@@ -11,16 +11,9 @@ import (
 	"time"
 )
 
-// {"Time":"2021-04-17T19:13:44.798614614-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
-// {"Time":"2021-04-17T19:13:44.798712863-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
-// {"Time":"2021-04-17T19:13:44.798719639-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: Hello() = \"Hello, World!\", want \"!Hello, World!\"\n"}
-// {"Time":"2021-04-17T19:13:44.798725206-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}
-// {"Time":"2021-04-17T19:13:44.798727988-04:00","Action":"fail","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
-// {"Time":"2021-04-17T19:13:44.798732941-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\n"}
-// {"Time":"2021-04-17T19:13:44.798987794-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"exit status 1\n"}
-// {"Time":"2021-04-17T19:13:44.799002674-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\tgithub.com/davidsday/hello\t0.001s\n"}
-// {"Time":"2021-04-17T19:13:44.799014744-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.001}
-
+// go test -json outputs JSON objects instead of lines
+// each JSON object looks like this. Not all fields
+// are emitted for each line
 type JLObject struct {
 	Time    string
 	Action  string
@@ -29,20 +22,6 @@ type JLObject struct {
 	Output  string
 	Elapsed float32
 }
-
-// var (
-// 	packageName = flag.String("package-name", "", "specify a package name (compiled test have no package name in output)")
-// 	setExitCode = flag.Bool("set-exit-code", false, "set exit code to 1 if tests failed")
-// )
-
-// let l:qfDict = {
-//       \ 'filename' : l:curDir . '/' . l:lineParts[0],
-//       \ 'lnum'     : l:lineParts[1],
-//       \ 'col'      : 1,
-//       \ 'vcol'     : 1,
-//       \ 'pattern'  : '',
-//       \ 'text'     : ''
-//       \ }
 
 // PD -> program data
 var PD PgmData
@@ -59,7 +38,7 @@ var PackageDir string
 func main() {
 
 	commandLine := "go test -v -json " + os.Args[1]
-	// New structs initialized empty (false, 0, "", [], {} etc)
+	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
 	PD.Perror.Validjson = true
@@ -86,8 +65,7 @@ func main() {
 		// Ensure we're getting valid JSON
 		if !json.Valid(json_line) {
 			PD.Perror.Validjson = false
-			// fmt.Printf("Oops!  %s is not valid JSON!\n\n", string(json_line))
-			// os.Exit(1)
+			break
 		} else {
 			// Convert line of JSON text to JSON line object (Go struct in this case)
 			json.Unmarshal(json_line, &jlo)
@@ -118,8 +96,6 @@ func main() {
 
 		PD, doBreak, err = HandleOutputLines(PD, jlo, prev_jlo, PackageDir)
 		if err != nil {
-			// fmt.Println("Oops!, HandleOutputLines() returned an error...")
-			// fmt.Println("Exiting....")
 			os.Exit(1)
 		}
 		if doBreak {
@@ -134,6 +110,11 @@ func main() {
 	// Make note of the elapsed time
 	PD.Elapsed = PD_Elapsed(jlo.Elapsed)
 
+	// We've completed the for loop,
+	// The last emitted line (JSON Line Object) announces
+	// if the run as a whole was a pass or fail.  It does
+	// not represent a test.  So it throws off our counts
+	// by one.
 	if jlo.Action == "pass" {
 		if PD.Counts.Passes > 1 {
 			PD.Counts.Passes--
@@ -144,8 +125,8 @@ func main() {
 			PD.Counts.Fails--
 		}
 	}
-	// Now we cycle through our PD.Error flags and create an
-	// yellow bar message if appropriate
+	// Now we cycle through our PD.Error flags and create a
+	// yellow bar and  message if appropriate
 
 	if !PD.Perror.Validjson {
 		PD.Barmessage.Color = "yellow"
