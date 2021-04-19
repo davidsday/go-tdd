@@ -59,105 +59,106 @@ func main() {
 	PD.Info.User = os.Getenv("USER")
 	// time.Now().Format(time.RFC3339Nano)
 
-	// stdout, stderr, _ := Shellout(commandLine)
-	stdout, _, _ := Shellout(commandLine)
-	// if len(stderr) > 0 {
-	// 	println("Oops!  Got something on stderr...Check it out!")
-	// 	os.Exit(1)
-	// }
-	// stdout & stderr are strings, we need []byte
-	lines := bytes.Split([]byte(stdout), []byte("\n"))
-
-	for _, json_line := range lines[:len(lines)-1] {
-
-		// Ensure we're getting valid JSON
-		if !json.Valid(json_line) {
-			PD.Perror.Validjson = false
-			break
-		} else {
-			// Convert line of JSON text to JSON line object (Go struct in this case)
-			json.Unmarshal(json_line, &jlo)
-		}
-
-		PackageDir = jlo.Package
-
-		if jlo.Action == "run" {
-			PD.Counts.Runs++
-		} else if jlo.Action == "continue" {
-			PD.Counts.Continues++
-		} else if jlo.Action == "pause" {
-			PD.Counts.Pauses++
-		} else if jlo.Action == "skip" {
-			PD.Counts.Skips++
-		} else if jlo.Action == "pass" {
-			PD.Counts.Passes++
-		} else if jlo.Action == "fail" {
-			PD.Counts.Fails++
-		}
-		var err error
-		var doBreak bool
-
-		PD, doBreak, err = HandleOutputLines(PD, jlo, prev_jlo, PackageDir)
-		if err != nil {
-			os.Exit(1)
-		}
-		if doBreak {
-			break
-		}
-		// Bottom of for loop - current JSON Line Object now
-		// becomes the Previous JSON Line Object,
-		// for look back purposes ...
-		prev_jlo = jlo
-	} //endfor
-
-	// Make note of the elapsed time
-	PD.Elapsed = PD_Elapsed(jlo.Elapsed)
-
-	// We've completed the for loop,
-	// The last emitted line (JSON Line Object) announces
-	// if the run as a whole was a pass or fail.  It does
-	// not represent a test.  So it throws off our counts
-	// by one.
-	if jlo.Action == "pass" {
-		if PD.Counts.Passes > 1 {
-			PD.Counts.Passes--
-		}
-	}
-	if jlo.Action == "fail" {
-		if PD.Counts.Fails > 1 {
-			PD.Counts.Fails--
-		}
-	}
-	// Now we cycle through our PD.Error flags and create a
-	// yellow bar and  message if appropriate
-
-	if !PD.Perror.Validjson {
+	stdout, stderr, _ := Shellout(commandLine)
+	if len(stderr) > 0 {
+		PD.Perror.Msg_stderr = true
 		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "In package: " + PackageDir + ", [Found Invalid JSON]"
-	} else if PD.Perror.Rcv_panic {
-		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
-	} else if PD.Perror.Notestfiles {
-		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "In package: " + PackageDir + ", [No Test Files]"
-	} else if PD.Perror.Buildfailed {
-		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
+		PD.Barmessage.Message = "Received output on STDERR: " + stderr[0:20] + ", Rest written to ./StdErr.txt"
+		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 	} else {
-		// No errors above so if we have fails or skips we load the quickfixlist
-		// and select "red" as our color bar color
-		if PD.Counts.Fails > 0 || PD.Counts.Skips > 0 {
-			PD.Barmessage.Color = "red"
-		} else {
-			PD.Barmessage.Color = "green"
+		// stdout & stderr are strings, we need []byte
+		lines := bytes.Split([]byte(stdout), []byte("\n"))
+
+		for _, json_line := range lines[:len(lines)-1] {
+
+			// Ensure we're getting valid JSON
+			if !json.Valid(json_line) {
+				PD.Perror.Validjson = false
+				break
+			} else {
+				// Convert line of JSON text to JSON line object (Go struct in this case)
+				json.Unmarshal(json_line, &jlo)
+			}
+
+			PackageDir = jlo.Package
+
+			if jlo.Action == "run" {
+				PD.Counts.Runs++
+			} else if jlo.Action == "continue" {
+				PD.Counts.Continues++
+			} else if jlo.Action == "pause" {
+				PD.Counts.Pauses++
+			} else if jlo.Action == "skip" {
+				PD.Counts.Skips++
+			} else if jlo.Action == "pass" {
+				PD.Counts.Passes++
+			} else if jlo.Action == "fail" {
+				PD.Counts.Fails++
+			}
+			var err error
+			var doBreak bool
+
+			PD, doBreak, err = HandleOutputLines(PD, jlo, prev_jlo, PackageDir)
+			if err != nil {
+				os.Exit(1)
+			}
+			if doBreak {
+				break
+			}
+			// Bottom of for loop - current JSON Line Object now
+			// becomes the Previous JSON Line Object,
+			// for look back purposes ...
+			prev_jlo = jlo
+		} //endfor
+
+		// Make note of the elapsed time
+		PD.Elapsed = PD_Elapsed(jlo.Elapsed)
+
+		// We've completed the for loop,
+		// The last emitted line (JSON Line Object) announces
+		// if the run as a whole was a pass or fail.  It does
+		// not represent a test.  So it throws off our counts
+		// by one.
+		if jlo.Action == "pass" {
+			if PD.Counts.Passes > 1 {
+				PD.Counts.Passes--
+			}
 		}
-		// func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed float32, fname string, lineno int) string {
-		PD.Barmessage.Message = BuildBarMessage(PD.Counts.Runs, PD.Counts.Skips, PD.Counts.Fails, PD.Counts.Passes, PD.Elapsed, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
+		if jlo.Action == "fail" {
+			if PD.Counts.Fails > 1 {
+				PD.Counts.Fails--
+			}
+		}
+		// Now we cycle through our PD.Error flags and create a
+		// yellow bar and  message if appropriate
+
+		if !PD.Perror.Validjson {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [Found Invalid JSON]"
+		} else if PD.Perror.Rcv_panic {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
+		} else if PD.Perror.Notestfiles {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [No Test Files]"
+		} else if PD.Perror.Buildfailed {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
+		} else {
+			// No errors above so if we have fails or skips we load the quickfixlist
+			// and select "red" as our color bar color
+			if PD.Counts.Fails > 0 || PD.Counts.Skips > 0 {
+				PD.Barmessage.Color = "red"
+			} else {
+				PD.Barmessage.Color = "green"
+			}
+			// func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed float32, fname string, lineno int) string {
+			PD.Barmessage.Message = BuildBarMessage(PD.Counts.Runs, PD.Counts.Skips, PD.Counts.Fails, PD.Counts.Passes, PD.Elapsed, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
+		}
+
+		// Endtime for PD.Info
+		PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
 	}
-
-	// Endtime for PD.Info
-	PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
-
 	marshallTR(PD)
 
 } // endmain()
@@ -264,7 +265,7 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elap
 	return barmessage
 }
 
-// Check for a match described by compiled regx with candidate
+// Check for a match described by compiled regx with candidate.
 // Returns true if theres a match, false otherwise
 func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	match := regx.FindString(candidate)
