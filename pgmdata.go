@@ -41,6 +41,7 @@ type PD_Perror struct {
 	Notestfiles bool `json:"notestfiles"`
 	Rcv_panic   bool `json:"panic"`
 	Buildfailed bool `json:"buildfailed"`
+	Msg_stderr  bool `json:"msg_stderr"`
 }
 
 type PD_QfList []PD_QfDict
