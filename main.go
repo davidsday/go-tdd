@@ -83,20 +83,15 @@ func main() {
 
 		if jlo.Action == "run" {
 			PD.Counts.Runs++
-		}
-		if jlo.Action == "continue" {
+		} else if jlo.Action == "continue" {
 			PD.Counts.Continues++
-		}
-		if jlo.Action == "pause" {
+		} else if jlo.Action == "pause" {
 			PD.Counts.Pauses++
-		}
-		if jlo.Action == "skip" {
+		} else if jlo.Action == "skip" {
 			PD.Counts.Skips++
-		}
-		if jlo.Action == "pass" {
+		} else if jlo.Action == "pass" {
 			PD.Counts.Passes++
-		}
-		if jlo.Action == "fail" {
+		} else if jlo.Action == "fail" {
 			PD.Counts.Fails++
 		}
 		var err error
@@ -252,6 +247,11 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject, Package
 	return pgmdata, doBreak, err
 }
 
+// BuildBarMessage() dynamically creates the message for passed,
+// failed, and skipped tests as appropriate
+//
+// Given the relevent counters, the elapsed time, a possible filename,
+// and line number, return the complete message
 func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string) string {
 	barmessage := strconv.Itoa(runs) + " Run, " + strconv.Itoa(passes) + " Passed"
 	if skips > 0 {
@@ -260,9 +260,7 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elap
 	if fails > 0 {
 		barmessage += ", " + strconv.Itoa(fails) + " Failed, 1st in " + fname + ", on line " + lineno
 	}
-
 	barmessage += ", in " + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
-
 	return barmessage
 }
 
