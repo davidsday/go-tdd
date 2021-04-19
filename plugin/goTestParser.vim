@@ -58,7 +58,7 @@ function! s:RunTest(toScreen)
     " Instead I am relying on installing goTestParser the go program
     " in my ~/bin/ but I really want this plugin to be self sufficient
 
-    let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/go/bin/goTestParser"
+    let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     " let s:cmdLine = 'goTestParser '  . l:packageDir
     let s:cmdLine=g:goTestParserBinary . ' ' . l:packageDir
     " let s:cmdLine = globpath('../go/bin/go/', 'goTestParser') . ' ' . l:packageDir
