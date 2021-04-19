@@ -194,7 +194,9 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject, Package
 	var regexNoTestFiles = regexp.MustCompile(`\?\s*\S*\s*\[no test files\]`)
 	var regexBuildFailed = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
 	// TODO: I don't yet know an adequate regex for this
-	var regexPanic = regexp.MustCompile(`panic`)
+	// panic: Log in goroutine after  has completed
+	var regexPanic = regexp.MustCompile(`^panic:`)
+
 	var regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
 
 	// Shiny new match for each loop, nothing left over from
