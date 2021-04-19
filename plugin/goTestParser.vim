@@ -49,10 +49,16 @@ function! s:RunTest(toScreen)
     " This script, goTestParser.vim, lives in goTestParser/plugin
     " The go source code lives in goTestParser/go.  The install.shell
     " script builds and moves the goTestParser binary into
-    " goTestParser/go/bin.  So, from here ../go/bin/goTestParser is
+    " goTestParser/go/bin.  So, from here ../go/bin/goTestParser should be a
     " reliable path to the gotTestParser binary.
     "
-    let s:cmdLine = '../go/bin/goTestParser ' . l:packageDir
+    "
+    " TODO: I'd like to use ../go/bin/goTestParser but don't know
+    " how to do it here....
+    " Instead I am relying on installing goTestParser the go program
+    " in my ~/bin/ but I really want this plugin to be self sufficient
+    let s:cmdLine = 'goTestParser '  . l:packageDir
+    " let s:cmdLine = globpath('../go/bin/go/', 'goTestParser') . ' ' . l:packageDir
     if a:toScreen == v:true
       echon system(s:cmdLine)
     else
