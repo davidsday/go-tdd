@@ -18,6 +18,10 @@
 "   And the file and line number of the first failure or the cause of
 "   the first skip.
 "
+" There is also a yellow bar indication for [No Tests Found], [Build Failed]
+" [Invalid JSON] and [Received a Panic] sorts of problem indications
+" for non test failures.
+"
 " <LocalLeader>v runs 'go test -v ' verbosely to the screen, allowing you
 " to see the entire output, and inspect more closely.
 "
@@ -41,7 +45,14 @@ function! s:RunTest(toScreen)
     let l:packageDir = shellescape(expand('%:p:h'))
     "-count=1 ensures uncached results.  This is optional.
     " let s:cmdLine = 'go test -v -count=1 ' . p . ' | goTestParser '
-    let s:cmdLine = 'goTestParser ' . l:packageDir
+    "
+    " This script, goTestParser.vim, lives in goTestParser/plugin
+    " The go source code lives in goTestParser/go.  The install.shell
+    " script builds and moves the goTestParser binary into
+    " goTestParser/go/bin.  So, from here ../go/bin/goTestParser is
+    " reliable path to the gotTestParser binary.
+    "
+    let s:cmdLine = '../go/bin/goTestParser ' . l:packageDir
     if a:toScreen == v:true
       echon system(s:cmdLine)
     else
