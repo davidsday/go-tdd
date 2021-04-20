@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -203,9 +202,7 @@ func marshallTR(pgmdata PgmData) {
 	// data, err := json.MarshalIndent(pgmdata, "", "    ")
 	data, _ := json.Marshal(pgmdata)
 
-	// os.Stdout.Write(data)
-	// os.Stdout.Sync()
-	fmt.Fprint(os.Stdout, string(data))
+	os.Stdout.Write(data)
 
 	os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
