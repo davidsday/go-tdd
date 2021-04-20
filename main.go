@@ -211,7 +211,6 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 	doBreak := false
 	pgmdata.Counts.Outputs++
 
-	CheckRegx(regexPanic, jlo.Output)
 	if CheckRegx(regexPanic, jlo.Output) {
 		pgmdata.Perror.Rcv_panic = true
 		doBreak = true
@@ -268,8 +267,8 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 // BuildBarMessage() dynamically creates the message for passed,
 // failed, and skipped tests as appropriate
 //
-// Given the relevent counters, the elapsed time, a possible filename,
-// and line number, return the complete message
+// Given the relevent counters, the elapsed time, a possible 1st error
+// filename and line number, return the completed message
 func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string) string {
 	barmessage := strconv.Itoa(runs) + " Run, " + strconv.Itoa(passes) + " Passed"
 	if skips > 0 {
