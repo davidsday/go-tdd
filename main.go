@@ -203,6 +203,8 @@ func marshallTR(pgmdata PgmData) {
 	data, _ := json.Marshal(pgmdata)
 
 	os.Stdout.Write(data)
+	os.Stdout.Sync()
+
 	os.WriteFile("./gotdd_log.json", data, 0664)
 } // end_marshallTR
 
