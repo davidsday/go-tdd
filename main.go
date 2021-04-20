@@ -135,15 +135,15 @@ func main() {
 		if !PD.Perror.Validjson {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [Found Invalid JSON]"
-		} else if PD.Perror.Rcv_panic {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
 		} else if PD.Perror.Notestfiles {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [No Test Files]"
 		} else if PD.Perror.Buildfailed {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
+		} else if PD.Perror.Rcv_panic {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
 		} else {
 			// No errors above so if we have fails or skips we load the quickfixlist
 			// and select "red" as our color bar color
