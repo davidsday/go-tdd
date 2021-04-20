@@ -61,9 +61,15 @@ func main() {
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
+		msg := ""
 		PD.Perror.Msg_stderr = true
 		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "STDERR: " + stderr[0:20] + ", Rest written to ./StdErr.txt"
+		if len(stderr) > 80 {
+			msg = stderr[:80]
+		} else {
+			msg = stderr
+		}
+		PD.Barmessage.Message = "STDERR: " + msg + ", [Rest written to ./StdErr.txt]"
 		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 	} else {
 		// stdout & stderr are strings, we need []byte
