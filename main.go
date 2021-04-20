@@ -71,6 +71,10 @@ func main() {
 
 		for _, json_line := range lines[:len(lines)-1] {
 
+			if len(bytes.TrimSpace(json_line)) == 0 {
+				continue
+			}
+
 			// Ensure we're getting valid JSON
 			if !json.Valid(json_line) {
 				PD.Perror.Validjson = false

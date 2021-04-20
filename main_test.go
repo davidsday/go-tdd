@@ -40,7 +40,7 @@ func TestCheckRegx_no_test_files1(t *testing.T) {
 
 //TestCheckRegx_no_test_files2() ....
 func TestCheckRegx_no_test_files2(t *testing.T) {
-	pmsg := "?   	github.com/zchee/nvim-go/pkg/server	[no test files"
+	pmsg := "?   	github.com/zchee/nvim-go/pkg/server	[No test files]"
 	got := CheckRegx(regexNoTestFiles, pmsg)
 	want := false
 	if got != want {

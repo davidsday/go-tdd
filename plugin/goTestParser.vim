@@ -42,7 +42,7 @@ function! s:RunTest(toScreen)
     echon 'Testing...'
     "shellescape(expand('%:p:h')) gives path to this docs directory
     "(package dir)
-    let l:packageDir = shellescape(expand('%:p:h'))
+    let g:packageDir = shellescape(expand('%:p:h'))
     "-count=1 ensures uncached results.  This is optional.
     " let s:cmdLine = 'go test -v -count=1 ' . p . ' | goTestParser '
     "
@@ -60,7 +60,7 @@ function! s:RunTest(toScreen)
 
     let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     " let s:cmdLine = 'goTestParser '  . l:packageDir
-    let s:cmdLine=g:goTestParserBinary . ' ' . l:packageDir
+    let s:cmdLine=g:goTestParserBinary . ' ' . g:packageDir
     " let s:cmdLine = globpath('../go/bin/go/', 'goTestParser') . ' ' . l:packageDir
     if a:toScreen == v:true
       echon system(s:cmdLine)
