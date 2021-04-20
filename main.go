@@ -111,7 +111,7 @@ func main() {
 			prev_jlo = jlo
 		} //endfor
 
-		// Make note of the elapsed time
+		// Make note of the elapsed time, as reported by go test
 		PD.Elapsed = PD_Elapsed(jlo.Elapsed)
 
 		// We've completed the for loop,
