@@ -63,7 +63,7 @@ func main() {
 	if len(stderr) > 0 {
 		PD.Perror.Msg_stderr = true
 		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "Received output on STDERR: " + stderr[0:20] + ", Rest written to ./StdErr.txt"
+		PD.Barmessage.Message = "STDERR: " + stderr[0:20] + ", Rest written to ./StdErr.txt"
 		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 	} else {
 		// stdout & stderr are strings, we need []byte
@@ -152,13 +152,29 @@ func main() {
 			} else {
 				PD.Barmessage.Color = "green"
 			}
-			// func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed float32, fname string, lineno int) string {
-			PD.Barmessage.Message = BuildBarMessage(PD.Counts.Runs, PD.Counts.Skips, PD.Counts.Fails, PD.Counts.Passes, PD.Elapsed, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
-		}
+			// func BuildBarMessage(
+			// runs int,
+			// skips int,
+			// fails int,
+			// passes int,
+			// elapsed float32,
+			// fname string,
+			// lineno int) string {}
 
-		// Endtime for PD.Info
-		PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
+			PD.Barmessage.Message = BuildBarMessage(
+				PD.Counts.Runs,
+				PD.Counts.Skips,
+				PD.Counts.Fails,
+				PD.Counts.Passes,
+				PD.Elapsed,
+				PD.Firstfailedtest.Fname,
+				PD.Firstfailedtest.Lineno,
+			)
+		}
 	}
+
+	// Endtime for PD.Info
+	PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
 	marshallTR(PD)
 
 } // endmain()
@@ -186,7 +202,8 @@ func marshallTR(pgmdata PgmData) {
 	os.WriteFile("./gotdd_log.json", data, 0664)
 } // end_marshallTR
 
-func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject, PackageDir string) (PgmData, bool, error) {
+func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
+	PackageDir string) (PgmData, bool, error) {
 	var tDict PD_QfDict
 	var err error = nil
 	var parts []string
