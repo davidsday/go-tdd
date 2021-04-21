@@ -1,5 +1,5 @@
 NOTE:  This plugin is under active development.  I try to keep the
-documentation current. But things change not always in real time.
+documentation current. But things change, not always in real time.
 
 This is a Vim plugin that seeks to bring two things
 to the Vim golang development experience:
@@ -40,7 +40,7 @@ I don't want the tools to report that as [SUCCESS].
 goTestParser is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
 
-It does not interfere with vim-go in anyway.
+It does not interfere with vim-go in anyway that I am aware of.
 
 goTestParser provides its own go test parser, written in golang, which
 parses the 'go test -v -json' output and in turn, provides a further
