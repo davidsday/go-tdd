@@ -17,6 +17,7 @@ type PD_Info struct {
 	Endtime        string   `json:"endtime"`
 	Gtp_issued_cmd string   `json:"gtp_issued_cmd"`
 	Gtp_rcvd_args  []string `json:"gtp_rcvd_args"`
+	TestCoverage   string   `json:"test_coverage"`
 }
 
 type PD_Counts struct {

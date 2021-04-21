@@ -17,6 +17,7 @@ var (
 	regexNoTestFiles    = regexp.MustCompile(`\?\s*\S*\s*\[no test files\]`)
 	regexBuildFailed    = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
 	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
+	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
 )
 
 // go test -json outputs JSON objects instead of lines
@@ -45,7 +46,7 @@ var PackageDir string
 
 func main() {
 
-	commandLine := "go test -v -json " + os.Args[1]
+	commandLine := "go test -v -json -cover " + os.Args[1]
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
@@ -180,6 +181,7 @@ func main() {
 				PD.Elapsed,
 				PD.Firstfailedtest.Fname,
 				PD.Firstfailedtest.Lineno,
+				PD.Info.TestCoverage,
 			)
 		}
 	}
@@ -227,6 +229,10 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 		pgmdata.Perror.Rcv_panic = true
 		doBreak = true
 		return pgmdata, doBreak, err
+	}
+
+	if CheckRegx(regexTestCoverage, jlo.Output) {
+		pgmdata.Info.TestCoverage = jlo.Output
 	}
 
 	if CheckRegx(regexNoTestFiles, jlo.Output) {
@@ -281,13 +287,16 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 //
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
-func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string) string {
+func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string, coverage string) string {
 	barmessage := strconv.Itoa(runs) + " Run, " + strconv.Itoa(passes) + " Passed"
 	if skips > 0 {
 		barmessage += ", " + strconv.Itoa(skips) + " Skipped"
 	}
 	if fails > 0 {
 		barmessage += ", " + strconv.Itoa(fails) + " Failed, 1st in " + fname + ", on line " + lineno
+	}
+	if skips == 0 && fails == 0 && len(coverage) > 0 {
+		barmessage += ", " + coverage
 	}
 	barmessage += ", in " + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
 	return barmessage
