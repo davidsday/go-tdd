@@ -233,7 +233,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 
 	if CheckRegx(regexTestCoverage, jlo.Output) {
 		pgmdata.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
-		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, "c", "C", 1)
+		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, "coverage: ", "", 1)
 		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, " of statements", "", 1)
 	}
 
@@ -290,17 +290,20 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
 func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string, coverage string) string {
+	oneSpace := " "
+	commaSpace := ", "
 	barmessage := strconv.Itoa(runs) + " Run, " + strconv.Itoa(passes) + " Passed"
 	if skips > 0 {
-		barmessage += ", " + strconv.Itoa(skips) + " Skipped"
+		barmessage += commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
 	}
 	if fails > 0 {
-		barmessage += ", " + strconv.Itoa(fails) + " Failed, 1st in " + fname + ", on line " + lineno
+		barmessage += commaSpace + strconv.Itoa(fails) + oneSpace + "Failed, 1st in"
+		barmessage += oneSpace + fname + commaSpace + "on line" + oneSpace + lineno
 	}
 	if skips == 0 && fails == 0 && len(coverage) > 0 {
-		barmessage += ", " + coverage
+		barmessage += commaSpace + "Test Coverage:" + oneSpace + coverage
 	}
-	barmessage += ", in " + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
+	barmessage += commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
 	return barmessage
 }
 
