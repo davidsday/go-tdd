@@ -15,7 +15,10 @@ is used to convey messages about errors that are not caused by an
 actual failing test.
 
 Right now these yellow bar messages include, [no tests found],
-[build failed], [received a panic], and [invalid JSON message].
+[build failed], [received a panic], and [invalid JSON message],
+and the receipt of a message on STDERR.  The build tools sometimes
+will issue important messages on STDERR, and I want to know about
+them immediately.
 
 There also are messages providing detail information in each red/green
 bars.  They report the number of tests run, passed, failed, and skipped,
@@ -32,16 +35,26 @@ or when tests were skipped with no notification to the programmer.
 My thinking is that if I am a consultant called in to work on a code base,
 I do not want my tools delivering erroneous, overly optimistic reports
 to me.  To me, if a package has 100 tests, but 25 are not even being run,
-I want to know that right up front.
+I don't want the tools to report that as [SUCCESS].
 
-goTestParser is designed to work alongside of vim-go.
+goTestParser is designed to work alongside of vim-go, since, really,
+vim-go is my most important golang development tool.
+
 It does not interfere with vim-go in anyway.
 
 goTestParser provides its own go test parser, written in golang, which
-parses the 'go test -v -json' output and in turn, provides a much further
+parses the 'go test -v -json' output and in turn, provides a further
 processed JSON structure which details for a small Vimscript what
 message, and in what color to deliver.  It also provides to Vim a quickfix
 list of test failures and/or skipped tests which Vim loads for your use.
 
+In this style of development, the RedBar/GreenBar (and YellowBar)s are the
+primary layer of communication with the developer, so goTestParser loads
+the quickfix list for you, but it does not open it and take you away from
+the file you have open.  I find that in my development work flow,
+I often don't need to go to the test at all, but want to peruse  and
+fix the function that caused the failure, and I am already there.
 
+In my set up, <Leader>q toggles the quickfix window and <C-j> and <C-k>
+navigate the quickfix list up and down.
 
