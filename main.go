@@ -58,6 +58,7 @@ func main() {
 	// PD.Info.Endtime is set just before finishing up, down below
 	PD.Info.User = os.Getenv("USER")
 	// time.Now().Format(time.RFC3339Nano)
+	PD.Info.Gtpargs = os.Args
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
@@ -210,7 +211,7 @@ func marshallTR(pgmdata PgmData) {
 
 	os.Stdout.Write(data)
 
-	// os.WriteFile("./goTestParser_log.json", data, 0664)
+	os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
 
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
