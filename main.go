@@ -233,6 +233,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 
 	if CheckRegx(regexTestCoverage, jlo.Output) {
 		pgmdata.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
+		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, "c", "C", 1)
 	}
 
 	if CheckRegx(regexNoTestFiles, jlo.Output) {
