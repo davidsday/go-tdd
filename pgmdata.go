@@ -11,12 +11,12 @@ type PgmData struct {
 }
 
 type PD_Info struct {
-	Host        string   `json:"host"`
-	User        string   `json:"user"`
-	Begintime   string   `json:"begintime"`
-	Endtime     string   `json:"endtime"`
-	Commandline string   `json:"commandline"`
-	Gtpargs     []string `json:"gtp_args"`
+	Host           string   `json:"host"`
+	User           string   `json:"user"`
+	Begintime      string   `json:"begintime"`
+	Endtime        string   `json:"endtime"`
+	Gtp_issued_cmd string   `json:"gtp_issued_cmd"`
+	Gtp_rcvd_args  []string `json:"gtp_rcvd_args"`
 }
 
 type PD_Counts struct {

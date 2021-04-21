@@ -53,12 +53,12 @@ func main() {
 
 	// General go test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
-	PD.Info.Commandline = commandLine
+	PD.Info.Gtp_issued_cmd = commandLine
 	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
 	// PD.Info.Endtime is set just before finishing up, down below
 	PD.Info.User = os.Getenv("USER")
 	// time.Now().Format(time.RFC3339Nano)
-	PD.Info.Gtpargs = os.Args
+	PD.Info.Gtp_rcvd_args = os.Args
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
