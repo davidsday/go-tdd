@@ -14,7 +14,10 @@ function! go#color_bar#DoColorBar(color, msg)
     hi GreenBar ctermfg=white ctermbg=green guibg=#719e07 guifg=black
     echohl GreenBar
   endif
-  echon a:msg . repeat(' ',&columns - (length) )
+  if l:length >= &columns
+    l:length = &columns - 1
+  endif
+  echon a:msg . repeat(' ',&columns - (l:length) )
   echohl None
 endfunction
 
