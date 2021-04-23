@@ -42,32 +42,19 @@ function! s:RunTest(toScreen)
     echon 'Testing...'
     "shellescape(expand('%:p:h')) gives path to this docs directory
     "(package dir)
-    let g:packageDir = shellescape(expand('%:p:h'))
-    "-count=1 ensures uncached results.  This is optional.
-    " let s:cmdLine = 'go test -v -count=1 ' . p . ' | goTestParser '
-    "
-    " This script, goTestParser.vim, lives in goTestParser/plugin
-    " The go source code lives in goTestParser/go.  The install.shell
-    " script builds and moves the goTestParser binary into
-    " goTestParser/go/bin.  So, from here ../go/bin/goTestParser should be a
-    " reliable path to the gotTestParser binary.
-    "
-    "
-    " TODO: I'd like to use ../go/bin/goTestParser but don't know
-    " how to do it here....
-
-
+    let l:packageDir = shellescape(expand('%:p:h'))
+    " Ensure Vim's working directory is the same as the file we are editing
     chdir %:p:h
-    let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
+    let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=" "
-    let s:cmdLine=g:goTestParserBinary . oneSpace . g:packageDir
+    let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir
     if a:toScreen == v:true
-      echon system(s:cmdLine)
+      echon system(l:cmdLine)
     else
-      let out = system(s:cmdLine)
-     call s:ProcessStdOutput(out)
+      let l:out = system(l:cmdLine)
+     call s:ProcessStdOutput(l:out)
     endif
-    let ch = getchar()
+    let l:ch = getchar()
     echon "\r\n\n"
     redraw
     " Turn Vim-Go's automatic type display back on
