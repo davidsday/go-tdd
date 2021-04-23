@@ -159,8 +159,10 @@ func main() {
 		} else {
 			// No errors above so if we have fails or skips we load the quickfixlist
 			// and select "red" as our color bar color
-			if PD.Counts.Fails > 0 || PD.Counts.Skips > 0 {
+			if PD.Counts.Fails > 0 {
 				PD.Barmessage.Color = "red"
+			} else if PD.Counts.Skips > 0 {
+				PD.Barmessage.Color = "yellow"
 			} else {
 				PD.Barmessage.Color = "green"
 			}

@@ -55,15 +55,9 @@ function! s:RunTest(toScreen)
     "
     " TODO: I'd like to use ../go/bin/goTestParser but don't know
     " how to do it here....
-    " Instead I am relying on installing goTestParser the go program
-    " in my ~/bin/ but I really want this plugin to be self sufficient
-
-    " This changes the working directory to where our file is
-    chdir %:p:h
     let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    " let s:cmdLine = 'goTestParser '  . l:packageDir
-    let s:cmdLine=g:goTestParserBinary . ' ' . g:packageDir
-    " let s:cmdLine = globpath('../go/bin/go/', 'goTestParser') . ' ' . l:packageDir
+    let l:oneSpace=" "
+    let s:cmdLine=g:goTestParserBinary . oneSpace . g:packageDir
     if a:toScreen == v:true
       echon system(s:cmdLine)
     else

@@ -12,7 +12,7 @@ to the Vim golang development experience:
 The first is via the use of Vim's message line to provide red/green
 bar fail/pass indications. There is also a yellow bar message which
 is used to convey messages about errors that are not caused by an
-actual failing test.
+actual failing test, or STDERR outputs.
 
 Right now these yellow bar messages include, [no tests found],
 [build failed], [received a panic], and [invalid JSON message],
@@ -23,7 +23,8 @@ them immediately.
 There also are messages providing detail information in each red/green
 bars.  They report the number of tests run, passed, failed, and skipped,
 in addition to the elapsed time for running all the tests as provided
-by go test.
+by go test. Test coverage is reported on Green Bars.  Presumably, you
+have more to worry about than that on Yellow or Red Bars.
 
 Much, if not all of this information is absent from the rather sparce
 reporting done by vim-go, which is by far the leading vim/neovim golang

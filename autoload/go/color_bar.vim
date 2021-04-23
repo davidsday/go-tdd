@@ -14,7 +14,10 @@ function! go#color_bar#DoColorBar(color, msg)
     hi GreenBar ctermfg=white ctermbg=green guibg=#719e07 guifg=black
     echohl GreenBar
   endif
-  echon a:msg . repeat(' ',&columns - (length) )
+  if l:length >= &columns
+    l:length = &columns - 1
+  endif
+  echon a:msg . repeat(' ',&columns - (l:length) )
   echohl None
 endfunction
 
@@ -27,15 +30,21 @@ function! go#color_bar#BuildBarMessage(
   " for providing any blank spaces preceding it, and must NOT leave
   " any blank spaces after itself. Life is simpler that way.
 
-  if a:runCount >1
-    let l:txtmsg = ' tests run,'
+  let l:oneSpace=' '
+  let l:commaSpace=', '
+
+
+  if a:runCount > 1
+    " plural
+    let l:txtmsg = 'tests run'
   else
-    let l:txtmsg = ' test run,'
+    " singular
+    let l:txtmsg = 'test run'
   endif
-  let l:barMessage = a:runCount . l:txtmsg
-  let l:barMessage .= ' ' . a:passCount . ' passed,'
+  let l:barMessage = a:runCount . l:oneSpace . l:txtmsg
+  let l:barMessage .= l:commaSpace . a:passCount . l:oneSpace . 'passed'
   if a:skipCount > 0
-    let l:barMessage .= ' ' . a:skipCount . ' skipped,'
+    let l:barMessage .= commaSpace . a:skipCount . oneSpace . 'skipped'
   endif
   " Our failCount will potentially include skipped files
   " So the true error count is failCount - skipCount
@@ -43,26 +52,26 @@ function! go#color_bar#BuildBarMessage(
     if a:failCount == 1
       " Singular
       let l:fails = 'failure'
-      let l:barMessage .=  ' ' . a:failCount .' ' . fails . ','
+      let l:barMessage .=  l:commaSpace . a:failCount . l:oneSpace . l:fails
     else
       " or plural...
       let l:fails = 'failures'
-      let l:barMessage .= ' ' . a:failCount .' ' . fails . ','
+      let l:barMessage .= l:commaSpace . a:failCount . l:oneSpace . l:fails
     endif
     if len(a:firstFailTestFname) > 0
       if a:failCount == 1
         " Singular
-        let l:barMessage .= ' in file ' . a:firstFailTestFname . ','
+        let l:barMessage .= l:commaSpace . 'in file' . l:oneSpace . a:firstFailTestFname
       else
-        let l:barMessage .= ' 1st in file ' . a:firstFailTestFname . ','
+        let l:barMessage .= l:commaSpace . '1st in file' . l:oneSpace . a:firstFailTestFname
       endif
     endif
     if len(string(a:firstFailTestLineNo)) > 0
-      let l:barMessage .= ' line nr ' . a:firstFailTestLineNo . ','
+      let l:barMessage .= l:commaSpace . 'line nr' . l:oneSpace . a:firstFailTestLineNo
     endif
   endif
   if len(string(a:runTime)) > 0
-    let l:barMessage .= ' in ' . string(a:runTime) . 's'
+    let l:barMessage .=  l:commaSpace . 'in' . oneSpace . string(a:runTime) . 's'
   endif
   return l:barMessage
 endfunction abort
