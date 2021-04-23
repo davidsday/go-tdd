@@ -55,6 +55,9 @@ function! s:RunTest(toScreen)
     "
     " TODO: I'd like to use ../go/bin/goTestParser but don't know
     " how to do it here....
+
+
+    chdir %:p:h
     let g:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=" "
     let s:cmdLine=g:goTestParserBinary . oneSpace . g:packageDir
