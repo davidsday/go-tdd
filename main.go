@@ -49,6 +49,8 @@ func main() {
 
 	// Remove ./StdeErr.txt if one still lingers
 	// and any lingering JSON logs...
+	// So we are guaranteed any present after
+	// this run are current
 	os.Remove("./StdErr.txt")
 	os.Remove("./goTestParser_log.json")
 	os.Remove("./gotestlog.json")
