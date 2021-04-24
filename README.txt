@@ -1,5 +1,5 @@
-NOTE:  This plugin is under active development.  I try to keep the
-documentation current. But things change, not always in real time.
+NOTE:  This plugin is under active development.  I try to keep this
+current. But things change....
 
 This is a Vim plugin that seeks to bring two things
 to the Vim golang development experience:
@@ -12,7 +12,7 @@ to the Vim golang development experience:
 The first is via the use of Vim's message line to provide red/green
 bar fail/pass indications. There is also a yellow bar message which
 is used to convey messages about errors that are not caused by an
-actual failing test, or STDERR outputs.
+actual failing tests.
 
 Right now these yellow bar messages include, [no tests found],
 [build failed], [received a panic], and [invalid JSON message],
@@ -26,22 +26,24 @@ in addition to the elapsed time for running all the tests as provided
 by go test. Test coverage is reported on Green Bars.  Presumably, you
 have more to worry about than that on Yellow or Red Bars.
 
-Much, if not all of this information is absent from the rather sparce
-reporting done by vim-go, which is by far the leading vim/neovim golang
-development plugin, one that I use everyday and cannot imagine
-programming in golang without.  But I have seen many instances where
-vim-go reports [SUCCESS] when there actually were not tests run at all,
-or when tests were skipped with no notification to the programmer.
+I have seen many instances where vim-go reports [SUCCESS] when there
+actually were not tests run at all, or when tests were skipped with
+no notification to the programmer.
 
 My thinking is that if I am a consultant called in to work on a code base,
-I do not want my tools delivering erroneous, overly optimistic reports
+I do not want my tools delivering overly optimistic reports
 to me.  To me, if a package has 100 tests, but 25 are not even being run,
-I don't want the tools to report that as [SUCCESS].
+I don't want the tools to report that as [SUCCESS]. If go test issues
+messages via STDERR, I want to know that.  The fact that they were issued
+on STDERR is info I want to be explicitly told.
 
 goTestParser is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
 
 It does not interfere with vim-go in anyway that I am aware of.
+In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
+<LocalLeader>t to activate goTestParser. If I desire to use vim-go's
+:GoTest command, I call it just like that.
 
 goTestParser provides its own go test parser, written in golang, which
 parses the 'go test -v -json' output and in turn, provides a further
@@ -54,8 +56,12 @@ primary layer of communication with the developer, so goTestParser loads
 the quickfix list for you, but it does not open it and take you away from
 the file you have open.  I find that in my development work flow,
 I often don't need to go to the test at all, but want to peruse  and
-fix the function that caused the failure, and I am already there.
+fix the function that caused the failure, and I may already be there.
+
+The RedBar/GreenBar/YellowBar message line lingers until any key is
+pressed (I typically just hit the space bar).
 
 In my set up, <Leader>q toggles the quickfix window and <C-j> and <C-k>
-navigate the quickfix list up and down.
+navigate the quickfix list up and down. <Leader>a takes me to the
+Alternate file.
 
