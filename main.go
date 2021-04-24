@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// ?   	github.com/zchee/nvim-go/pkg/server	[no test files]
+// ?    github.com/zchee/nvim-go/pkg/server [no test files]
 var (
 	regexPanic          = regexp.MustCompile(`^panic:`)
 	regexNoTestFiles    = regexp.MustCompile(`\?\s*\S*\s*\[no test files\]`)
