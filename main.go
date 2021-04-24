@@ -33,6 +33,11 @@ type JLObject struct {
 }
 
 // PD -> program data
+// This is the whole enchilada
+// It holds all the program's
+// important data.  It is defined
+// in pgmdata.go
+//
 var PD PgmData
 
 // jlo & JLO -> JSON Line Object
@@ -40,16 +45,20 @@ var jlo JLObject
 var prev_jlo JLObject
 var PackageDir string
 
-// var testResults TestResults
-// var qfLines QuickFixLines
-// var qfLine QuickFixLine
-
 func main() {
+
+	// Remove ./StdeErr.txt if one still lingers
+	// and any lingering JSON logs...
+	os.Remove("./StdErr.txt")
+	os.Remove("./goTestParser_log.json")
+	os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
+	// We will assume we are receiving valid JSON, until we
+	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
 
 	// General go test run info is in PD.Info
