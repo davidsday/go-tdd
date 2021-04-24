@@ -44,6 +44,9 @@ function! s:RunTest(toScreen)
     "(package dir)
     let l:packageDir = shellescape(expand('%:p:h'))
     " Ensure Vim's working directory is the same as the file we are editing
+    " Without this, sometimes, when opening opening a file found by FZF
+    " (<Leader>f), Vim's working directory stays at the directory we just
+    " left.  So don't delete it.
     chdir %:p:h
     let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=" "
