@@ -86,8 +86,8 @@ func main() {
 		} else {
 			msg = stderr
 		}
-		PD.Barmessage.Message = "STDERR: " + msg + ", [Rest written to pkgdir/StdErr.txt]"
 		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", ":") + ", [Rest written to pkgdir/StdErr.txt]"
 	} else {
 		// stdout & stderr are strings, we need []byte
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
