@@ -50,7 +50,7 @@ func main() {
 	// Remove ./StdeErr.txt if one still lingers
 	// and any lingering JSON logs...
 	// So we are guaranteed any present after
-	// this run are current
+	// this run are created by this run
 	os.Remove("./StdErr.txt")
 	os.Remove("./goTestParser_log.json")
 	os.Remove("./gotestlog.json")
@@ -59,7 +59,7 @@ func main() {
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
-	// We will assume we are receiving valid JSON, until we
+	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
 
@@ -72,17 +72,21 @@ func main() {
 	// time.Now().Format(time.RFC3339Nano)
 	PD.Info.Gtp_rcvd_args = os.Args
 
+	// If os.Args[2] == "--" {
+	//    open stdin and read from it until EOF
+	// } and our stdin becomes our variable stdout, here
+	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
 		msg := ""
 		PD.Perror.Msg_stderr = true
 		PD.Barmessage.Color = "yellow"
-		if len(stderr) > 80 {
-			msg = stderr[:80]
+		if len(stderr) > 90 {
+			msg = stderr[:90]
 		} else {
 			msg = stderr
 		}
-		PD.Barmessage.Message = "STDERR: " + msg + ", [Rest written to ./StdErr.txt]"
+		PD.Barmessage.Message = "STDERR: " + msg + ", [Rest written to pkgdir/StdErr.txt]"
 		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 	} else {
 		// stdout & stderr are strings, we need []byte
