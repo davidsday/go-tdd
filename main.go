@@ -46,6 +46,8 @@ var prev_jlo JLObject
 var PackageDir string
 
 func main() {
+	// oneSpace := " "
+	commaSpace := ", "
 
 	// Remove ./StdeErr.txt if one still lingers
 	// and any lingering JSON logs...
@@ -86,8 +88,11 @@ func main() {
 		} else {
 			msg = stderr
 		}
-		os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
-		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", ":") + ", [Rest written to pkgdir/StdErr.txt]"
+		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", ":")
+		if len(stderr) > 90 {
+			os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+			PD.Barmessage.Message += commaSpace + "[Rest written to pkgdir/StdErr.txt]"
+		}
 	} else {
 		// stdout & stderr are strings, we need []byte
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
