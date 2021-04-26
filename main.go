@@ -83,8 +83,8 @@ func main() {
 		msg := ""
 		PD.Perror.Msg_stderr = true
 		PD.Barmessage.Color = "yellow"
-		if len(stderr) > 90 {
-			msg = stderr[:90]
+		if len(stderr) > 100 {
+			msg = stderr[:100]
 		} else {
 			msg = stderr
 		}
