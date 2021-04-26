@@ -41,7 +41,10 @@ requires going back to parsing the non JSON go test -v output, thus
 largely defeating the point of converting to -json in the first place.
 
 For now, I am just taking the go test -json output's word and we need to
-realize that the results are approximate.
+realize that the results are approximate. I have not yet found even one
+tool that gets this right.  Just don't be surprised if you think you
+have written 33 tests and 35 get reported. Go test -json is counting the
+subtests parent test, even though testing is only done by the subtests.
 
 I have seen many instances where vim-go reports [SUCCESS] when there
 actually were not tests run at all, or when tests were skipped with
