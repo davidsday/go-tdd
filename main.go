@@ -254,7 +254,9 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 	}
 
 	if CheckRegx(regexTestCoverage, jlo.Output) {
+		// Remove trailing '\n'
 		pgmdata.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
+		// Strip away everything but the percent coverage string ("57.8%", for example)
 		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, "coverage: ", "", 1)
 		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, " of statements", "", 1)
 	}
