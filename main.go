@@ -316,7 +316,8 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string, coverage string) string {
 	oneSpace := " "
 	commaSpace := ", "
-	barmessage := strconv.Itoa(runs) + " Run, " + strconv.Itoa(passes) + " Passed"
+	barmessage := strconv.Itoa(runs) + oneSpace + "Run"
+	barmessage += commaSpace + strconv.Itoa(passes) + oneSpace + "Passed"
 	if skips > 0 {
 		barmessage += commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
 	}
