@@ -235,7 +235,7 @@ func marshallTR(pgmdata PgmData) {
 
 	os.Stdout.Write(data)
 
-	os.WriteFile("./goTestParser_log.json", data, 0664)
+	// os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
 
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
