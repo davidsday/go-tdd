@@ -21,7 +21,7 @@ will issue important messages on STDERR, and I want to know about
 them immediately.  These messages are not in JSON format.  They are
 issued from the build system tools in their normal output formats
 and would end up interspersed with the go test -json output, leading
-to goTestParser having to distinguish between them.
+to goTestParser raising an error due to invalid JSON in its input stream.
 
 There also are messages providing detail information in each red/green
 bars.  They report the number of tests run, passed, failed, and skipped,
@@ -38,7 +38,7 @@ counts the main test even though it does no testing itself. So a main
 test with 5 subtests count as 6 tests, which is incorrect.  It should
 be possible to discern what the actual count should be, but basically
 requires going back to parsing the non JSON go test -v output, thus
-largely defeating the point of converting to JSON in the first place.
+largely defeating the point of converting to -json in the first place.
 
 For now, I am just taking the go test -json output's word and we need to
 realize that the results are approximate.
@@ -79,6 +79,6 @@ The RedBar/GreenBar/YellowBar message line lingers until any key is
 pressed (I typically just hit the space bar).
 
 In my set up, <Leader>q toggles the quickfix window and <C-j> and <C-k>
-navigate the quickfix list up and down. <Leader>a takes me to the
+navigate the quickfix list up and down. <LocalLeader>a takes me to the
 Alternate file.
 
