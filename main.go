@@ -322,8 +322,9 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elap
 		barmessage += commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
 	}
 	if fails > 0 {
-		barmessage += commaSpace + strconv.Itoa(fails) + oneSpace + "Failed, 1st in"
-		barmessage += oneSpace + fname + commaSpace + "on line" + oneSpace + lineno
+		barmessage += commaSpace + strconv.Itoa(fails) + oneSpace + "Failed"
+		barmessage += commaSpace + "1st in" + oneSpace + fname
+		barmessage += commaSpace + "on line" + oneSpace + lineno
 	}
 	if skips == 0 && fails == 0 && len(coverage) > 0 {
 		barmessage += commaSpace + "Test Coverage:" + oneSpace + coverage
