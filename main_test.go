@@ -27,10 +27,10 @@ func TestCheckRegx_panic2(t *testing.T) {
 	}
 }
 
-// ?   	github.com/zchee/nvim-go/pkg/server	[no test files]
+// ?    github.com/zchee/nvim-go/pkg/server [no test files]
 //TestCheckRegx_no_test_files1() ....
 func TestCheckRegx_no_test_files1(t *testing.T) {
-	pmsg := "?   	github.com/zchee/nvim-go/pkg/server	[no test files]"
+	pmsg := "?    github.com/zchee/nvim-go/pkg/server [no test files]"
 	got := CheckRegx(regexNoTestFiles, pmsg)
 	want := true
 	if got != want {
@@ -40,7 +40,7 @@ func TestCheckRegx_no_test_files1(t *testing.T) {
 
 //TestCheckRegx_no_test_files2_capital_N() ....
 func TestCheckRegx_no_test_files2_capital_N(t *testing.T) {
-	pmsg := "?   	github.com/zchee/nvim-go/pkg/server	[No test files]"
+	pmsg := "?    github.com/zchee/nvim-go/pkg/server [No test files]"
 	got := CheckRegx(regexNoTestFiles, pmsg)
 	want := false
 	if got != want {
