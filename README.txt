@@ -18,13 +18,30 @@ Right now these yellow bar messages include, [no tests found],
 [build failed], [received a panic], and [invalid JSON message],
 and the receipt of a message on STDERR.  The build tools sometimes
 will issue important messages on STDERR, and I want to know about
-them immediately.
+them immediately.  These messages are not in JSON format.  They are
+issued from the build system tools in their normal output formats
+and would end up interspersed with the go test -json output, leading
+to goTestParser having to distinguish between them.
 
 There also are messages providing detail information in each red/green
 bars.  They report the number of tests run, passed, failed, and skipped,
 in addition to the elapsed time for running all the tests as provided
 by go test. Test coverage is reported on Green Bars.  Presumably, you
 have more to worry about than that on Yellow or Red Bars.
+
+Right now, goTestParser is taking go test -json at its word as to
+how many tests are run, passed failed etc, based on the JSON Action
+fields.  These are wrong sometimes, since they count a main test that
+has subtests right along with the subtests.  It is quite common for
+a test to kick off subtests which do the actual testing.  go test -json
+counts the main test even though it does no testing itself. So a main
+test with 5 subtests count as 6 tests, which is incorrect.  It should
+be possible to discern what the actual count should be, but basically
+requires going back to parsing the non JSON go test -v output, thus
+largely defeating the point of converting to JSON in the first place.
+
+For now, I am just taking the go test -json output's word and we need to
+realize that the results are approximate.
 
 I have seen many instances where vim-go reports [SUCCESS] when there
 actually were not tests run at all, or when tests were skipped with
