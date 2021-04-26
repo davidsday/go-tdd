@@ -53,9 +53,9 @@ func main() {
 	// and any lingering JSON logs...
 	// So we are guaranteed any present after
 	// this run are created by this run
-	os.Remove("./StdErr.txt")
-	os.Remove("./goTestParser_log.json")
-	os.Remove("./gotestlog.json")
+	// os.Remove("./StdErr.txt")
+	// os.Remove("./goTestParser_log.json")
+	// os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	// New structs are initialized empty (false, 0, "", [], {} etc)
@@ -65,7 +65,7 @@ func main() {
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
 
-	// General go test run info is in PD.Info
+	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
 	PD.Info.Gtp_issued_cmd = commandLine
 	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
@@ -88,7 +88,7 @@ func main() {
 		} else {
 			msg = stderr
 		}
-		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", ":")
+		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 		if len(stderr) > 90 {
 			os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 			PD.Barmessage.Message += commaSpace + "[Rest written to pkgdir/StdErr.txt]"
