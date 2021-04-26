@@ -85,9 +85,9 @@ function! s:ProcessStdOutput(stdout) abort
         \ l:json_object.barmessage.message)
 
   " Encode l:pgmdata into JSON and write it out for our inspection
-  let l:tmp_json_object = json_encode(l:json_object)
-  let l:logPath = expand('%:p:h') . '/gotestlog.json'
-  call writefile(split(l:tmp_json_object,'\n'), l:logPath, 'b')
+  " let l:tmp_json_object = json_encode(l:json_object)
+  " let l:logPath = expand('%:p:h') . '/gotestlog.json'
+  " call writefile(split(l:tmp_json_object,'\n'), l:logPath, 'b')
 endfunction
 
 noremap <unique> <Plug>(RunGoTestsVerbose) :call <SID>RunTest('True')<CR>
