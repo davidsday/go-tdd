@@ -13,7 +13,9 @@ import (
 
 // ?    github.com/zchee/nvim-go/pkg/server [no test files]
 var (
-	regexPanic          = regexp.MustCompile(`^panic:`)
+	regexPanic = regexp.MustCompile(`^panic:`)
+	// regexNoTestsToRun   = regexp.MustCompile(`^testing: warning: no tests to run`)
+	regexNoTestsToRun   = regexp.MustCompile(`no tests to run`)
 	regexNoTestFiles    = regexp.MustCompile(`\?\s*\S*\s*\[no test files\]`)
 	regexBuildFailed    = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
 	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
@@ -170,6 +172,9 @@ func main() {
 		} else if PD.Perror.Notestfiles {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [No Test Files]"
+		} else if PD.Perror.Noteststorun {
+			PD.Barmessage.Color = "yellow"
+			PD.Barmessage.Message = "In package: " + PackageDir + ", [Test Files, but No Tests to Run]"
 		} else if PD.Perror.Buildfailed {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
@@ -235,7 +240,7 @@ func marshallTR(pgmdata PgmData) {
 
 	os.Stdout.Write(data)
 
-	// os.WriteFile("./goTestParser_log.json", data, 0664)
+	os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
 
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
@@ -263,6 +268,12 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 
 	if CheckRegx(regexNoTestFiles, jlo.Output) {
 		pgmdata.Perror.Notestfiles = true
+		doBreak = true
+		return pgmdata, doBreak, err
+	}
+
+	if CheckRegx(regexNoTestsToRun, jlo.Output) {
+		pgmdata.Perror.Noteststorun = true
 		doBreak = true
 		return pgmdata, doBreak, err
 	}

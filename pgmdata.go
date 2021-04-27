@@ -39,11 +39,12 @@ type PD_FirstFailedTest struct {
 type PD_Elapsed float64
 
 type PD_Perror struct {
-	Validjson   bool `json:"validjson"`
-	Notestfiles bool `json:"notestfiles"`
-	Rcv_panic   bool `json:"panic"`
-	Buildfailed bool `json:"buildfailed"`
-	Msg_stderr  bool `json:"msg_stderr"`
+	Validjson    bool `json:"validjson"`
+	Notestfiles  bool `json:"notestfiles"`
+	Noteststorun bool `json:"noteststorun"`
+	Rcv_panic    bool `json:"panic"`
+	Buildfailed  bool `json:"buildfailed"`
+	Msg_stderr   bool `json:"msg_stderr"`
 }
 
 type PD_QfList []PD_QfDict
