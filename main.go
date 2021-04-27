@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -22,6 +23,7 @@ var (
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
 )
 
+// JLObject -
 // go test -json outputs JSON objects instead of lines
 // each JSON object looks like this. Not all fields
 // are emitted for each line
@@ -44,7 +46,7 @@ var PD PgmData
 
 // jlo & JLO -> JSON Line Object
 var jlo JLObject
-var prev_jlo JLObject
+var prevJlo JLObject
 var PackageDir string
 
 func main() {
@@ -92,26 +94,32 @@ func main() {
 		}
 		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 		if len(stderr) > 90 {
-			os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+			err := os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+			if err != nil {
+				log.Fatal("Error writing pkgfile/StdErr.txt")
+			}
 			PD.Barmessage.Message += commaSpace + "[Rest written to pkgdir/StdErr.txt]"
 		}
 	} else {
 		// stdout & stderr are strings, we need []byte
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
 
-		for _, json_line := range lines[:len(lines)-1] {
+		for _, jsonLine := range lines[:len(lines)-1] {
 
-			if len(bytes.TrimSpace(json_line)) == 0 {
+			if len(bytes.TrimSpace(jsonLine)) == 0 {
 				continue
 			}
 
 			// Ensure we're getting valid JSON
-			if !json.Valid(json_line) {
+			if !json.Valid(jsonLine) {
 				PD.Perror.Validjson = false
 				break
 			} else {
 				// Convert line of JSON text to JSON line object (Go struct in this case)
-				json.Unmarshal(json_line, &jlo)
+				err := json.Unmarshal(jsonLine, &jlo)
+				if err != nil {
+					log.Fatal("Error Unmarshalling jsonLine ")
+				}
 			}
 
 			PackageDir = jlo.Package
@@ -132,7 +140,7 @@ func main() {
 			var err error
 			var doBreak bool
 
-			PD, doBreak, err = HandleOutputLines(PD, jlo, prev_jlo, PackageDir)
+			PD, doBreak, err = HandleOutputLines(PD, jlo, prevJlo, PackageDir)
 			if err != nil {
 				os.Exit(1)
 			}
@@ -142,7 +150,7 @@ func main() {
 			// Bottom of for loop - current JSON Line Object now
 			// becomes the Previous JSON Line Object,
 			// for look back purposes ...
-			prev_jlo = jlo
+			prevJlo = jlo
 		} //endfor
 
 		// Make note of the elapsed time, as reported by go test
@@ -238,12 +246,15 @@ func marshallTR(pgmdata PgmData) {
 	// data, err := json.MarshalIndent(pgmdata, "", "    ")
 	data, _ := json.Marshal(pgmdata)
 
-	os.Stdout.Write(data)
+	_, err := os.Stdout.Write(data)
+	if err != nil {
+		log.Fatal("Error writing to Stdout")
+	}
 
 	// os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
 
-func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
+func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	PackageDir string) (PgmData, bool, error) {
 	var tDict PD_QfDict
 	var err error = nil
@@ -293,7 +304,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 		if pgmdata.Counts.Fails == 0 {
 			pgmdata.Firstfailedtest.Fname = parts[0]
 			pgmdata.Firstfailedtest.Lineno = parts[1]
-			pgmdata.Firstfailedtest.Tname = prev_jlo.Test
+			pgmdata.Firstfailedtest.Tname = prevJlo.Test
 		}
 		if len(parts) > 2 {
 			text = strings.Join(parts[2:], ":")
@@ -319,7 +330,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prev_jlo JLObject,
 	return pgmdata, doBreak, err
 }
 
-// BuildBarMessage() dynamically creates the message for passed,
+// BuildBarMessage dynamically creates the message for passed,
 // failed, and skipped tests as appropriate
 //
 // Given the relevent counters, the elapsed time, a possible 1st error
@@ -344,7 +355,7 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elap
 	return barmessage
 }
 
-// Check for a match described by compiled regx with candidate.
+// CheckRegx check for a match described by compiled regx with candidate.
 // Returns true if theres a match, false otherwise
 func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	match := regx.FindString(candidate)
