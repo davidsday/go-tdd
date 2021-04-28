@@ -256,7 +256,11 @@ func marshallTR(pgmdata PgmData) {
 		log.Fatal("Error writing to Stdout")
 	}
 
-	// os.WriteFile("./goTestParser_log.json", data, 0664)
+	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
+	// if err != nil {
+	//	log.Fatal("Error writing to ./goTestParserLog.json")
+	// }
+
 } // end_marshallTR
 
 // HandleOutputLines does the regular expression checking and
