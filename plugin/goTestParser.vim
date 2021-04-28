@@ -50,7 +50,8 @@ function! s:RunTest(toScreen)
     chdir %:p:h
     let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=" "
-    let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir
+    let l:screencolumns=string(&columns - 1)
+    let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir . screencolumns
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else

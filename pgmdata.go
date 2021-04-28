@@ -52,6 +52,7 @@ type PDQfList []PDQfDict
 type PDBarMessage struct {
 	Color   string `json:"color"`
 	Message string `json:"message"`
+	Columns int    `json:"columns"`
 }
 
 type PDQfDict struct {

@@ -68,6 +68,8 @@ func main() {
 	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
+	cols, _ := strconv.Atoi(os.Args[2])
+	PD.Barmessage.Columns = cols
 
 	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
@@ -93,12 +95,13 @@ func main() {
 			msg = stderr
 		}
 		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
-		if len(stderr) > 90 {
+		if len(stderr) > PD.Barmessage.Columns-26 {
 			err := os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
 			if err != nil {
 				log.Fatal("Error writing pkgfile/StdErr.txt")
 			}
-			PD.Barmessage.Message += commaSpace + "[Rest written to pkgdir/StdErr.txt]"
+			PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-26]
+			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 		}
 	} else {
 		// stdout & stderr are strings, we need []byte
