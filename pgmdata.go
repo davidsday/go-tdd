@@ -1,26 +1,26 @@
 package main
 
 type PgmData struct {
-	Info            PD_Info            `json:"info"`
-	Counts          PD_Counts          `json:"counts"`
-	Firstfailedtest PD_FirstFailedTest `json:"firstfailedtest"`
-	Elapsed         PD_Elapsed         `json:"elapsed"`
-	Perror          PD_Perror          `json:"error"`
-	Qflist          PD_QfList          `json:"qflist"`
-	Barmessage      PD_BarMessage      `json:"barmessage"`
+	Info            PDInfo            `json:"info"`
+	Counts          PDCounts          `json:"counts"`
+	Firstfailedtest PDFirstFailedTest `json:"firstfailedtest"`
+	Elapsed         PDElapsed         `json:"elapsed"`
+	Perror          PDPerror          `json:"error"`
+	Qflist          PDQfList          `json:"qflist"`
+	Barmessage      PDBarMessage      `json:"barmessage"`
 }
 
-type PD_Info struct {
-	Host           string   `json:"host"`
-	User           string   `json:"user"`
-	Begintime      string   `json:"begintime"`
-	Endtime        string   `json:"endtime"`
-	Gtp_issued_cmd string   `json:"gtp_issued_cmd"`
-	Gtp_rcvd_args  []string `json:"gtp_rcvd_args"`
-	TestCoverage   string   `json:"test_coverage"`
+type PDInfo struct {
+	Host         string   `json:"host"`
+	User         string   `json:"user"`
+	Begintime    string   `json:"begintime"`
+	Endtime      string   `json:"endtime"`
+	GtpIssuedCmd string   `json:"gtp_issued_cmd"`
+	GtpRcvdArgs  []string `json:"gtp_rcvd_args"`
+	TestCoverage string   `json:"test_coverage"`
 }
 
-type PD_Counts struct {
+type PDCounts struct {
 	Runs      int `json:"runs"`
 	Pauses    int `json:"pauses"`
 	Continues int `json:"continues"`
@@ -30,31 +30,31 @@ type PD_Counts struct {
 	Outputs   int `json:"outputs"`
 }
 
-type PD_FirstFailedTest struct {
+type PDFirstFailedTest struct {
 	Fname  string `json:"fname"`
 	Tname  string `json:"tname"`
 	Lineno string `json:"lineno"`
 }
 
-type PD_Elapsed float64
+type PDElapsed float64
 
-type PD_Perror struct {
+type PDPerror struct {
 	Validjson    bool `json:"validjson"`
 	Notestfiles  bool `json:"notestfiles"`
 	Noteststorun bool `json:"noteststorun"`
-	Rcv_panic    bool `json:"panic"`
+	RcvPanic     bool `json:"panic"`
 	Buildfailed  bool `json:"buildfailed"`
-	Msg_stderr   bool `json:"msg_stderr"`
+	MsgStderr    bool `json:"msg_stderr"`
 }
 
-type PD_QfList []PD_QfDict
+type PDQfList []PDQfDict
 
-type PD_BarMessage struct {
+type PDBarMessage struct {
 	Color   string `json:"color"`
 	Message string `json:"message"`
 }
 
-type PD_QfDict struct {
+type PDQfDict struct {
 	Filename string `json:"filename"`
 	Lnum     int    `json:"lnum"`
 	Col      int    `json:"col"`

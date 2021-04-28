@@ -71,12 +71,12 @@ func main() {
 
 	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
-	PD.Info.Gtp_issued_cmd = commandLine
+	PD.Info.GtpIssuedCmd = commandLine
 	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
 	// PD.Info.Endtime is set just before finishing up, down below
 	PD.Info.User = os.Getenv("USER")
 	// time.Now().Format(time.RFC3339Nano)
-	PD.Info.Gtp_rcvd_args = os.Args
+	PD.Info.GtpRcvdArgs = os.Args
 
 	// If os.Args[2] == "--" {
 	//    open stdin and read from it until EOF
@@ -85,7 +85,7 @@ func main() {
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
 		msg := ""
-		PD.Perror.Msg_stderr = true
+		PD.Perror.MsgStderr = true
 		PD.Barmessage.Color = "yellow"
 		if len(stderr) > 100 {
 			msg = stderr[:100]
@@ -154,7 +154,7 @@ func main() {
 		} //endfor
 
 		// Make note of the elapsed time, as reported by go test
-		PD.Elapsed = PD_Elapsed(jlo.Elapsed)
+		PD.Elapsed = PDElapsed(jlo.Elapsed)
 
 		// We've completed the for loop,
 		// The last emitted line (JSON Line Object) announces
@@ -186,7 +186,7 @@ func main() {
 		} else if PD.Perror.Buildfailed {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
-		} else if PD.Perror.Rcv_panic {
+		} else if PD.Perror.RcvPanic {
 			PD.Barmessage.Color = "yellow"
 			PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
 		} else {
@@ -256,7 +256,7 @@ func marshallTR(pgmdata PgmData) {
 
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	PackageDir string) (PgmData, bool, error) {
-	var tDict PD_QfDict
+	var tDict PDQfDict
 	var err error = nil
 	var parts []string
 	var text string
@@ -264,7 +264,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	pgmdata.Counts.Outputs++
 
 	if CheckRegx(regexPanic, jlo.Output) {
-		pgmdata.Perror.Rcv_panic = true
+		pgmdata.Perror.RcvPanic = true
 		doBreak = true
 		return pgmdata, doBreak, err
 	}
@@ -335,7 +335,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 //
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
-func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PD_Elapsed, fname string, lineno string, coverage string) string {
+func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string) string {
 	oneSpace := " "
 	commaSpace := ", "
 	barmessage := strconv.Itoa(runs) + oneSpace + "Run"
