@@ -47,6 +47,8 @@ var PD PgmData
 // jlo & JLO -> JSON Line Object
 var jlo JLObject
 var prevJlo JLObject
+
+// PackageDir is where the current package lives
 var PackageDir string
 
 func main() {
@@ -257,6 +259,8 @@ func marshallTR(pgmdata PgmData) {
 	// os.WriteFile("./goTestParser_log.json", data, 0664)
 } // end_marshallTR
 
+// HandleOutputLines does the regular expression checking and
+// to discern what is happening
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	PackageDir string) (PgmData, bool, error) {
 	var tDict PDQfDict
