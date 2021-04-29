@@ -11,13 +11,14 @@ type PgmData struct {
 }
 
 type PDInfo struct {
-	Host         string   `json:"host"`
-	User         string   `json:"user"`
-	Begintime    string   `json:"begintime"`
-	Endtime      string   `json:"endtime"`
-	GtpIssuedCmd string   `json:"gtp_issued_cmd"`
-	GtpRcvdArgs  []string `json:"gtp_rcvd_args"`
-	TestCoverage string   `json:"test_coverage"`
+	Host          string   `json:"host"`
+	User          string   `json:"user"`
+	Begintime     string   `json:"begintime"`
+	Endtime       string   `json:"endtime"`
+	GtpIssuedCmd  string   `json:"gtp_issued_cmd"`
+	GtpRcvdArgs   []string `json:"gtp_rcvd_args"`
+	TestCoverage  string   `json:"test_coverage"`
+	AvgComplexity string   `json:"avg_complexity"`
 }
 
 type PDCounts struct {

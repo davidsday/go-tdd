@@ -21,6 +21,7 @@ var (
 	regexBuildFailed    = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
 	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
+	// regexAvgComplexity  = regexp.MustCompile(`Average: \d{1,2}\.\d{1,2}`)
 )
 
 // JLObject -
@@ -64,6 +65,12 @@ func main() {
 	// os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go' . | grep 'Average: ' | awk '{print $2}'"
+	sout, _, err := Shellout(avgCmplxCmdLine)
+	PD.Info.AvgComplexity = sout
+	if err != nil {
+		log.Fatal("Error getting Cyclomatic Complexity")
+	}
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
@@ -222,6 +229,7 @@ func main() {
 				PD.Firstfailedtest.Fname,
 				PD.Firstfailedtest.Lineno,
 				PD.Info.TestCoverage,
+				PD.Info.AvgComplexity,
 			)
 		}
 	}
@@ -346,7 +354,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 //
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
-func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string) string {
+func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string, complexity string) string {
 	oneSpace := " "
 	commaSpace := ", "
 	barmessage := strconv.Itoa(runs) + oneSpace + "Run"
@@ -361,6 +369,7 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElaps
 	}
 	if skips == 0 && fails == 0 && len(coverage) > 0 {
 		barmessage += commaSpace + "Test Coverage:" + oneSpace + coverage
+		barmessage += commaSpace + "Average Complexity:" + oneSpace + complexity
 	}
 	barmessage += commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
 	return barmessage
