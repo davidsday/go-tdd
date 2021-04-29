@@ -66,11 +66,6 @@ func main() {
 	// os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
-	var err error
-	PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
-	if err != nil {
-		log.Fatalf("%s, exiting", err)
-	}
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
@@ -210,6 +205,14 @@ func main() {
 				PD.Barmessage.Color = "yellow"
 			} else {
 				PD.Barmessage.Color = "green"
+				// Since we are going to show a green bar, we get and load the
+				// avg cyclomatic complexity, which we save some time on by only
+				// showing it on green bars
+				var err error
+				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
+				if err != nil {
+					log.Fatalf("%s, exiting", err)
+				}
 			}
 			// func BuildBarMessage(
 			// runs int,
