@@ -83,7 +83,7 @@ func TestBuildBarMessage_fails_no_skips(t *testing.T) {
 
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
-	got, err := getAvgCyclomaticComplexity("/home/dave/sw/go/goTestParser/tests/avgCCmplx/main.go")
+	got, err := getAvgCyclomaticComplexity("./tests/avgCCmplx/main.go")
 	if err != nil {
 		t.Errorf("Error in get AverageCyclomaticComplexity()")
 	}
