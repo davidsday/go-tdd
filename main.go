@@ -100,11 +100,11 @@ func main() {
 		// PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
 		if len(stderr) > PD.Barmessage.Columns-26 {
 			// path := PackageDir + "/StdErr.txt"
-			path := "./StdErr.txt"
-			err := os.WriteFile(path, []byte(stderr), 0664)
-			if err != nil {
-				log.Fatal("Error writing pkgfile/StdErr.txt")
-			}
+			// path := "./StdErr.txt"
+			// err := os.WriteFile(path, []byte(stderr), 0664)
+			// if err != nil {
+			//	log.Fatal("Error writing pkgfile/StdErr.txt")
+			// }
 			// PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-25]
 			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 		}
