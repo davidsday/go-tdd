@@ -212,26 +212,6 @@ func main() {
 					log.Fatalf("%s, exiting", err)
 				}
 			}
-			// func BuildBarMessage(
-			// runs int,
-			// skips int,
-			// fails int,
-			// passes int,
-			// elapsed float32,
-			// fname string,
-			// lineno int) string {}
-
-			// PD.Barmessage.Message = BuildBarMessage(
-			//	PD.Counts.Runs,
-			//	PD.Counts.Skips,
-			//	PD.Counts.Fails,
-			//	PD.Counts.Passes,
-			//	PD.Elapsed,
-			//	PD.Firstfailedtest.Fname,
-			//	PD.Firstfailedtest.Lineno,
-			//	PD.Info.TestCoverage,
-			//	PD.Info.AvgComplexity,
-			// )
 
 			barmessage := runMsg(PD.Counts.Runs)
 			barmessage += passMsg(PD.Counts.Passes)
@@ -357,21 +337,6 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 
 	err = nil
 	return pgmdata, doBreak, err
-}
-
-// BuildBarMessage dynamically creates the message for passed,
-// failed, and skipped tests as appropriate
-//
-// Given the relevent counters, the elapsed time, a possible 1st error
-// filename and line number, return the completed message
-func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string, complexity string) string {
-	barmessage := runMsg(runs)
-	barmessage += passMsg(passes)
-	barmessage += skipMsg(skips)
-	barmessage += failMsg(fails, fname, lineno)
-	barmessage += metricsMsg(skips, fails, coverage, complexity)
-	barmessage += elapsedMsg(elapsed)
-	return barmessage
 }
 
 func passMsg(passes int) string {
