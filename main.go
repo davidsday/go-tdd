@@ -67,6 +67,7 @@ func main() {
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go' . | grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
+	sout = strings.TrimSuffix(sout, "\n")
 	PD.Info.AvgComplexity = sout
 	if err != nil {
 		log.Fatal("Error getting Cyclomatic Complexity")
