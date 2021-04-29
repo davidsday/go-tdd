@@ -207,8 +207,7 @@ func main() {
 				PD.Barmessage.Color = "green"
 				// Since we only show avg cyclomatic complexity on green bars,
 				var err error
-				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(PackageDir + "/")
-				// PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
+				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
 				if err != nil {
 					log.Fatalf("%s, exiting", err)
 				}
