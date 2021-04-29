@@ -67,7 +67,7 @@ func main() {
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	var err error
-	PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity()
+	PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
 	if err != nil {
 		log.Fatalf("%s, exiting", err)
 	}
@@ -382,8 +382,9 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	return match != ""
 }
 
-func getAvgCyclomaticComplexity() (string, error) {
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go' . | grep 'Average: ' | awk '{print $2}'"
+func getAvgCyclomaticComplexity(path string) (string, error) {
+	oneSpace := " "
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + "| grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
 	sout = strings.TrimSuffix(sout, "\n")
 	if err != nil {
