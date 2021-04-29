@@ -356,24 +356,60 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
 func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string, complexity string) string {
+	barmessage := runMsg(runs)
+	barmessage += passMsg(passes)
+	barmessage += skipMsg(skips)
+	barmessage += failMsg(fails, fname, lineno)
+	barmessage += metricsMsg(skips, fails, coverage, complexity)
+	barmessage += elapsedMsg(elapsed)
+	return barmessage
+}
+
+func passMsg(passes int) string {
 	oneSpace := " "
 	commaSpace := ", "
-	barmessage := strconv.Itoa(runs) + oneSpace + "Run"
-	barmessage += commaSpace + strconv.Itoa(passes) + oneSpace + "Passed"
-	if skips > 0 {
-		barmessage += commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
-	}
-	if fails > 0 {
-		barmessage += commaSpace + strconv.Itoa(fails) + oneSpace + "Failed"
-		barmessage += commaSpace + "1st in" + oneSpace + fname
-		barmessage += commaSpace + "on line" + oneSpace + lineno
-	}
+	return commaSpace + strconv.Itoa(passes) + oneSpace + "Passed"
+}
+
+func runMsg(runs int) string {
+	oneSpace := " "
+	return strconv.Itoa(runs) + oneSpace + "Run"
+}
+
+func elapsedMsg(elapsed PDElapsed) string {
+	oneSpace := " "
+	commaSpace := ", "
+	msg := commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
+	return msg
+}
+func metricsMsg(skips, fails int, coverage, complexity string) string {
+	oneSpace := " "
+	commaSpace := ", "
 	if skips == 0 && fails == 0 && len(coverage) > 0 {
-		barmessage += commaSpace + "Test Coverage:" + oneSpace + coverage
-		barmessage += commaSpace + "Average Complexity:" + oneSpace + complexity
+		msg := commaSpace + "Test Coverage:" + oneSpace + coverage
+		msg += commaSpace + "Average Complexity:" + oneSpace + complexity
+		return msg
 	}
-	barmessage += commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
-	return barmessage
+	return ""
+}
+func failMsg(fails int, fname, lineno string) string {
+	if fails > 0 {
+		oneSpace := " "
+		commaSpace := ", "
+		msg := commaSpace + strconv.Itoa(fails) + oneSpace + "Failed"
+		msg += commaSpace + "1st in" + oneSpace + fname
+		msg += commaSpace + "on line" + oneSpace + lineno
+		return msg
+	}
+	return ""
+}
+func skipMsg(skips int) string {
+	oneSpace := " "
+	commaSpace := ", "
+	if skips > 0 {
+		return commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
+	}
+	return ""
 }
 
 // CheckRegx check for a match described by compiled regx with candidate.
