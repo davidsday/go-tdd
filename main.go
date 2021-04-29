@@ -207,7 +207,8 @@ func main() {
 				PD.Barmessage.Color = "green"
 				// Since we only show avg cyclomatic complexity on green bars,
 				var err error
-				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(PackageDir)
+				// PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(PackageDir)
+				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
 				if err != nil {
 					log.Fatalf("%s, exiting", err)
 				}
@@ -385,7 +386,7 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 
 func getAvgCyclomaticComplexity(path string) (string, error) {
 	oneSpace := " "
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + "| grep 'Average: ' | awk '{print $2}'"
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
 	sout = strings.TrimSuffix(sout, "\n")
 	if err != nil {
