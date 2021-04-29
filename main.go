@@ -96,12 +96,8 @@ func main() {
 		msg := ""
 		PD.Perror.MsgStderr = true
 		PD.Barmessage.Color = "yellow"
-		if len(stderr) > 100 {
-			msg = stderr[:90]
-		} else {
-			msg = stderr
-		}
 		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
+		PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
 		if len(stderr) > PD.Barmessage.Columns-26 {
 			path := PackageDir + "/StdErr.txt"
 			err := os.WriteFile(path, []byte(stderr), 0664)
