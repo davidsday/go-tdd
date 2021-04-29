@@ -29,6 +29,13 @@ in addition to the elapsed time for running all the tests as provided
 by go test. Test coverage is reported on Green Bars.  Presumably, you
 have more to worry about than that on Yellow or Red Bars.
 
+I have also added Average Cyclomatic Complexity to the Green Bars.
+This has little to do with testing but a lot to do with design and
+it is a metric I want to be aware of.  I find that most Golang projects
+run between 4 and 8.  I like to keep mine between 1.3 and 2.5.  Dr. Bob
+says his teams achieve about 1.3-1.7 routinely.  He has been a strong TDD
+proponent.
+
 Right now, goTestParser is taking go test -json at its word as to
 how many tests are run, passed failed etc, based on the JSON Action
 fields.  These are wrong sometimes, since they count a main test that
