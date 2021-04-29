@@ -103,7 +103,8 @@ func main() {
 		}
 		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 		if len(stderr) > PD.Barmessage.Columns-26 {
-			err := os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+			path := PackageDir + "/StdErr.txt"
+			err := os.WriteFile(path, []byte(stderr), 0664)
 			if err != nil {
 				log.Fatal("Error writing pkgfile/StdErr.txt")
 			}
