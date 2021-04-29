@@ -93,19 +93,18 @@ func main() {
 	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
 	if len(stderr) > 0 {
-		// msg := ""
+		msg := ""
 		PD.Perror.MsgStderr = true
 		PD.Barmessage.Color = "yellow"
-		// PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
-		// PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
+		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
+		PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
 		if len(stderr) > PD.Barmessage.Columns-26 {
-			// path := PackageDir + "/StdErr.txt"
-			// path := "./StdErr.txt"
-			// err := os.WriteFile(path, []byte(stderr), 0664)
-			// if err != nil {
-			//	log.Fatal("Error writing pkgfile/StdErr.txt")
-			// }
-			// PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-25]
+			path := PackageDir + "/StdErr.txt"
+			err := os.WriteFile(path, []byte(stderr), 0664)
+			if err != nil {
+				log.Fatal("Error writing pkgfile/StdErr.txt")
+			}
+			PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-25]
 			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 		}
 	} else {
@@ -222,13 +221,25 @@ func main() {
 			// fname string,
 			// lineno int) string {}
 
-			barmessage := runMsg(PD.Counts.Runs)
-			barmessage += passMsg(PD.Counts.Passes)
-			barmessage += skipMsg(PD.Counts.Skips)
-			barmessage += failMsg(PD.Counts.Fails, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
-			barmessage += metricsMsg(PD.Counts.Skips, PD.Counts.Fails, PD.Info.TestCoverage, PD.Info.AvgComplexity)
-			barmessage += elapsedMsg(PD.Elapsed)
-			PD.Barmessage.Message = barmessage
+			PD.Barmessage.Message = BuildBarMessage(
+				PD.Counts.Runs,
+				PD.Counts.Skips,
+				PD.Counts.Fails,
+				PD.Counts.Passes,
+				PD.Elapsed,
+				PD.Firstfailedtest.Fname,
+				PD.Firstfailedtest.Lineno,
+				PD.Info.TestCoverage,
+				PD.Info.AvgComplexity,
+			)
+
+			// barmessage := runMsg(PD.Counts.Runs)
+			// barmessage += passMsg(PD.Counts.Passes)
+			// barmessage += skipMsg(PD.Counts.Skips)
+			// barmessage += failMsg(PD.Counts.Fails, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
+			// barmessage += metricsMsg(PD.Counts.Skips, PD.Counts.Fails, PD.Info.TestCoverage, PD.Info.AvgComplexity)
+			// barmessage += elapsedMsg(PD.Elapsed)
+			// PD.Barmessage.Message = barmessage
 
 		}
 	}
@@ -353,15 +364,15 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 //
 // Given the relevent counters, the elapsed time, a possible 1st error
 // filename and line number, return the completed message
-// func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string, complexity string) string {
-//	barmessage := runMsg(runs)
-//	barmessage += passMsg(passes)
-//	barmessage += skipMsg(skips)
-//	barmessage += failMsg(fails, fname, lineno)
-//	barmessage += metricsMsg(skips, fails, coverage, complexity)
-//	barmessage += elapsedMsg(elapsed)
-//	return barmessage
-// }
+func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElapsed, fname string, lineno string, coverage string, complexity string) string {
+	barmessage := runMsg(runs)
+	barmessage += passMsg(passes)
+	barmessage += skipMsg(skips)
+	barmessage += failMsg(fails, fname, lineno)
+	barmessage += metricsMsg(skips, fails, coverage, complexity)
+	barmessage += elapsedMsg(elapsed)
+	return barmessage
+}
 
 func passMsg(passes int) string {
 	oneSpace := " "
