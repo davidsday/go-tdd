@@ -221,25 +221,25 @@ func main() {
 			// fname string,
 			// lineno int) string {}
 
-			PD.Barmessage.Message = BuildBarMessage(
-				PD.Counts.Runs,
-				PD.Counts.Skips,
-				PD.Counts.Fails,
-				PD.Counts.Passes,
-				PD.Elapsed,
-				PD.Firstfailedtest.Fname,
-				PD.Firstfailedtest.Lineno,
-				PD.Info.TestCoverage,
-				PD.Info.AvgComplexity,
-			)
+			// PD.Barmessage.Message = BuildBarMessage(
+			//	PD.Counts.Runs,
+			//	PD.Counts.Skips,
+			//	PD.Counts.Fails,
+			//	PD.Counts.Passes,
+			//	PD.Elapsed,
+			//	PD.Firstfailedtest.Fname,
+			//	PD.Firstfailedtest.Lineno,
+			//	PD.Info.TestCoverage,
+			//	PD.Info.AvgComplexity,
+			// )
 
-			// barmessage := runMsg(PD.Counts.Runs)
-			// barmessage += passMsg(PD.Counts.Passes)
-			// barmessage += skipMsg(PD.Counts.Skips)
-			// barmessage += failMsg(PD.Counts.Fails, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
-			// barmessage += metricsMsg(PD.Counts.Skips, PD.Counts.Fails, PD.Info.TestCoverage, PD.Info.AvgComplexity)
-			// barmessage += elapsedMsg(PD.Elapsed)
-			// PD.Barmessage.Message = barmessage
+			barmessage := runMsg(PD.Counts.Runs)
+			barmessage += passMsg(PD.Counts.Passes)
+			barmessage += skipMsg(PD.Counts.Skips)
+			barmessage += failMsg(PD.Counts.Fails, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
+			barmessage += metricsMsg(PD.Counts.Skips, PD.Counts.Fails, PD.Info.TestCoverage, PD.Info.AvgComplexity)
+			barmessage += elapsedMsg(PD.Elapsed)
+			PD.Barmessage.Message = barmessage
 
 		}
 	}
