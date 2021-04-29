@@ -72,6 +72,9 @@ func main() {
 	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
+	// Vim/Neovim knows how many screen columns it has
+	// and passes that knowledge to us via os.Args[2]
+	// so we can tailor our messages to fit on one screen line
 	cols, _ := strconv.Atoi(os.Args[2])
 	PD.Barmessage.Columns = cols
 
