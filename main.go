@@ -109,7 +109,7 @@ func main() {
 			if err != nil {
 				log.Fatal("Error writing pkgfile/StdErr.txt")
 			}
-			PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-26]
+			// PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-26]
 			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 		}
 	} else {
