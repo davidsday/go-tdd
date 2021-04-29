@@ -54,8 +54,8 @@ func TestCheckRegx_no_test_files2_capital_N(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_no_skips() ....
 func TestBuildBarMessage_no_fails_no_skips(t *testing.T) {
-	got := BuildBarMessage(10, 0, 0, 10, 0.013, "", "", "1.4%")
-	want := "10 Run, 10 Passed, Test Coverage: 1.4%, in 0.013s"
+	got := BuildBarMessage(10, 0, 0, 10, 0.013, "", "", "1.4%", "2.33")
+	want := "10 Run, 10 Passed, Test Coverage: 1.4%, Average Complexity: 2.33, in 0.013s"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
@@ -63,7 +63,7 @@ func TestBuildBarMessage_no_fails_no_skips(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips() ....
 func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
-	got := BuildBarMessage(10, 4, 0, 6, 0.015, "", "", "7.4%")
+	got := BuildBarMessage(10, 4, 0, 6, 0.015, "", "", "7.4%", "2.33")
 	want := "10 Run, 6 Passed, 4 Skipped, in 0.015s"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
@@ -72,7 +72,7 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 
 //TestBuildBarMessage_fails_no_skips() ....
 func TestBuildBarMessage_fails_no_skips(t *testing.T) {
-	got := BuildBarMessage(10, 0, 2, 8, 0.015, "main_test.go", "37", "8.4%")
+	got := BuildBarMessage(10, 0, 2, 8, 0.015, "main_test.go", "37", "8.4%", "2.33")
 	want := "10 Run, 8 Passed, 2 Failed, 1st in main_test.go, on line 37, in 0.015s"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
