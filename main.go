@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -65,12 +66,10 @@ func main() {
 	// os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go' . | grep 'Average: ' | awk '{print $2}'"
-	sout, _, err := Shellout(avgCmplxCmdLine)
-	sout = strings.TrimSuffix(sout, "\n")
-	PD.Info.AvgComplexity = sout
+	var err error
+	PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity()
 	if err != nil {
-		log.Fatal("Error getting Cyclomatic Complexity")
+		log.Fatalf("%s, exiting", err)
 	}
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
@@ -381,4 +380,16 @@ func BuildBarMessage(runs int, skips int, fails int, passes int, elapsed PDElaps
 func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	match := regx.FindString(candidate)
 	return match != ""
+}
+
+func getAvgCyclomaticComplexity() (string, error) {
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go' . | grep 'Average: ' | awk '{print $2}'"
+	sout, _, err := Shellout(avgCmplxCmdLine)
+	sout = strings.TrimSuffix(sout, "\n")
+	if err != nil {
+		myerr := errors.New("error getting cyclomatic complexity")
+		sout = ""
+		return sout, myerr
+	}
+	return sout, err
 }
