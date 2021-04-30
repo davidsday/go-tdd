@@ -99,3 +99,54 @@ func TestGetAverageCyclomaticComplexity(t *testing.T) {
 }
 
 //===========================================================================
+// func rcvdMsgOnStdErr(stderror string) bool
+//===========================================================================
+
+//TestRcvdMsgOnStdErr_no ....
+func TestRcvdMsgOnStdErr_no(t *testing.T) {
+	got := rcvdMsgOnStdErr("")
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestRcvdMsgOnStdErr_yes ....
+func TestRcvdMsgOnStdErr_yes(t *testing.T) {
+	got := rcvdMsgOnStdErr("Pretend STDERR message")
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestRcvdMsgOnStdErr_yes_one_char ....
+func TestRcvdMsgOnStdErr_yes_one_char(t *testing.T) {
+	got := rcvdMsgOnStdErr("P")
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func skipMsg(skips int) string {
+//===========================================================================
+
+//TestSkipMsg_0 ....
+func TestSkipMsg_0(t *testing.T) {
+	got := skipMsg(0)
+	want := ""
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestSkipMsg_3 ....
+func TestSkipMsg_3(t *testing.T) {
+	got := skipMsg(3)
+	want := ", 3 skips"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
