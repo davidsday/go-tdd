@@ -67,6 +67,8 @@ func main() {
 	// so we can tailor our messages to fit on one screen line
 	cols, _ := strconv.Atoi(os.Args[2])
 	PD.Barmessage.Columns = cols
+	println("Cols:", strconv.Itoa(cols))
+	println("Args[2]", os.Args[2])
 
 	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
@@ -405,6 +407,10 @@ func doStdErrMsg(stderr string) {
 
 // TODO: This needs full testing. Not sure its working
 func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
+	println("cols:                   ", strconv.Itoa(cols))
+	println("len(stderr):            ", strconv.Itoa(len(stderr)))
+	println("len(STDERR: ):          ", strconv.Itoa(len("STDERR: ")))
+	println("len(stdErrMsgTrailer):  ", strconv.Itoa(len(stdErrMsgTrailer)))
 	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
 }
 
