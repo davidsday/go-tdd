@@ -51,7 +51,6 @@ function! s:RunTest(toScreen)
     let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=" "
     let l:screencolumns=string(&columns - 1)
-    echomsg "ScreenColumns: " l:screencolumns
 
     let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir . oneSpace . l:screencolumns
     if a:toScreen == v:true

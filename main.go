@@ -230,10 +230,10 @@ func marshallTR(pgmdata PgmData) {
 		log.Fatal("Error writing to Stdout")
 	}
 
-	err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	if err != nil {
-		log.Fatal("Error writing to ./goTestParserLog.json")
-	}
+	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
+	// if err != nil {
+	//	log.Fatal("Error writing to ./goTestParserLog.json")
+	// }
 
 } // end_marshallTR
 
