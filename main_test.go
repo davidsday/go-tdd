@@ -51,12 +51,34 @@ func TestCheckRegx_no_test_files2_capital_N(t *testing.T) {
 //===========================================================================
 
 //TestStdErrLongerThanScreenWidth ....
-func TestStdErrLongerThanScreenWidth(t *testing.T) {
+func TestStdErrMsgTooLongForOneLine_144_cols(t *testing.T) {
+	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 144)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestStdErrMsgTooLongForOneLine_80_cols ...
+func TestStdErrMsgTooLongForOneLine_80_cols(t *testing.T) {
 	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	// msg := "xxxxxxxxxx"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, PD.Barmessage.Columns)
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 80)
 	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestStdErrMsgTooLongForOneLine_80_cols ...
+func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
+	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 80)
+	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
