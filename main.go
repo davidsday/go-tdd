@@ -67,9 +67,6 @@ func main() {
 	// so we can tailor our messages to fit on one screen line
 	cols, _ := strconv.Atoi(os.Args[2])
 	PD.Barmessage.Columns = cols
-	println("Cols:", strconv.Itoa(cols))
-	println("Args[2]", os.Args[2])
-
 	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
 	PD.Info.GtpIssuedCmd = commandLine
@@ -85,7 +82,7 @@ func main() {
 	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr)
+		doStdErrMsg(stderr, &PD)
 	} else {
 		// stdout & stderr are strings, we need []byte
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
@@ -388,20 +385,20 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string) {
+func doStdErrMsg(stderr string, pd *PgmData) {
 	commaSpace := ", "
 	msg := stderr
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	PD.Perror.MsgStderr = true
-	PD.Barmessage.Color = "yellow"
-	PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
-	PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer, PD.Barmessage.Columns) {
+	pd.Perror.MsgStderr = true
+	pd.Barmessage.Color = "yellow"
+	pd.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
+	pd.Barmessage.Message = strings.TrimSuffix(pd.Barmessage.Message, "|")
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer, pd.Barmessage.Columns) {
 		writeStdErrMsgToDisk(stderr, PackageDir)
-		PD.Barmessage.Message =
-			PD.Barmessage.Message[0 : PD.Barmessage.Columns-
+		pd.Barmessage.Message =
+			pd.Barmessage.Message[0 : pd.Barmessage.Columns-
 				len(stdErrMsgTrailer)]
-		PD.Barmessage.Message += commaSpace + stdErrMsgTrailer
+		pd.Barmessage.Message += commaSpace + stdErrMsgTrailer
 	}
 }
 
