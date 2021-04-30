@@ -404,10 +404,6 @@ func doStdErrMsg(stderr string, pd *PgmData) {
 
 // TODO: This needs full testing. Not sure its working
 func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
-	println("cols:                   ", strconv.Itoa(cols))
-	println("len(stderr):            ", strconv.Itoa(len(stderr)))
-	println("len(STDERR: ):          ", strconv.Itoa(len("STDERR: ")))
-	println("len(stdErrMsgTrailer):  ", strconv.Itoa(len(stdErrMsgTrailer)))
 	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
 }
 
