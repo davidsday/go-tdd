@@ -394,17 +394,17 @@ func doStdErrMsg(stderr string) {
 	PD.Barmessage.Color = "yellow"
 	PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 	PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
-	if stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer) {
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer, PD.Barmessage.Columns) {
 		writeStdErrMsgToDisk(stderr, PackageDir)
 		PD.Barmessage.Message =
-			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)-
-				len("STDERR: ")]
-		PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
+			PD.Barmessage.Message[0 : PD.Barmessage.Columns-
+				len(stdErrMsgTrailer)]
+		PD.Barmessage.Message += commaSpace + stdErrMsgTrailer
 	}
 }
 
-func stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer string) bool {
-	return len(stderr) > (PD.Barmessage.Columns - (len(stdErrMsgTrailer) + len("STDERR: ")))
+func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
+	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
