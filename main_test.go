@@ -50,6 +50,18 @@ func TestCheckRegx_no_test_files2_capital_N(t *testing.T) {
 
 //===========================================================================
 
+//TestStdErrLongerThanScreenWidth ....
+func TestStdErrLongerThanScreenWidth(t *testing.T) {
+	// msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	msg := "xxxxxxxxxx"
+	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
+	got := stdErrMsgLongerThanScreenWidth(msg, stdErrMsgTrailer)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
 //===========================================================================
 
 //TestgetAverageCyclomaticComplexity ....

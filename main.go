@@ -404,7 +404,7 @@ func doStdErrMsg(stderr string) {
 }
 
 func stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer string) bool {
-	return len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer)
+	return len(stderr) > (PD.Barmessage.Columns - len(stdErrMsgTrailer) - len("STDERR: "))
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
