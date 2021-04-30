@@ -55,7 +55,7 @@ var PackageDir string
 
 func main() {
 	// oneSpace := " "
-	commaSpace := ", "
+	// commaSpace := ", "
 
 	// Remove ./StdeErr.txt if one still lingers
 	// and any lingering JSON logs...
