@@ -54,16 +54,6 @@ var prevJlo JLObject
 var PackageDir string
 
 func main() {
-	// oneSpace := " "
-	// commaSpace := ", "
-
-	// Remove ./StdeErr.txt if one still lingers
-	// and any lingering JSON logs...
-	// So we are guaranteed any present after
-	// this run are created by this run
-	// os.Remove("./StdErr.txt")
-	// os.Remove("./goTestParser_log.json")
-	// os.Remove("./gotestlog.json")
 
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	// New structs are initialized empty (false, 0, "", [], {} etc)
@@ -404,7 +394,7 @@ func doStdErrMsg(stderr string) {
 	PD.Barmessage.Color = "yellow"
 	PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 	PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
-	if len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer) {
+	if stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer) {
 		path := PackageDir + "/StdErr.txt"
 		err := os.WriteFile(path, []byte(stderr), 0664)
 		if err != nil {
@@ -414,4 +404,8 @@ func doStdErrMsg(stderr string) {
 			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)]
 		PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 	}
+}
+
+func stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer string) bool {
+	return len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer)
 }
