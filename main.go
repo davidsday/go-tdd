@@ -24,6 +24,7 @@ var (
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
 	// regexAvgComplexity  = regexp.MustCompile(`Average: \d{1,2}\.\d{1,2}`)
 )
+var pdcounts = map[string]int{"runs": 0, "pauses": 0, "continues": 0, "skips": 0, "passes": 0, "fails": 0, "outputs": 0}
 
 // JLObject -
 // go test -json outputs JSON objects instead of lines
@@ -353,6 +354,7 @@ func failMsg(fails int, fname, lineno string) string {
 	}
 	return ""
 }
+
 func skipMsg(skips int) string {
 	oneSpace := " "
 	commaSpace := ", "
@@ -402,7 +404,6 @@ func doStdErrMsg(stderr string, pd *PgmData) {
 	}
 }
 
-// TODO: This needs full testing. Not sure its working
 func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
 	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
 }
