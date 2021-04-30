@@ -75,7 +75,7 @@ func TestStdErrMsgTooLongForOneLine_80_cols(t *testing.T) {
 
 //TestStdErrMsgTooLongForOneLine_80_cols ...
 func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
-	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
 	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 80)
 	want := false
