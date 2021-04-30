@@ -403,6 +403,7 @@ func doStdErrMsg(stderr string) {
 	}
 }
 
+// TODO: This needs full testing. Not sure its working
 func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
 	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
 }
