@@ -94,22 +94,6 @@ func main() {
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
 		doStdErrMsg(stderr)
-		msg := stderr
-		stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-		PD.Perror.MsgStderr = true
-		PD.Barmessage.Color = "yellow"
-		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
-		PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
-		if len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer) {
-			path := PackageDir + "/StdErr.txt"
-			err := os.WriteFile(path, []byte(stderr), 0664)
-			if err != nil {
-				log.Fatal("Error writing pkgfile/StdErr.txt")
-			}
-			PD.Barmessage.Message =
-				PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)]
-			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
-		}
 	} else {
 		// stdout & stderr are strings, we need []byte
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
