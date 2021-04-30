@@ -397,7 +397,8 @@ func doStdErrMsg(stderr string) {
 	if stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer) {
 		writeStdErrMsgToDisk(stderr, PackageDir)
 		PD.Barmessage.Message =
-			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)]
+			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)-
+				len("STDERR: ")]
 		PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
 	}
 }
