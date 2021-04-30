@@ -92,7 +92,8 @@ func main() {
 	// } and our stdin becomes our variable stdout, here
 	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
-	if len(stderr) > 0 {
+	if rcvdMsgOnStdErr(stderr) {
+		err := doStdErrMsg(commaSpace, stderr)
 		msg := stderr
 		stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
 		PD.Perror.MsgStderr = true
@@ -406,4 +407,27 @@ func getAvgCyclomaticComplexity(path string) (string, error) {
 		return sout, myerr
 	}
 	return sout, err
+}
+func rcvdMsgOnStdErr(stderror string) bool {
+	return len(stderror) > 0
+}
+
+func doStdErrMsg(stderr string) {
+	commaSpace := ", "
+	msg := stderr
+	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
+	PD.Perror.MsgStderr = true
+	PD.Barmessage.Color = "yellow"
+	PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
+	PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
+	if len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer) {
+		path := PackageDir + "/StdErr.txt"
+		err := os.WriteFile(path, []byte(stderr), 0664)
+		if err != nil {
+			log.Fatal("Error writing pkgfile/StdErr.txt")
+		}
+		PD.Barmessage.Message =
+			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)]
+		PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
+	}
 }
