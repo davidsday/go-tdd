@@ -93,7 +93,7 @@ func main() {
 	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		err := doStdErrMsg(commaSpace, stderr)
+		doStdErrMsg(stderr)
 		msg := stderr
 		stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
 		PD.Perror.MsgStderr = true
