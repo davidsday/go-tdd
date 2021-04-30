@@ -395,11 +395,7 @@ func doStdErrMsg(stderr string) {
 	PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 	PD.Barmessage.Message = strings.TrimSuffix(PD.Barmessage.Message, "|")
 	if stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer) {
-		path := PackageDir + "/StdErr.txt"
-		err := os.WriteFile(path, []byte(stderr), 0664)
-		if err != nil {
-			log.Fatal("Error writing pkgfile/StdErr.txt")
-		}
+		writeStdErrMsgToDisk(stderr, PackageDir)
 		PD.Barmessage.Message =
 			PD.Barmessage.Message[0 : PD.Barmessage.Columns-len(stdErrMsgTrailer)]
 		PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
@@ -408,4 +404,12 @@ func doStdErrMsg(stderr string) {
 
 func stdErrMsgLongerThanScreenWidth(stderr, stdErrMsgTrailer string) bool {
 	return len(stderr) > PD.Barmessage.Columns-len(stdErrMsgTrailer)
+}
+
+func writeStdErrMsgToDisk(stderr, pkgdir string) {
+	path := pkgdir + "/StdErr.txt"
+	err := os.WriteFile(path, []byte(stderr), 0664)
+	if err != nil {
+		log.Fatal("Error writing pkgfile/StdErr.txt")
+	}
 }
