@@ -218,3 +218,25 @@ func TestRunMsg_0(t *testing.T) {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
 }
+
+//===========================================================================
+// func elapsedMsg(elapsed PDElapsed) string
+//===========================================================================
+
+//TestElapsedMsg_0.005 ....
+func TestElapsedMsg_0_005(t *testing.T) {
+	got := elapsedMsg(0.005)
+	want := ", in 0.005s"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestElapsedMsg_0.005 ....
+func TestElapsedMsg_0_000(t *testing.T) {
+	got := elapsedMsg(0.000)
+	want := ", in 0.000s"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
