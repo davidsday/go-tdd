@@ -21,6 +21,7 @@ type PDInfo struct {
 	AvgComplexity string   `json:"avg_complexity"`
 }
 
+// type PDCounts map[string]int
 type PDCounts struct {
 	Runs      int `json:"runs"`
 	Pauses    int `json:"pauses"`
