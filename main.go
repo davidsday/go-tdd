@@ -24,7 +24,6 @@ var (
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
 	// regexAvgComplexity  = regexp.MustCompile(`Average: \d{1,2}\.\d{1,2}`)
 )
-var pdcounts = map[string]int{"runs": 0, "pauses": 0, "continues": 0, "skips": 0, "passes": 0, "fails": 0, "outputs": 0}
 
 // JLObject -
 // go test -json outputs JSON objects instead of lines
@@ -63,6 +62,8 @@ func main() {
 	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
+	// var pdcounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	// PD.Counts    = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	// Vim/Neovim knows how many screen columns it has
 	// and passes that knowledge to us via os.Args[2]
 	// so we can tailor our messages to fit on one screen line
@@ -107,7 +108,7 @@ func main() {
 			}
 
 			PackageDir = jlo.Package
-
+			// pdcounts[jlo.Action]++
 			if jlo.Action == "run" {
 				PD.Counts.Runs++
 			} else if jlo.Action == "continue" {
@@ -333,6 +334,7 @@ func elapsedMsg(elapsed PDElapsed) string {
 	msg := commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
 	return msg
 }
+
 func metricsMsg(skips, fails int, coverage, complexity string) string {
 	oneSpace := " "
 	commaSpace := ", "
