@@ -79,7 +79,7 @@ function! s:ProcessStdOutput(stdout) abort
 
   let l:json_object = json_decode(a:stdout)
 
-  if l:json_object.counts.fails > 0 || l:json_object.counts.skips > 0
+  if l:json_object.counts.fail > 0 || l:json_object.counts.skip > 0
     call setqflist(l:json_object.qflist,'r')
   endif
 
