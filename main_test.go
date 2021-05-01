@@ -196,3 +196,25 @@ func TestPassMsg_0(t *testing.T) {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
 }
+
+//===========================================================================
+// func runMsg(runs int) string {
+//===========================================================================
+
+//TestRunMsg_10 ....
+func TestRunMsg_10(t *testing.T) {
+	got := runMsg(10)
+	want := "10 Run"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestRunMsg_0 ....
+func TestRunMsg_0(t *testing.T) {
+	got := runMsg(0)
+	want := "0 Run"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
