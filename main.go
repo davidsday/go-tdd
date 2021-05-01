@@ -109,19 +109,6 @@ func main() {
 
 			PackageDir = jlo.Package
 			PD.Counts[jlo.Action]++
-			// if jlo.Action == "run" {
-			//	PD.Counts.Runs++
-			// } else if jlo.Action == "continue" {
-			//	PD.Counts.Continues++
-			// } else if jlo.Action == "pause" {
-			//	PD.Counts.Pauses++
-			// } else if jlo.Action == "skip" {
-			//	PD.Counts.Skips++
-			// } else if jlo.Action == "pass" {
-			//	PD.Counts.Passes++
-			// } else if jlo.Action == "fail" {
-			//	PD.Counts.Fails++
-			// }
 
 			var err error
 			var doBreak bool
@@ -233,10 +220,10 @@ func marshallTR(pgmdata PgmData) {
 		log.Fatal("Error writing to Stdout")
 	}
 
-	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	// if err != nil {
-	//	log.Fatal("Error writing to ./goTestParserLog.json")
-	// }
+	err = os.WriteFile("./goTestParserLog.json", data, 0664)
+	if err != nil {
+		log.Fatal("Error writing to ./goTestParserLog.json")
+	}
 
 } // end_marshallTR
 
