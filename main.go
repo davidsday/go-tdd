@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -62,20 +61,19 @@ func main() {
 	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
-	// var pdcounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	PD.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+
 	// Vim/Neovim knows how many screen columns it has
 	// and passes that knowledge to us via os.Args[2]
 	// so we can tailor our messages to fit on one screen line
-	cols, _ := strconv.Atoi(os.Args[2])
-	PD.Barmessage.Columns = cols
+	PD.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
+
 	// General test run info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
 	PD.Info.GtpIssuedCmd = commandLine
 	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
 	// PD.Info.Endtime is set just before finishing up, down below
 	PD.Info.User = os.Getenv("USER")
-	// time.Now().Format(time.RFC3339Nano)
 	PD.Info.GtpRcvdArgs = os.Args
 
 	// If os.Args[2] == "--" {
@@ -90,11 +88,6 @@ func main() {
 		lines := bytes.Split([]byte(stdout), []byte("\n"))
 
 		for _, jsonLine := range lines[:len(lines)-1] {
-
-			if len(bytes.TrimSpace(jsonLine)) == 0 {
-				continue
-			}
-
 			// Ensure we're getting valid JSON
 			if !json.Valid(jsonLine) {
 				PD.Perror.Validjson = false
@@ -102,9 +95,7 @@ func main() {
 			} else {
 				// Convert line of JSON text to JSON line object (Go struct in this case)
 				err := json.Unmarshal(jsonLine, &jlo)
-				if err != nil {
-					log.Fatal("Error Unmarshalling jsonLine ")
-				}
+				chkErr(err, "Error Unmarshaling jsonLine")
 			}
 
 			PackageDir = jlo.Package
@@ -114,9 +105,7 @@ func main() {
 			var doBreak bool
 
 			PD, doBreak, err = HandleOutputLines(PD, jlo, prevJlo, PackageDir)
-			if err != nil {
-				os.Exit(1)
-			}
+			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
 			}
@@ -173,10 +162,8 @@ func main() {
 				PD.Barmessage.Color = "green"
 				// Since we only show avg cyclomatic complexity on green bars,
 				var err error
-				PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity(".")
-				if err != nil {
-					log.Fatalf("%s, exiting", err)
-				}
+				PD.Info.AvgComplexity = getAvgCyclomaticComplexity(".")
+				chkErr(err, "Fatal error in getAvgCyclomaticComplexity()")
 			}
 
 			barmessage := runMsg(PD.Counts["run"])
@@ -216,9 +203,7 @@ func marshallTR(pgmdata PgmData) {
 	data, _ := json.Marshal(pgmdata)
 
 	_, err := os.Stdout.Write(data)
-	if err != nil {
-		log.Fatal("Error writing to Stdout")
-	}
+	chkErr(err, "Error writing to Stdout")
 
 	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
 	// if err != nil {
@@ -361,18 +346,16 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	return match != ""
 }
 
-func getAvgCyclomaticComplexity(path string) (string, error) {
+func getAvgCyclomaticComplexity(path string) string {
 	oneSpace := " "
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
+	// avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
 	sout = strings.TrimSuffix(sout, "\n")
-	if err != nil {
-		myerr := errors.New("error getting cyclomatic complexity")
-		sout = ""
-		return sout, myerr
-	}
-	return sout, err
+	chkErr(err, "error getting cyclomatic complexity")
+	return sout
 }
+
 func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
@@ -403,5 +386,11 @@ func writeStdErrMsgToDisk(stderr, pkgdir string) {
 	err := os.WriteFile(path, []byte(stderr), 0664)
 	if err != nil {
 		log.Fatal("Error writing pkgfile/StdErr.txt")
+	}
+}
+
+func chkErr(err error, msg string) {
+	if err != nil {
+		log.Fatalf("Error: %v, %s", err, msg)
 	}
 }
