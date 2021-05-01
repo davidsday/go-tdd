@@ -21,16 +21,7 @@ type PDInfo struct {
 	AvgComplexity string   `json:"avg_complexity"`
 }
 
-// type PDCounts map[string]int
-type PDCounts struct {
-	Runs      int `json:"runs"`
-	Pauses    int `json:"pauses"`
-	Continues int `json:"continues"`
-	Skips     int `json:"skips"`
-	Passes    int `json:"passes"`
-	Fails     int `json:"fails"`
-	Outputs   int `json:"outputs"`
-}
+type PDCounts map[string]int
 
 type PDFirstFailedTest struct {
 	Fname  string `json:"fname"`

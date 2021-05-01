@@ -63,7 +63,7 @@ func main() {
 	// an invalid JSON Line Object
 	PD.Perror.Validjson = true
 	// var pdcounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	// PD.Counts    = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	PD.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	// Vim/Neovim knows how many screen columns it has
 	// and passes that knowledge to us via os.Args[2]
 	// so we can tailor our messages to fit on one screen line
@@ -108,20 +108,21 @@ func main() {
 			}
 
 			PackageDir = jlo.Package
-			// pdcounts[jlo.Action]++
-			if jlo.Action == "run" {
-				PD.Counts.Runs++
-			} else if jlo.Action == "continue" {
-				PD.Counts.Continues++
-			} else if jlo.Action == "pause" {
-				PD.Counts.Pauses++
-			} else if jlo.Action == "skip" {
-				PD.Counts.Skips++
-			} else if jlo.Action == "pass" {
-				PD.Counts.Passes++
-			} else if jlo.Action == "fail" {
-				PD.Counts.Fails++
-			}
+			PD.Counts[jlo.Action]++
+			// if jlo.Action == "run" {
+			//	PD.Counts.Runs++
+			// } else if jlo.Action == "continue" {
+			//	PD.Counts.Continues++
+			// } else if jlo.Action == "pause" {
+			//	PD.Counts.Pauses++
+			// } else if jlo.Action == "skip" {
+			//	PD.Counts.Skips++
+			// } else if jlo.Action == "pass" {
+			//	PD.Counts.Passes++
+			// } else if jlo.Action == "fail" {
+			//	PD.Counts.Fails++
+			// }
+
 			var err error
 			var doBreak bool
 
@@ -147,13 +148,13 @@ func main() {
 		// not represent a test.  So it throws off our counts
 		// by one.
 		if jlo.Action == "pass" {
-			if PD.Counts.Passes > 1 {
-				PD.Counts.Passes--
+			if PD.Counts["pass"] > 1 {
+				PD.Counts["pass"]--
 			}
 		}
 		if jlo.Action == "fail" {
-			if PD.Counts.Fails > 1 {
-				PD.Counts.Fails--
+			if PD.Counts["fail"] > 1 {
+				PD.Counts["fail"]--
 			}
 		}
 		// Now we cycle through our PD.Error flags and create a
@@ -177,9 +178,9 @@ func main() {
 		} else {
 			// No errors above so if we have fails or skips we load the quickfixlist
 			// and select "red" as our color bar color
-			if PD.Counts.Fails > 0 {
+			if PD.Counts["fail"] > 0 {
 				PD.Barmessage.Color = "red"
-			} else if PD.Counts.Skips > 0 {
+			} else if PD.Counts["skip"] > 0 {
 				PD.Barmessage.Color = "yellow"
 			} else {
 				PD.Barmessage.Color = "green"
@@ -191,11 +192,11 @@ func main() {
 				}
 			}
 
-			barmessage := runMsg(PD.Counts.Runs)
-			barmessage += passMsg(PD.Counts.Passes)
-			barmessage += skipMsg(PD.Counts.Skips)
-			barmessage += failMsg(PD.Counts.Fails, PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
-			barmessage += metricsMsg(PD.Counts.Skips, PD.Counts.Fails, PD.Info.TestCoverage, PD.Info.AvgComplexity)
+			barmessage := runMsg(PD.Counts["run"])
+			barmessage += passMsg(PD.Counts["pass"])
+			barmessage += skipMsg(PD.Counts["skip"])
+			barmessage += failMsg(PD.Counts["fail"], PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
+			barmessage += metricsMsg(PD.Counts["skip"], PD.Counts["fail"], PD.Info.TestCoverage, PD.Info.AvgComplexity)
 			barmessage += elapsedMsg(PD.Elapsed)
 			PD.Barmessage.Message = barmessage
 
@@ -248,7 +249,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	var parts []string
 	var text string
 	doBreak := false
-	pgmdata.Counts.Outputs++
+	pgmdata.Counts["output"]++
 
 	if CheckRegx(regexPanic, jlo.Output) {
 		pgmdata.Perror.RcvPanic = true
@@ -288,7 +289,7 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 			// so we take the sublist and continue our work
 			parts = parts[1:]
 		}
-		if pgmdata.Counts.Fails == 0 {
+		if pgmdata.Counts["fail"] == 0 {
 			pgmdata.Firstfailedtest.Fname = parts[0]
 			pgmdata.Firstfailedtest.Lineno = parts[1]
 			pgmdata.Firstfailedtest.Tname = prevJlo.Test
