@@ -98,6 +98,18 @@ func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	}
 }
 
+//TestgetAverageCyclomaticComplexity ....
+func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
+	got, err := getAvgCyclomaticComplexity("./bin")
+	if err != nil {
+		t.Errorf("Error in get AverageCyclomaticComplexity()")
+	}
+	want := "NaN"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
 //===========================================================================
 // func rcvdMsgOnStdErr(stderror string) bool
 //===========================================================================
