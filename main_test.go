@@ -157,10 +157,41 @@ func TestSkipMsg_3(t *testing.T) {
 
 // func failMsg(fails int, fname, lineno string) string {
 
-//TestFailMsg ....
-func TestFailMsg(t *testing.T) {
+//TestFailMsg with fails....
+func TestFailMsgWithFails(t *testing.T) {
 	got := failMsg(4, "main_test.go", "87")
 	want := ", 4 Failed, 1st in main_test.go, on line 87"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestFailMsg without fails....
+func TestFailMsgWithOutFails(t *testing.T) {
+	got := failMsg(0, "", "")
+	want := ""
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//===========================================================================
+// func passMsg(passes int) string {
+//===========================================================================
+
+//TestPassMsg_10 ....
+func TestPassMsg_10(t *testing.T) {
+	got := passMsg(10)
+	want := ", 10 Passed"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestPassMsg_0 ....
+func TestPassMsg_0(t *testing.T) {
+	got := passMsg(0)
+	want := ", 0 Passed"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
