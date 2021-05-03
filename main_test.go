@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"strconv"
 	"testing"
 )
@@ -244,5 +245,125 @@ func TestElapsedMsg_0_000(t *testing.T) {
 	want := ", in 0.000s"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//===========================================================================
+// func convertStringToBytes(s string) []byte {
+//===========================================================================
+
+//TestConvertStringToBytes() ....
+func TestConvertStringToBytes(t *testing.T) {
+	s := "What we want"
+	got := convertStringToBytes(s)
+	want := []byte("What we want")
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%s' want '%s'", string(got), string(want))
+	}
+}
+
+//===========================================================================
+// func splitBytesIntoLines(b []byte) [][]byte {
+//===========================================================================
+
+//TestSplitBytesIntoLines ....
+func TestSplitBytesIntoLines(t *testing.T) {
+	b := []byte("Strings\nIntegers\nFloats\nBooleans\n")
+	got := splitBytesIntoLines(b)
+	want := [][]byte{[]byte("Strings"), []byte("Integers"), []byte("Floats"), []byte("Booleans")}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestSplitBytesIntoLines_with_non_empty_last_line ....
+func TestSplitBytesIntoLines_with_non_empty_last_line(t *testing.T) {
+	b := []byte("Strings\nIntegers\nFloats\nBooleans\nBytes")
+	got := splitBytesIntoLines(b)
+	want := [][]byte{[]byte("Strings"), []byte("Integers"), []byte("Floats"), []byte("Booleans"), []byte("Bytes")}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//===========================================================================
+// func thisIsTheFirstFailure(pgmdata PgmData) bool {
+//===========================================================================
+
+//TestThisIsTheFirstFailure_true ....
+func TestThisIsTheFirstFailure_true(t *testing.T) {
+	var pgmdata PgmData
+	pgmdata.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	pgmdata.Counts["fail"] = 0
+	got := thisIsTheFirstFailure(&pgmdata)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestThisIsTheFirstFailure_false ....
+func TestThisIsTheFirstFailure_false(t *testing.T) {
+	var pgmdata PgmData
+	pgmdata.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	pgmdata.Counts["fail"] = 1
+	got := thisIsTheFirstFailure(&pgmdata)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// takeNoteOfFirstFailure(pgmdata PgmData, parts []string, testName string)
+//===========================================================================
+
+//TestTakeNoteOfFirstFailure ....
+func TestTakeNoteOfFirstFailure(t *testing.T) {
+	pd := PgmData{}
+	testName := "thisTest"
+	parts := []string{"firstPart", "secondPart"}
+
+	takeNoteOfFirstFailure(&pd, parts, testName)
+
+	if pd.Firstfailedtest.Tname != testName && pd.Firstfailedtest.Lineno != parts[1] && pd.Firstfailedtest.Fname != parts[0] {
+		t.Errorf("Filename: %s, LineNo: %s, TestName: %s", pd.Firstfailedtest.Fname, pd.Firstfailedtest.Lineno, pd.Firstfailedtest.Tname)
+	}
+}
+
+//TestAddToQuickFixList ....
+func TestAddToQuickFixList(t *testing.T) {
+	var pgmdata PgmData
+	parts := []string{"firstPart", "secondPart", "thirdPart"}
+	args := []string{"programName", "packageDir", "10"}
+	jlo := JLObject{}
+	jlo.Test = "thisTest"
+
+	addToQuickFixList(&pgmdata, args, parts, jlo)
+	if len(pgmdata.QfList) <= 0 {
+		t.Errorf("The length of pgmdata.QfList is  '%d'\n", len(pgmdata.QfList))
+	}
+	if pgmdata.QfList[0].Filename != "packageDir/firstPart" {
+		t.Errorf("Filename:  Got: %s, Wanted: %s\n", pgmdata.QfList[0].Filename, "packageDir/firstPart")
+	}
+}
+
+//TestUnneededFAILPrefix_Has_FAIL ....
+func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
+	output := "FAIL:Part1:Part2:Part3"
+	got := removeUnneededFAILPrefix(output)
+	want := []string{"Part1", "Part2", "Part3"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%v' want '%v'", got, want)
+	}
+}
+
+//TestUnneededFAILPrefix_Has_No_FAIL ....
+func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
+	output := "Part1:Part2:Part3"
+	got := removeUnneededFAILPrefix(output)
+	want := []string{"Part1", "Part2", "Part3"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%v' want '%v'", got, want)
 	}
 }

@@ -22,6 +22,8 @@ var (
 	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
 	// regexAvgComplexity  = regexp.MustCompile(`Average: \d{1,2}\.\d{1,2}`)
+	// TODO: Figure out what to use for a regex that never matches
+	regexNil = regexp.MustCompile(`-=-=-=-=-=-=-=-=-=-=-=-=-=-=`)
 )
 
 // JLObject -
@@ -54,7 +56,8 @@ var PackageDir string
 
 func main() {
 
-	commandLine := "go test -v -json -cover " + os.Args[1]
+	PackageDir = os.Args[1]
+	commandLine := "go test -v -json -cover " + PackageDir
 	// New structs are initialized empty (false, 0, "", [], {} etc)
 	// A few struct members need to have different initializations
 	// So we take care of that here
@@ -68,26 +71,26 @@ func main() {
 	// so we can tailor our messages to fit on one screen line
 	PD.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
 
-	// General test run info is in PD.Info
+	// General info is in PD.Info
 	PD.Info.Host, _ = os.Hostname()
 	PD.Info.GtpIssuedCmd = commandLine
 	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
 	// PD.Info.Endtime is set just before finishing up, down below
 	PD.Info.User = os.Getenv("USER")
+	// goTestParser is started by vim
+	// these are the args it received
 	PD.Info.GtpRcvdArgs = os.Args
 
-	// If os.Args[2] == "--" {
-	//    open stdin and read from it until EOF
-	// } and our stdin becomes our variable stdout, here
-	// Might have to reconsider our naming, eh???
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr, &PD)
+		doStdErrMsg(stderr, &PD, PackageDir)
 	} else {
 		// stdout & stderr are strings, we need []byte
-		lines := bytes.Split([]byte(stdout), []byte("\n"))
+		byteString := convertStringToBytes(stdout)
+		byteLines := splitBytesIntoLines(byteString)
 
-		for _, jsonLine := range lines[:len(lines)-1] {
+		// Now we should have valid JSON lines only
+		for _, jsonLine := range byteLines {
 			// Ensure we're getting valid JSON
 			if !json.Valid(jsonLine) {
 				PD.Perror.Validjson = false
@@ -216,10 +219,8 @@ func marshallTR(pgmdata PgmData) {
 // to discern what is happening
 func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 	PackageDir string) (PgmData, bool, error) {
-	var tDict PDQfDict
 	var err error = nil
 	var parts []string
-	var text string
 	doBreak := false
 	pgmdata.Counts["output"]++
 
@@ -255,33 +256,13 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 		return pgmdata, doBreak, err
 	}
 	if CheckRegx(regexFailorTestFile, jlo.Output) {
-		parts = strings.Split(strings.TrimSpace(jlo.Output), ":")
-		if strings.Contains(parts[0], "FAIL:") {
-			// then the 1st element is " FAIL:"
-			// so we take the sublist and continue our work
-			parts = parts[1:]
+		parts = removeUnneededFAILPrefix(jlo.Output)
+		if thisIsTheFirstFailure(&pgmdata) {
+			takeNoteOfFirstFailure(&pgmdata, parts, prevJlo.Test)
 		}
-		if pgmdata.Counts["fail"] == 0 {
-			pgmdata.Firstfailedtest.Fname = parts[0]
-			pgmdata.Firstfailedtest.Lineno = parts[1]
-			pgmdata.Firstfailedtest.Tname = prevJlo.Test
-		}
-		if len(parts) > 2 {
-			text = strings.Join(parts[2:], ":")
-		} else {
-			text = "xxx"
-		}
-		// pgmdata.Counts.Fails++
-		// Now we can build/fill the QuickFix List
-		// tDict.Filename = PackageDir + "/" + parts[0]
-		tDict.Filename = os.Args[1] + "/" + parts[0]
-		// tDict.Filename = parts[0]
-		tDict.Lnum, _ = strconv.Atoi(parts[1])
-		tDict.Col = 1
-		tDict.Vcol = 1
-		tDict.Pattern = jlo.Test
-		tDict.Text = text
-		pgmdata.Qflist = append(pgmdata.Qflist, tDict)
+
+		addToQuickFixList(&pgmdata, os.Args, parts, jlo)
+
 		// Should already be false, since that is how it was initialized
 		doBreak = false
 	}
@@ -360,7 +341,7 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string, pd *PgmData) {
+func doStdErrMsg(stderr string, pd *PgmData, pkgdir string) {
 	commaSpace := ", "
 	msg := stderr
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
@@ -369,7 +350,7 @@ func doStdErrMsg(stderr string, pd *PgmData) {
 	pd.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 	pd.Barmessage.Message = strings.TrimSuffix(pd.Barmessage.Message, "|")
 	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer, pd.Barmessage.Columns) {
-		writeStdErrMsgToDisk(stderr, PackageDir)
+		writeStdErrMsgToDisk(stderr, pkgdir)
 		pd.Barmessage.Message =
 			pd.Barmessage.Message[0 : pd.Barmessage.Columns-
 				len(stdErrMsgTrailer)]
@@ -385,7 +366,7 @@ func writeStdErrMsgToDisk(stderr, pkgdir string) {
 	path := pkgdir + "/StdErr.txt"
 	err := os.WriteFile(path, []byte(stderr), 0664)
 	if err != nil {
-		log.Fatal("Error writing pkgfile/StdErr.txt")
+		log.Fatalf("Error: %s ", err)
 	}
 }
 
@@ -393,4 +374,60 @@ func chkErr(err error, msg string) {
 	if err != nil {
 		log.Fatalf("Error: %v, %s", err, msg)
 	}
+}
+
+func buildAndAppendAnErrorForInvalidJSON(pd *PgmData) {
+	pd.Perrors = append(pd.Perrors,
+		GTPerror{
+			Name:    "InvalidJSON",
+			Regex:   regexNil,
+			Message: "[Invalid JSON]",
+			Color:   "yellow",
+		})
+}
+func splitBytesIntoLines(b []byte) [][]byte {
+	// stdout & stderr are strings, we need []byte
+	lines := bytes.Split(b, []byte("\n"))
+	//bytes.Split returns an empty line AFTER the final "\n"
+	// so we drop that one
+	if len(lines[len(lines)-1]) > 0 {
+		return lines
+	}
+	return lines[:len(lines)-1]
+}
+
+func convertStringToBytes(s string) []byte {
+	return []byte(s)
+}
+
+func thisIsTheFirstFailure(pgmdata *PgmData) bool {
+	return pgmdata.Counts["fail"] == 0
+}
+
+func takeNoteOfFirstFailure(pgmdata *PgmData, parts []string, testName string) {
+	pgmdata.Firstfailedtest.Fname = parts[0]
+	pgmdata.Firstfailedtest.Lineno = parts[1]
+	pgmdata.Firstfailedtest.Tname = testName
+}
+
+func removeUnneededFAILPrefix(output string) []string {
+	parts := strings.Split(strings.TrimSpace(output), ":")
+	if strings.Contains(parts[0], "FAIL") {
+		// so we take the sublist and continue our work
+		parts = parts[1:]
+	}
+	return parts
+}
+
+func addToQuickFixList(pgmdata *PgmData, args []string, parts []string, jlo JLObject) {
+	var QfItem PDQfDict
+	// Now we can build/fill the QuickFix List
+	// QfItem.Filename = PackageDir + "/" + parts[0]
+	QfItem.Filename = args[1] + "/" + parts[0]
+	QfItem.Lnum, _ = strconv.Atoi(parts[1])
+	QfItem.Col = 1
+	QfItem.Vcol = 1
+	QfItem.Pattern = jlo.Test
+	QfItem.Text = strings.Join(parts[2:], ":")
+	pgmdata.QfList = append(pgmdata.QfList, QfItem)
 }

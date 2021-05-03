@@ -1,12 +1,15 @@
 package main
 
+import "regexp"
+
 type PgmData struct {
 	Info            PDInfo            `json:"info"`
 	Counts          PDCounts          `json:"counts"`
 	Firstfailedtest PDFirstFailedTest `json:"firstfailedtest"`
 	Elapsed         PDElapsed         `json:"elapsed"`
 	Perror          PDPerror          `json:"error"`
-	Qflist          PDQfList          `json:"qflist"`
+	Perrors         GTPerrors         `json:"errors"`
+	QfList          PDQfList          `json:"qflist"`
 	Barmessage      PDBarMessage      `json:"barmessage"`
 }
 
@@ -30,6 +33,15 @@ type PDFirstFailedTest struct {
 }
 
 type PDElapsed float64
+
+type GTPerror struct {
+	Name    string         `json:"name"`
+	Regex   *regexp.Regexp `json:"regexp"`
+	Message string         `json:"message"`
+	Color   string         `json:"color"`
+}
+
+type GTPerrors []GTPerror
 
 type PDPerror struct {
 	Validjson    bool `json:"validjson"`
