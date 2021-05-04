@@ -86,10 +86,12 @@ func main() {
 			var err error
 			var doBreak bool
 
-			doBreak, err = HandleOutputLines(&PD, jlo, prevJlo, PackageDirFromJlo)
-			chkErr(err, "Error in HandleOutputLines()")
-			if doBreak {
-				break
+			if jlo.Action == "output" {
+				doBreak, err = HandleOutputLines(&PD, jlo, prevJlo, PackageDirFromJlo)
+				chkErr(err, "Error in HandleOutputLines()")
+				if doBreak {
+					break
+				}
 			}
 			// Bottom of for loop - current JSON Line Object now
 			// becomes the Previous JSON Line Object,
