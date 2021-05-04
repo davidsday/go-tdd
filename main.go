@@ -106,16 +106,7 @@ func main() {
 		// if the run as a whole was a pass or fail.  It does
 		// not represent a test.  So it throws off our counts
 		// by one.
-		if jlo.Action == "pass" {
-			if PD.Counts["pass"] > 1 {
-				PD.Counts["pass"]--
-			}
-		}
-		if jlo.Action == "fail" {
-			if PD.Counts["fail"] > 1 {
-				PD.Counts["fail"]--
-			}
-		}
+		adjustOutSuperfluousFinalResult()
 
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
@@ -130,6 +121,7 @@ func main() {
 			} else {
 				PD.Barmessage.Color = "green"
 				// Since we only show avg cyclomatic complexity on green bars,
+				// only run it for green bars
 				PD.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
 			}
 
@@ -279,8 +271,8 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 
 func getAvgCyclomaticComplexity(path string) string {
 	oneSpace := " "
-	// avgCmplxCmdLine := "gocyclo -avg " + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average:' | awk '{print $2}'"
+	// avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
+	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
 	sout = strings.TrimSuffix(sout, "\n")
 	chkErr(err, "error getting cyclomatic complexity")
@@ -415,5 +407,64 @@ func initializePgmData(pd *PgmData, commandLine string) {
 	// goTestParser is started by vim
 	// these are the args it received
 	pd.Info.GtpRcvdArgs = os.Args
+}
 
+func finalActionWasPass(action string) bool {
+	return action == "pass"
+}
+
+func finalActionWasFail(action string) bool {
+	return action == "fail"
+}
+
+func weHaveHadMoreThanOnePass(passes int) bool {
+	return passes > 1
+}
+
+func weHaveHadMoreThanOneFail(fails int) bool {
+	return fails > 1
+}
+
+func adjustOutSuperfluousFinalPass() {
+	if finalActionWasPass(jlo.Action) {
+		if weHaveHadMoreThanOnePass(PD.Counts["pass"]) {
+			// if PD.Counts["pass"] > 1 {
+			PD.Counts["pass"]--
+		}
+	}
+}
+
+func adjustOutSuperfluousFinalFail() {
+	if finalActionWasFail(jlo.Action) {
+		if weHaveHadMoreThanOneFail(PD.Counts["fail"]) {
+			// if PD.Counts["fail"] > 1 {
+			PD.Counts["fail"]--
+		}
+	}
+}
+
+func adjustOutSuperfluousFinalResult() {
+	adjustOutSuperfluousFinalPass()
+	adjustOutSuperfluousFinalFail()
+}
+
+func (p *PgmData) setBarMessage() {
+	if p.Counts["fail"] > 0 {
+		p.Barmessage.Color = "red"
+	} else if p.Counts["skip"] > 0 {
+		p.Barmessage.Color = "yellow"
+	} else {
+		p.Barmessage.Color = "green"
+		// Since we only show avg cyclomatic complexity on green bars,
+		// only run it for green bars
+		p.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
+	}
+
+	barmessage := runMsg(p.Counts["run"])
+	barmessage += passMsg(p.Counts["pass"])
+	barmessage += skipMsg(p.Counts["skip"])
+	barmessage += failMsg(p.Counts["fail"], p.Firstfailedtest.Fname, p.Firstfailedtest.Lineno)
+	barmessage += metricsMsg(p.Counts["skip"], p.Counts["fail"], p.Info.TestCoverage, p.Info.AvgComplexity)
+	barmessage += elapsedMsg(p.Elapsed)
+	p.Barmessage.Message = barmessage
 }
