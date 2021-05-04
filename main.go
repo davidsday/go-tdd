@@ -58,7 +58,7 @@ func main() {
 
 	PackageDirFromVim = os.Args[1]
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
-	initializePgmData(&PD, commandLine)
+	PD.initializePgmData(commandLine)
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
@@ -381,32 +381,6 @@ func addToQuickFixList(pgmdata *PgmData, args []string, parts []string, jlo JLOb
 	QfItem.Pattern = jlo.Test
 	QfItem.Text = strings.Join(parts[2:], ":")
 	pgmdata.QfList = append(pgmdata.QfList, QfItem)
-}
-
-func initializePgmData(pd *PgmData, commandLine string) {
-
-	// New structs are initialized empty (false, 0, "", [], {} etc)
-	// A few struct members need to have different initializations
-	// So we take care of that here
-	// We will assume we are receiving valid JSON, until we find
-	// an invalid JSON Line Object
-	pd.Perror.Validjson = true
-	pd.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-
-	// Vim/Neovim knows how many screen columns it has
-	// and passes that knowledge to us via os.Args[2]
-	// so we can tailor our messages to fit on one screen line
-	pd.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
-
-	// General info is held in PD.Info
-	pd.Info.Host, _ = os.Hostname()
-	pd.Info.GtpIssuedCmd = commandLine
-	pd.Info.Begintime = time.Now().Format(time.RFC3339Nano)
-	// PD.Info.Endtime is set just before finishing up, down below
-	pd.Info.User = os.Getenv("USER")
-	// goTestParser is started by vim
-	// these are the args it received
-	pd.Info.GtpRcvdArgs = os.Args
 }
 
 func finalActionWasPass(action string) bool {

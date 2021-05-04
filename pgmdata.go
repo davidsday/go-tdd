@@ -1,6 +1,11 @@
 package main
 
-import "regexp"
+import (
+	"os"
+	"regexp"
+	"strconv"
+	"time"
+)
 
 type PgmData struct {
 	Info            PDInfo            `json:"info"`
@@ -43,6 +48,32 @@ type PDInfo struct {
 	GtpRcvdArgs   []string `json:"gtp_rcvd_args"`
 	TestCoverage  string   `json:"test_coverage"`
 	AvgComplexity string   `json:"avg_complexity"`
+}
+
+func (p *PgmData) initializePgmData(commandLine string) {
+
+	// New structs are initialized empty (false, 0, "", [], {} etc)
+	// A few struct members need to have different initializations
+	// So we take care of that here
+	// We will assume we are receiving valid JSON, until we find
+	// an invalid JSON Line Object
+	p.Perror.Validjson = true
+	p.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+
+	// Vim/Neovim knows how many screen columns it has
+	// and passes that knowledge to us via os.Args[2]
+	// so we can tailor our messages to fit on one screen line
+	p.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
+
+	// General info is held in PD.Info
+	p.Info.Host, _ = os.Hostname()
+	p.Info.GtpIssuedCmd = commandLine
+	p.Info.Begintime = time.Now().Format(time.RFC3339Nano)
+	// PD.Info.Endtime is set just before finishing up, down below
+	p.Info.User = os.Getenv("USER")
+	// goTestParser is started by vim
+	// these are the args it received
+	p.Info.GtpRcvdArgs = os.Args
 }
 
 type PDCounts map[string]int

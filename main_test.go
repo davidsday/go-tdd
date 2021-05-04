@@ -449,7 +449,7 @@ func TestBuildAndAppendAnErrorForInvalidJSON(t *testing.T) {
 func TestInitializePgmData(t *testing.T) {
 	pd := PgmData{}
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
-	initializePgmData(&pd, commandLine)
+	pd.initializePgmData(commandLine)
 	host, _ := os.Hostname()
 	if pd.Info.Host != host {
 		t.Errorf("got '%s' as hostname,  want '%s'", pd.Info.Host, host)
