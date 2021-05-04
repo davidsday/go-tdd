@@ -358,7 +358,6 @@ func weHaveHadMoreThanOneFail(fails int) bool {
 func adjustOutSuperfluousFinalPass() {
 	if finalActionWasPass(jlo.Action) {
 		if weHaveHadMoreThanOnePass(PD.Counts["pass"]) {
-			// if PD.Counts["pass"] > 1 {
 			PD.Counts["pass"]--
 		}
 	}
@@ -367,7 +366,6 @@ func adjustOutSuperfluousFinalPass() {
 func adjustOutSuperfluousFinalFail() {
 	if finalActionWasFail(jlo.Action) {
 		if weHaveHadMoreThanOneFail(PD.Counts["fail"]) {
-			// if PD.Counts["fail"] > 1 {
 			PD.Counts["fail"]--
 		}
 	}
