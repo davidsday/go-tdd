@@ -152,33 +152,18 @@ func HandleOutputLines(pgmdata *PgmData, jlo JLObject, prevJlo JLObject,
 
 	var err error = nil
 	doBreak := false
-	var parts []string
 
 	pgmdata.Counts["output"]++
 
-	checkErrorCandidates(&PD)
-
-	if CheckRegx(regexTestCoverage, jlo.Output) {
-		// Remove trailing '\n'
-		pgmdata.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
-		// Strip away everything but the percent coverage string ("57.8%", for example)
-		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, "coverage: ", "", 1)
-		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, " of statements", "", 1)
+	doBreak = checkErrorCandidates(&PD)
+	if doBreak {
+		return doBreak, err
 	}
 
-	if CheckRegx(regexFailorTestFile, jlo.Output) {
-		parts = removeUnneededFAILPrefix(jlo.Output)
-		if thisIsTheFirstFailure(pgmdata) {
-			takeNoteOfFirstFailure(pgmdata, parts, prevJlo.Test)
-		}
+	checkTestCoverage(&PD)
 
-		addToQuickFixList(pgmdata, os.Args, parts, jlo)
+	checkForFAILs(&PD, jlo, prevJlo)
 
-		// Should already be false, since that is how it was initialized
-		doBreak = false
-	}
-
-	err = nil
 	return doBreak, err
 } // End HandleOutputLines()
 
@@ -392,14 +377,12 @@ func adjustOutSuperfluousFinalResult() {
 }
 
 func checkErrorCandidates(pd *PgmData) bool {
-
 	var ErrorCandidates = GTPerrors{
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Tests Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
 		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
 		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
 	}
-
 	for _, rx := range ErrorCandidates {
 		if CheckRegx(rx.Regex, jlo.Output) {
 			pd.Perrors = append(pd.Perrors, rx)
@@ -407,4 +390,25 @@ func checkErrorCandidates(pd *PgmData) bool {
 		}
 	}
 	return false
+}
+
+func checkTestCoverage(pd *PgmData) {
+	if CheckRegx(regexTestCoverage, jlo.Output) {
+		// Remove trailing '\n'
+		pd.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
+		// Strip away everything but the percent coverage string ("57.8%", for example)
+		pd.Info.TestCoverage = strings.Replace(pd.Info.TestCoverage, "coverage: ", "", 1)
+		pd.Info.TestCoverage = strings.Replace(pd.Info.TestCoverage, " of statements", "", 1)
+	}
+}
+
+func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
+	if CheckRegx(regexFailorTestFile, jlo.Output) {
+		parts := removeUnneededFAILPrefix(jlo.Output)
+		if thisIsTheFirstFailure(pd) {
+			takeNoteOfFirstFailure(pd, parts, prevJlo.Test)
+		}
+		addToQuickFixList(pd, os.Args, parts, jlo)
+		// Should already be false, since that is how it was initialized
+	}
 }
