@@ -411,6 +411,5 @@ func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
 			takeNoteOfFirstFailure(pd, parts, prevJlo.Test)
 		}
 		addToQuickFixList(pd, os.Args, parts, jlo)
-		// Should already be false, since that is how it was initialized
 	}
 }
