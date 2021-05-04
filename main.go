@@ -106,33 +106,9 @@ func main() {
 		// not represent a test.  So it throws off our counts
 		// by one.
 		adjustOutSuperfluousFinalResult()
-
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
-		if len(PD.Perrors) > 0 {
-			PD.Barmessage.Color = PD.Perrors[0].Color
-			PD.Barmessage.Message = PD.Perrors[0].Message
-		} else {
-			if PD.Counts["fail"] > 0 {
-				PD.Barmessage.Color = "red"
-			} else if PD.Counts["skip"] > 0 {
-				PD.Barmessage.Color = "yellow"
-			} else {
-				PD.Barmessage.Color = "green"
-				// Since we only show avg cyclomatic complexity on green bars,
-				// only run it for green bars
-				PD.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
-			}
-
-			barmessage := runMsg(PD.Counts["run"])
-			barmessage += passMsg(PD.Counts["pass"])
-			barmessage += skipMsg(PD.Counts["skip"])
-			barmessage += failMsg(PD.Counts["fail"], PD.Firstfailedtest.Fname, PD.Firstfailedtest.Lineno)
-			barmessage += metricsMsg(PD.Counts["skip"], PD.Counts["fail"], PD.Info.TestCoverage, PD.Info.AvgComplexity)
-			barmessage += elapsedMsg(PD.Elapsed)
-			PD.Barmessage.Message = barmessage
-
-		}
+		PD.setBarMessage()
 	} //Endif
 
 	// Endtime for PD.Info

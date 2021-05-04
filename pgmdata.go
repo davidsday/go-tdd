@@ -18,24 +18,29 @@ type PgmData struct {
 }
 
 func (p *PgmData) setBarMessage() {
-	if p.Counts["fail"] > 0 {
-		p.Barmessage.Color = "red"
-	} else if p.Counts["skip"] > 0 {
-		p.Barmessage.Color = "yellow"
+	if len(PD.Perrors) > 0 {
+		PD.Barmessage.Color = PD.Perrors[0].Color
+		PD.Barmessage.Message = PD.Perrors[0].Message
 	} else {
-		p.Barmessage.Color = "green"
-		// Since we only show avg cyclomatic complexity on green bars,
-		// only run it for green bars
-		p.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
-	}
+		if p.Counts["fail"] > 0 {
+			p.Barmessage.Color = "red"
+		} else if p.Counts["skip"] > 0 {
+			p.Barmessage.Color = "yellow"
+		} else {
+			p.Barmessage.Color = "green"
+			// Since we only show avg cyclomatic complexity on green bars,
+			// only run it for green bars
+			p.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
+		}
 
-	barmessage := runMsg(p.Counts["run"])
-	barmessage += passMsg(p.Counts["pass"])
-	barmessage += skipMsg(p.Counts["skip"])
-	barmessage += failMsg(p.Counts["fail"], p.Firstfailedtest.Fname, p.Firstfailedtest.Lineno)
-	barmessage += metricsMsg(p.Counts["skip"], p.Counts["fail"], p.Info.TestCoverage, p.Info.AvgComplexity)
-	barmessage += elapsedMsg(p.Elapsed)
-	p.Barmessage.Message = barmessage
+		barmessage := runMsg(p.Counts["run"])
+		barmessage += passMsg(p.Counts["pass"])
+		barmessage += skipMsg(p.Counts["skip"])
+		barmessage += failMsg(p.Counts["fail"], p.Firstfailedtest.Fname, p.Firstfailedtest.Lineno)
+		barmessage += metricsMsg(p.Counts["skip"], p.Counts["fail"], p.Info.TestCoverage, p.Info.AvgComplexity)
+		barmessage += elapsedMsg(p.Elapsed)
+		p.Barmessage.Message = barmessage
+	}
 }
 
 type PDInfo struct {
