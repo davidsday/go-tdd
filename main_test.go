@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"reflect"
 	"strconv"
 	"testing"
@@ -54,8 +55,9 @@ func TestCheckRegx_no_test_files2_capital_N(t *testing.T) {
 //TestStdErrLongerThanScreenWidth ....
 func TestStdErrMsgTooLongForOneLine_144_cols(t *testing.T) {
 	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 144)
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgPrefix, stdErrMsgTrailer, 144)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -66,8 +68,9 @@ func TestStdErrMsgTooLongForOneLine_144_cols(t *testing.T) {
 func TestStdErrMsgTooLongForOneLine_80_cols(t *testing.T) {
 	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	// msg := "xxxxxxxxxx"
+	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 80)
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgPrefix, stdErrMsgTrailer, 80)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -77,8 +80,9 @@ func TestStdErrMsgTooLongForOneLine_80_cols(t *testing.T) {
 //TestStdErrMsgTooLongForOneLine_80_cols ...
 func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
 	msg := "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgTrailer, 80)
+	got := stdErrMsgTooLongForOneLine(msg, stdErrMsgPrefix, stdErrMsgTrailer, 80)
 	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -367,3 +371,115 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 		t.Errorf("got '%v' want '%v'", got, want)
 	}
 }
+
+//TestDoStdErrMsg ....
+func TestDoStdErrMsg(t *testing.T) {
+	pgmdata := PgmData{}
+	pgmdata.Barmessage.Columns = 135
+	msg := "STDERR: This is my message from STDERR."
+	PackageDir := "/home/dave/sw/go/goTestParser"
+	doStdErrMsg(msg, &pgmdata, PackageDir)
+	if pgmdata.Perror.MsgStderr != true {
+		t.Errorf("pgmdata.Perror.MsgStderr = %s\n", strconv.FormatBool(pgmdata.Perror.MsgStderr))
+	}
+}
+
+//TestDoStdErrMsgTooLong ....
+func TestDoStdErrMsgTooLong(t *testing.T) {
+	pgmdata := PgmData{}
+	pgmdata.Barmessage.Columns = 135
+	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	PackageDir := "/home/dave/sw/go/goTestParser"
+	doStdErrMsg(msg, &pgmdata, PackageDir)
+	if pgmdata.Perror.MsgStderr != true {
+		t.Errorf("pgmdata.Perror.MsgStderr = %s\n", strconv.FormatBool(pgmdata.Perror.MsgStderr))
+	}
+	_ = os.Remove(PackageDir + "/StdErr.txt")
+}
+
+//===========================================================================
+// metricsMsg()
+//===========================================================================
+
+//TestMetricsMsg() ....
+func TestMetricsMsg(t *testing.T) {
+	skips := 0
+	fails := 0
+	coverage := "32.0%"
+	complexity := "7.29"
+	got := metricsMsg(skips, fails, coverage, complexity)
+	want := ", Test Coverage: 32.0%, Average Complexity: 7.29"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//TestMetricsMsg() ....
+func TestMetricsMsg_no_skips_2_fails(t *testing.T) {
+	skips := 0
+	fails := 2
+	coverage := "32.0%"
+	complexity := "7.29"
+	got := metricsMsg(skips, fails, coverage, complexity)
+	want := ""
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
+//===========================================================================
+// buildAndAppendAnErrorForInvalidJSON(&PD)
+//===========================================================================
+
+//TestBuildAndAppendAnErrorForInvalidJSON ....
+func TestBuildAndAppendAnErrorForInvalidJSON(t *testing.T) {
+	pgmdata := PgmData{}
+	pgmdata.Barmessage.Columns = 135
+	buildAndAppendAnErrorForInvalidJSON(&pgmdata)
+	if len(pgmdata.Perrors) <= 0 {
+		t.Errorf("pgmdata.Perrors has %d elements", len(pgmdata.Perrors))
+	}
+}
+
+//===========================================================================
+// func initializePgmData(pd *PgmData, commandLine string) {
+//===========================================================================
+
+//TestInitializePgmData ....
+func TestInitializePgmData(t *testing.T) {
+	pd := PgmData{}
+	commandLine := "go test -v -json -cover " + PackageDirFromVim
+	initializePgmData(&pd, commandLine)
+	host, _ := os.Hostname()
+	if pd.Info.Host != host {
+		t.Errorf("got '%s' as hostname,  want '%s'", pd.Info.Host, host)
+	}
+}
+
+//===========================================================================
+// func marshallTR(pgmdata PgmData)
+//===========================================================================
+
+//TestMarshallTR() ....
+//func TestMarshallTR() (t *testing.T) {
+// json := {"info":{"host":"dev","user":"dave","begintime":"2021-04-25T07:40:25.484991373-04:00","endtime":"2021-04-25T07:40:26.214428046-04:00","gtp_issued_cmd":"go test -v -json -cover /home/dave/sw/go/hello","gtp_rcvd_args":["/home/dave/.config/nvim/plugged/goTestParser/bin/goTestParser","/home/dave/sw/go/hello"],"test_coverage":"0.0%"},"counts":{"runs":1,"pauses":0,"continues":0,"skips":0,"passes":1,"fails":0,"outputs":8},"firstfailedtest":{"fname":"","tname":"","lineno":""},"elapsed":0.0020000000949949026,"error":{"validjson":true,"notestfiles":false,"panic":false,"buildfailed":false,"msg_stderr":false},"qflist":null,"barmessage":{"color":"green","message":"1 Run, 1 Passed, Test Coverage: 0.0%, in 0.002s"}}
+
+//	pd := PgmData{}
+//	pd.Barmessage.Columns = 135
+
+//	marshallTR(pd)
+//	want := "What we want"
+//	if got != want {
+//		t.Errorf("got '%s' want '%s'", got, want)
+//	}
+//}
+
+//// function to perform marshalling
+//func marshallTR(pgmdata PgmData) {
+//	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+//	data, _ := json.Marshal(pgmdata)
+//	_, err := os.Stdout.Write(data)
+//	chkErr(err, "Error writing to Stdout in marshallTR()")
+//	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
+//	//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshallTR()")
+//} // end_marshallTR

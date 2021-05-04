@@ -21,9 +21,7 @@ var (
 	regexBuildFailed    = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
 	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
 	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
-	// regexAvgComplexity  = regexp.MustCompile(`Average: \d{1,2}\.\d{1,2}`)
-	// TODO: Figure out what to use for a regex that never matches
-	regexNil = regexp.MustCompile(`-=-=-=-=-=-=-=-=-=-=-=-=-=-=`)
+	regexNil            = &regexp.Regexp{}
 )
 
 // JLObject -
@@ -48,42 +46,23 @@ type JLObject struct {
 var PD PgmData
 
 // jlo & JLO -> JSON Line Object
+// go test -json spits these out, one at a time, separated by newlines
 var jlo JLObject
 var prevJlo JLObject
 
 // PackageDir is where the current package lives
-var PackageDir string
+// We get it from Vim as os.Args[1]
+var PackageDirFromVim string
 
 func main() {
 
-	PackageDir = os.Args[1]
-	commandLine := "go test -v -json -cover " + PackageDir
-	// New structs are initialized empty (false, 0, "", [], {} etc)
-	// A few struct members need to have different initializations
-	// So we take care of that here
-	// We will assume we are receiving valid JSON, until we find
-	// an invalid JSON Line Object
-	PD.Perror.Validjson = true
-	PD.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-
-	// Vim/Neovim knows how many screen columns it has
-	// and passes that knowledge to us via os.Args[2]
-	// so we can tailor our messages to fit on one screen line
-	PD.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
-
-	// General info is in PD.Info
-	PD.Info.Host, _ = os.Hostname()
-	PD.Info.GtpIssuedCmd = commandLine
-	PD.Info.Begintime = time.Now().Format(time.RFC3339Nano)
-	// PD.Info.Endtime is set just before finishing up, down below
-	PD.Info.User = os.Getenv("USER")
-	// goTestParser is started by vim
-	// these are the args it received
-	PD.Info.GtpRcvdArgs = os.Args
+	PackageDirFromVim = os.Args[1]
+	commandLine := "go test -v -json -cover " + PackageDirFromVim
+	initializePgmData(&PD, commandLine)
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr, &PD, PackageDir)
+		doStdErrMsg(stderr, &PD, PackageDirFromVim)
 	} else {
 		// stdout & stderr are strings, we need []byte
 		byteString := convertStringToBytes(stdout)
@@ -94,6 +73,7 @@ func main() {
 			// Ensure we're getting valid JSON
 			if !json.Valid(jsonLine) {
 				PD.Perror.Validjson = false
+				buildAndAppendAnErrorForInvalidJSON(&PD)
 				break
 			} else {
 				// Convert line of JSON text to JSON line object (Go struct in this case)
@@ -101,13 +81,13 @@ func main() {
 				chkErr(err, "Error Unmarshaling jsonLine")
 			}
 
-			PackageDir = jlo.Package
+			PackageDirFromJlo := jlo.Package
 			PD.Counts[jlo.Action]++
 
 			var err error
 			var doBreak bool
 
-			PD, doBreak, err = HandleOutputLines(PD, jlo, prevJlo, PackageDir)
+			doBreak, err = HandleOutputLines(&PD, jlo, prevJlo, PackageDirFromJlo)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
@@ -136,27 +116,13 @@ func main() {
 				PD.Counts["fail"]--
 			}
 		}
-		// Now we cycle through our PD.Error flags and create a
-		// yellow bar and  message if appropriate
 
-		if !PD.Perror.Validjson {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [Found Invalid JSON]"
-		} else if PD.Perror.Notestfiles {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [No Test Files]"
-		} else if PD.Perror.Noteststorun {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [Test Files, but No Tests to Run]"
-		} else if PD.Perror.Buildfailed {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [Build Failed]"
-		} else if PD.Perror.RcvPanic {
-			PD.Barmessage.Color = "yellow"
-			PD.Barmessage.Message = "In package: " + PackageDir + ", [Received a Panic]"
+		// Now we check for PD.Errors and create a
+		// yellow bar and  message if appropriate
+		if len(PD.Perrors) > 0 {
+			PD.Barmessage.Color = PD.Perrors[0].Color
+			PD.Barmessage.Message = PD.Perrors[0].Message
 		} else {
-			// No errors above so if we have fails or skips we load the quickfixlist
-			// and select "red" as our color bar color
 			if PD.Counts["fail"] > 0 {
 				PD.Barmessage.Color = "red"
 			} else if PD.Counts["skip"] > 0 {
@@ -164,9 +130,7 @@ func main() {
 			} else {
 				PD.Barmessage.Color = "green"
 				// Since we only show avg cyclomatic complexity on green bars,
-				var err error
-				PD.Info.AvgComplexity = getAvgCyclomaticComplexity(".")
-				chkErr(err, "Fatal error in getAvgCyclomaticComplexity()")
+				PD.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
 			}
 
 			barmessage := runMsg(PD.Counts["run"])
@@ -178,7 +142,7 @@ func main() {
 			PD.Barmessage.Message = barmessage
 
 		}
-	}
+	} //Endif
 
 	// Endtime for PD.Info
 	PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
@@ -199,35 +163,37 @@ func Shellout(command string) (string, string, error) {
 	return stdout.String(), stderr.String(), err
 } //end_Shellout()
 
-// function to perform marshalling
+// function to perform marshaling
 func marshallTR(pgmdata PgmData) {
-
 	// data, err := json.MarshalIndent(pgmdata, "", "    ")
 	data, _ := json.Marshal(pgmdata)
-
 	_, err := os.Stdout.Write(data)
-	chkErr(err, "Error writing to Stdout")
-
+	chkErr(err, "Error writing to Stdout in marshallTR()")
 	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	// if err != nil {
-	//	log.Fatal("Error writing to ./goTestParserLog.json")
-	// }
-
+	//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshallTR()")
 } // end_marshallTR
 
 // HandleOutputLines does the regular expression checking and
 // to discern what is happening
-func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
-	PackageDir string) (PgmData, bool, error) {
+func HandleOutputLines(pgmdata *PgmData, jlo JLObject, prevJlo JLObject,
+	PackageDirFromVim string) (bool, error) {
+	var ErrorCandidates = GTPerrors{
+		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Tests Files]", Color: "yellow"},
+		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
+		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
+		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
+	}
 	var err error = nil
 	var parts []string
 	doBreak := false
 	pgmdata.Counts["output"]++
 
-	if CheckRegx(regexPanic, jlo.Output) {
-		pgmdata.Perror.RcvPanic = true
-		doBreak = true
-		return pgmdata, doBreak, err
+	for _, rx := range ErrorCandidates {
+		if CheckRegx(rx.Regex, jlo.Output) {
+			PD.Perrors = append(PD.Perrors, rx)
+			doBreak = true
+			return doBreak, err
+		}
 	}
 
 	if CheckRegx(regexTestCoverage, jlo.Output) {
@@ -238,38 +204,21 @@ func HandleOutputLines(pgmdata PgmData, jlo JLObject, prevJlo JLObject,
 		pgmdata.Info.TestCoverage = strings.Replace(pgmdata.Info.TestCoverage, " of statements", "", 1)
 	}
 
-	if CheckRegx(regexNoTestFiles, jlo.Output) {
-		pgmdata.Perror.Notestfiles = true
-		doBreak = true
-		return pgmdata, doBreak, err
-	}
-
-	if CheckRegx(regexNoTestsToRun, jlo.Output) {
-		pgmdata.Perror.Noteststorun = true
-		doBreak = true
-		return pgmdata, doBreak, err
-	}
-
-	if CheckRegx(regexBuildFailed, jlo.Output) {
-		pgmdata.Perror.Buildfailed = true
-		doBreak = true
-		return pgmdata, doBreak, err
-	}
 	if CheckRegx(regexFailorTestFile, jlo.Output) {
 		parts = removeUnneededFAILPrefix(jlo.Output)
-		if thisIsTheFirstFailure(&pgmdata) {
-			takeNoteOfFirstFailure(&pgmdata, parts, prevJlo.Test)
+		if thisIsTheFirstFailure(pgmdata) {
+			takeNoteOfFirstFailure(pgmdata, parts, prevJlo.Test)
 		}
 
-		addToQuickFixList(&pgmdata, os.Args, parts, jlo)
+		addToQuickFixList(pgmdata, os.Args, parts, jlo)
 
 		// Should already be false, since that is how it was initialized
 		doBreak = false
 	}
 
 	err = nil
-	return pgmdata, doBreak, err
-}
+	return doBreak, err
+} // End HandleOutputLines()
 
 func passMsg(passes int) string {
 	oneSpace := " "
@@ -299,6 +248,7 @@ func metricsMsg(skips, fails int, coverage, complexity string) string {
 	}
 	return ""
 }
+
 func failMsg(fails int, fname, lineno string) string {
 	if fails > 0 {
 		oneSpace := " "
@@ -341,33 +291,42 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string, pd *PgmData, pkgdir string) {
-	commaSpace := ", "
+func doStdErrMsg(stderr string, pd *PgmData, PackageDir string) {
+	oneSpace := " "
 	msg := stderr
+	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	pd.Perror.MsgStderr = true
 	pd.Barmessage.Color = "yellow"
-	pd.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
-	pd.Barmessage.Message = strings.TrimSuffix(pd.Barmessage.Message, "|")
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer, pd.Barmessage.Columns) {
-		writeStdErrMsgToDisk(stderr, pkgdir)
-		pd.Barmessage.Message =
-			pd.Barmessage.Message[0 : pd.Barmessage.Columns-
-				len(stdErrMsgTrailer)]
-		pd.Barmessage.Message += commaSpace + stdErrMsgTrailer
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, pd.Barmessage.Columns) {
+		writeStdErrMsgToDisk(stderr, PackageDir)
+		pd.Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, pd.Barmessage.Columns)
+	} else {
+		pd.Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|") + stdErrMsgTrailer
 	}
+	gtperror := GTPerror{Name: "StdErrError", Regex: regexNil, Message: pd.Barmessage.Message, Color: "yellow"}
+	pd.Perror.MsgStderr = true
+	pd.Perrors = append(PD.Perrors, gtperror)
 }
 
-func stdErrMsgTooLongForOneLine(stderr, stdErrMsgTrailer string, cols int) bool {
-	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len("STDERR: "))))
+func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg string, cols int) string {
+	oneSpace := " "
+	commaSpace := ", "
+	retMsg := stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
+	retMsg = strings.TrimSuffix(msg, "|")
+	retMsg = retMsg[0 : cols-(len(stdErrMsgPrefix)+len(stdErrMsgTrailer))]
+	retMsg += commaSpace + stdErrMsgTrailer
+	return retMsg
+}
+
+func stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer string, cols int) bool {
+	oneSpace := " "
+	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len(stdErrMsgPrefix) + len(oneSpace))))
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
 	path := pkgdir + "/StdErr.txt"
 	err := os.WriteFile(path, []byte(stderr), 0664)
-	if err != nil {
-		log.Fatalf("Error: %s ", err)
-	}
+	chkErr(err, "error writing "+path)
 }
 
 func chkErr(err error, msg string) {
@@ -430,4 +389,31 @@ func addToQuickFixList(pgmdata *PgmData, args []string, parts []string, jlo JLOb
 	QfItem.Pattern = jlo.Test
 	QfItem.Text = strings.Join(parts[2:], ":")
 	pgmdata.QfList = append(pgmdata.QfList, QfItem)
+}
+
+func initializePgmData(pd *PgmData, commandLine string) {
+
+	// New structs are initialized empty (false, 0, "", [], {} etc)
+	// A few struct members need to have different initializations
+	// So we take care of that here
+	// We will assume we are receiving valid JSON, until we find
+	// an invalid JSON Line Object
+	pd.Perror.Validjson = true
+	pd.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+
+	// Vim/Neovim knows how many screen columns it has
+	// and passes that knowledge to us via os.Args[2]
+	// so we can tailor our messages to fit on one screen line
+	pd.Barmessage.Columns, _ = strconv.Atoi(os.Args[2])
+
+	// General info is held in PD.Info
+	pd.Info.Host, _ = os.Hostname()
+	pd.Info.GtpIssuedCmd = commandLine
+	pd.Info.Begintime = time.Now().Format(time.RFC3339Nano)
+	// PD.Info.Endtime is set just before finishing up, down below
+	pd.Info.User = os.Getenv("USER")
+	// goTestParser is started by vim
+	// these are the args it received
+	pd.Info.GtpRcvdArgs = os.Args
+
 }
