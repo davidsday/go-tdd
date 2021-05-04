@@ -280,7 +280,7 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 func getAvgCyclomaticComplexity(path string) string {
 	oneSpace := " "
 	// avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
+	avgCmplxCmdLine := "/home/dave/.config/nvim/bin/gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
 	sout, _, err := Shellout(avgCmplxCmdLine)
 	sout = strings.TrimSuffix(sout, "\n")
 	chkErr(err, "error getting cyclomatic complexity")
