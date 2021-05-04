@@ -72,7 +72,6 @@ func main() {
 		for _, jsonLine := range byteLines {
 			// Ensure we're getting valid JSON
 			if !json.Valid(jsonLine) {
-				PD.Perror.Validjson = false
 				buildAndAppendAnErrorForInvalidJSON(&PD)
 				break
 			} else {
@@ -296,7 +295,6 @@ func doStdErrMsg(stderr string, pd *PgmData, PackageDir string) {
 		pd.Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|") + stdErrMsgTrailer
 	}
 	gtperror := GTPerror{Name: "StdErrError", Regex: regexNil, Message: pd.Barmessage.Message, Color: "yellow"}
-	pd.Perror.MsgStderr = true
 	pd.Perrors = append(PD.Perrors, gtperror)
 }
 

@@ -12,7 +12,6 @@ type PgmData struct {
 	Counts          PDCounts          `json:"counts"`
 	Firstfailedtest PDFirstFailedTest `json:"firstfailedtest"`
 	Elapsed         PDElapsed         `json:"elapsed"`
-	Perror          PDPerror          `json:"error"`
 	Perrors         GTPerrors         `json:"errors"`
 	QfList          PDQfList          `json:"qflist"`
 	Barmessage      PDBarMessage      `json:"barmessage"`
@@ -57,7 +56,6 @@ func (p *PgmData) initializePgmData(commandLine string) {
 	// So we take care of that here
 	// We will assume we are receiving valid JSON, until we find
 	// an invalid JSON Line Object
-	p.Perror.Validjson = true
 	p.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 
 	// Vim/Neovim knows how many screen columns it has

@@ -379,8 +379,8 @@ func TestDoStdErrMsg(t *testing.T) {
 	msg := "STDERR: This is my message from STDERR."
 	PackageDir := "/home/dave/sw/go/goTestParser"
 	doStdErrMsg(msg, &pgmdata, PackageDir)
-	if pgmdata.Perror.MsgStderr != true {
-		t.Errorf("pgmdata.Perror.MsgStderr = %s\n", strconv.FormatBool(pgmdata.Perror.MsgStderr))
+	if len(pgmdata.Perrors) == 0 {
+		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(pgmdata.Perrors)))
 	}
 }
 
@@ -391,8 +391,8 @@ func TestDoStdErrMsgTooLong(t *testing.T) {
 	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	PackageDir := "/home/dave/sw/go/goTestParser"
 	doStdErrMsg(msg, &pgmdata, PackageDir)
-	if pgmdata.Perror.MsgStderr != true {
-		t.Errorf("pgmdata.Perror.MsgStderr = %s\n", strconv.FormatBool(pgmdata.Perror.MsgStderr))
+	if len(pgmdata.Perrors) == 0 {
+		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(pgmdata.Perrors)))
 	}
 	_ = os.Remove(PackageDir + "/StdErr.txt")
 }
