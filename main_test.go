@@ -457,6 +457,96 @@ func TestInitializePgmData(t *testing.T) {
 }
 
 //===========================================================================
+// func ifFinalActionWasPass(jlo.Action string) bool
+//===========================================================================
+
+//TestIfFinalActionWasPass ....
+func TestFinalActionWasPass_pass(t *testing.T) {
+	got := finalActionWasPass("pass")
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestIfFinalActionWasPass ....
+func TestFinalActionWasPass_fail(t *testing.T) {
+	got := finalActionWasPass("fail")
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func ifFinalActionWasFail(jlo.Action string) bool
+//===========================================================================
+
+//TestIfFinalActionWasFail ....
+func TestFinalActionWasFail_fail(t *testing.T) {
+	got := finalActionWasFail("fail")
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestIfFinalActionWasFail_pass ....
+func TestFinalActionWasFail_pass(t *testing.T) {
+	got := finalActionWasFail("pass")
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func WeHaveHadMoreThanOnePass(passes int) bool
+//===========================================================================
+
+//Test ....
+func TestWeHaveHadMoreThanOnePass_five(t *testing.T) {
+	passes := 5
+	got := weHaveHadMoreThanOnePass(passes)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+func TestWeHaveHadMoreThanOnePass_zero(t *testing.T) {
+	passes := 0
+	got := weHaveHadMoreThanOnePass(passes)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func WeHaveHadMoreThanOneFail(fails int) bool
+//===========================================================================
+
+//Test ....
+func TestWeHaveHadMoreThanOneFail_five(t *testing.T) {
+	fails := 5
+	got := weHaveHadMoreThanOneFail(fails)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+func TestWeHaveHadMoreThanOneFail_zero(t *testing.T) {
+	fails := 0
+	got := weHaveHadMoreThanOneFail(fails)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
 // func marshallTR(pgmdata PgmData)
 //===========================================================================
 
