@@ -113,6 +113,7 @@ func main() {
 
 	// Endtime for PD.Info
 	PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
+	// Turn our PD object into JSON and send it to stdout
 	marshallTR(PD)
 
 } // endmain()
@@ -140,28 +141,22 @@ func marshallTR(pgmdata PgmData) {
 	//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshallTR()")
 } // end_marshallTR
 
-// HandleOutputLines does the regular expression checking and
-// to discern what is happening
+// HandlOutputLines() does much of our work, very similarly
+// to how we would search and grep go test -v output.
+// to do a good job reporting to the user, we still have
+// to grep through normal go test -v type outputs.
+// go test -json emits these in jlo.Output fields we handle
+// this task here
 func HandleOutputLines(pgmdata *PgmData, jlo JLObject, prevJlo JLObject,
 	PackageDirFromVim string) (bool, error) {
-	var ErrorCandidates = GTPerrors{
-		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Tests Files]", Color: "yellow"},
-		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
-		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
-		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
-	}
+
 	var err error = nil
-	var parts []string
 	doBreak := false
+	var parts []string
+
 	pgmdata.Counts["output"]++
 
-	for _, rx := range ErrorCandidates {
-		if CheckRegx(rx.Regex, jlo.Output) {
-			PD.Perrors = append(PD.Perrors, rx)
-			doBreak = true
-			return doBreak, err
-		}
-	}
+	checkErrorCandidates(&PD)
 
 	if CheckRegx(regexTestCoverage, jlo.Output) {
 		// Remove trailing '\n'
@@ -394,4 +389,22 @@ func adjustOutSuperfluousFinalFail() {
 func adjustOutSuperfluousFinalResult() {
 	adjustOutSuperfluousFinalPass()
 	adjustOutSuperfluousFinalFail()
+}
+
+func checkErrorCandidates(pd *PgmData) bool {
+
+	var ErrorCandidates = GTPerrors{
+		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Tests Files]", Color: "yellow"},
+		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
+		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
+		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
+	}
+
+	for _, rx := range ErrorCandidates {
+		if CheckRegx(rx.Regex, jlo.Output) {
+			pd.Perrors = append(pd.Perrors, rx)
+			return true
+		}
+	}
+	return false
 }
