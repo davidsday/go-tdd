@@ -405,6 +405,7 @@ func checkTestCoverage(pd *PgmData) {
 }
 
 func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
+	// one of the surest fail indicators is an output about a "_test.go" file
 	if CheckRegx(regexFailorTestFile, jlo.Output) {
 		parts := removeUnneededFAILPrefix(jlo.Output)
 		if thisIsTheFirstFailure(pd) {
