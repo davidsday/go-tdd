@@ -18,9 +18,9 @@ type PgmData struct {
 }
 
 func (p *PgmData) setBarMessage() {
-	if len(PD.Perrors) > 0 {
-		PD.Barmessage.Color = PD.Perrors[0].Color
-		PD.Barmessage.Message = PD.Perrors[0].Message
+	if len(p.Perrors) > 0 {
+		p.Barmessage.Color = p.Perrors[0].Color
+		p.Barmessage.Message = p.Perrors[0].Message
 	} else {
 		if p.Counts["fail"] > 0 {
 			p.Barmessage.Color = "red"
