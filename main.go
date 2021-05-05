@@ -251,7 +251,8 @@ func doStdErrMsg(stderr string, pd *PgmData, PackageDir string) {
 		writeStdErrMsgToDisk(stderr, PackageDir)
 		pd.Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, pd.Barmessage.Columns)
 	} else {
-		pd.Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|") + stdErrMsgTrailer
+		pd.Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
+		pd.Barmessage.Message = strings.TrimSuffix(msg, "|") + stdErrMsgTrailer
 	}
 	gtperror := GTPerror{Name: "StdErrError", Regex: regexNil, Message: pd.Barmessage.Message, Color: "yellow"}
 	pd.Perrors = append(PD.Perrors, gtperror)
