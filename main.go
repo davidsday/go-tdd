@@ -233,7 +233,7 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 }
 
 func getAvgCyclomaticComplexity(paths []string) string {
-	allStats := gocyclo.Analyze(paths, regex("vendor"))
+	allStats := gocyclo.Analyze(paths, regexp.MustCompile("vendor"))
 	return fmt.Sprintf("%.3g", allStats.AverageComplexity())
 }
 
@@ -412,15 +412,4 @@ func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
 		}
 		addToQuickFixList(pd, os.Args, parts, jlo)
 	}
-}
-
-func regex(expr string) *regexp.Regexp {
-	if expr == "" {
-		return nil
-	}
-	re, err := regexp.Compile(expr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return re
 }
