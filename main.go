@@ -61,7 +61,7 @@ var PackagesToSearch []string
 func main() {
 
 	PackageDirFromVim = os.Args[1]
-	PackagesToSearch[0] = PackageDirFromVim
+	PackagesToSearch = append(PackagesToSearch, PackageDirFromVim)
 
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
 	PD.initializePgmData(commandLine)
