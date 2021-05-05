@@ -66,9 +66,6 @@ func main() {
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
 	PD.initializePgmData(commandLine)
 
-	// allStats := gocyclo.Analyze(PackagesToSearch, regex("vendor"))
-	// PD.Info.AvgComplexity = fmt.Sprintf("%.3g\n", allStats.AverageComplexity())
-
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
 		doStdErrMsg(stderr, &PD, PackageDirFromVim)
