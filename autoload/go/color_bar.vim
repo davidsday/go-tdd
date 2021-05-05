@@ -15,7 +15,7 @@ function! go#color_bar#DoColorBar(color, msg)
     echohl GreenBar
   endif
   if l:length >= &columns
-    l:length = &columns - 1
+    let l:length = &columns - 1
   endif
   echon a:msg . repeat(' ',&columns - (l:length) )
   echohl None
