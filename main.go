@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -10,7 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	// "github.com/fzipp/gocyclo"
+
+	"github.com/fzipp/gocyclo"
 )
 
 // ?    github.com/zchee/nvim-go/pkg/server [no test files]
@@ -54,12 +56,18 @@ var prevJlo JLObject
 // PackageDir is where the current package lives
 // We get it from Vim as os.Args[1]
 var PackageDirFromVim string
+var PackagesToSearch []string
 
 func main() {
 
 	PackageDirFromVim = os.Args[1]
+	PackagesToSearch[0] = PackageDirFromVim
+
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
 	PD.initializePgmData(commandLine)
+
+	// allStats := gocyclo.Analyze(PackagesToSearch, regex("vendor"))
+	// PD.Info.AvgComplexity = fmt.Sprintf("%.3g\n", allStats.AverageComplexity())
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
@@ -227,14 +235,9 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	return match != ""
 }
 
-func getAvgCyclomaticComplexity(path string) string {
-	oneSpace := " "
-	// avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor|_test.go'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
-	avgCmplxCmdLine := "gocyclo -avg -ignore 'vendor'" + oneSpace + path + oneSpace + " | grep 'Average: ' | awk '{print $2}'"
-	sout, _, err := Shellout(avgCmplxCmdLine)
-	sout = strings.TrimSuffix(sout, "\n")
-	chkErr(err, "error getting cyclomatic complexity")
-	return sout
+func getAvgCyclomaticComplexity(paths []string) string {
+	allStats := gocyclo.Analyze(paths, regex("vendor"))
+	return fmt.Sprintf("%.3g", allStats.AverageComplexity())
 }
 
 func rcvdMsgOnStdErr(stderror string) bool {
@@ -412,4 +415,15 @@ func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
 		}
 		addToQuickFixList(pd, os.Args, parts, jlo)
 	}
+}
+
+func regex(expr string) *regexp.Regexp {
+	if expr == "" {
+		return nil
+	}
+	re, err := regexp.Compile(expr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return re
 }

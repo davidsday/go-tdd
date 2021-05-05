@@ -93,7 +93,9 @@ func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
 
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
-	got := getAvgCyclomaticComplexity("./tests/avgCCmplx/main.go")
+	var paths []string
+	paths = append(paths, "./tests/avgCCmplx/main.go")
+	got := getAvgCyclomaticComplexity(paths)
 	want := "7.29"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
@@ -102,7 +104,9 @@ func TestGetAverageCyclomaticComplexity(t *testing.T) {
 
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
-	got := getAvgCyclomaticComplexity("./bin")
+	var paths []string
+	paths = append(paths, "./bin/")
+	got := getAvgCyclomaticComplexity(paths)
 	want := "NaN"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)

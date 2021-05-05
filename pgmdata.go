@@ -30,7 +30,7 @@ func (p *PgmData) setBarMessage() {
 			p.Barmessage.Color = "green"
 			// Since we only show avg cyclomatic complexity on green bars,
 			// only run it for green bars
-			p.Info.AvgComplexity = getAvgCyclomaticComplexity(PackageDirFromVim)
+			p.Info.AvgComplexity = getAvgCyclomaticComplexity(PackagesToSearch)
 		}
 
 		barmessage := runMsg(p.Counts["run"])

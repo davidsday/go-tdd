@@ -32,9 +32,18 @@ have more to worry about than that on Yellow or Red Bars.
 I have also added Average Cyclomatic Complexity to the Green Bars.
 This has little to do with testing but a lot to do with design and
 it is a metric I want to be aware of.  I find that most Golang projects
-run between 4 and 8.  I like to keep mine between 1.3 and 2.5.  Dr. Bob
-says his teams achieve about 1.3-1.7 routinely.  He has been a strong TDD
-proponent.
+run between 4 and 8.  I here that several well known IDEs start warning
+about Cyclomatic Complexity at 10.  I like to keep mine around 2.5.
+Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
+I think perhaps 1.3-1.7 would be a stretch in Golang.
+
+By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
+which provides the code for this.  It took one import and exactly two
+extra lines of code to incorporate this feature into goTestParser.
+Previous to that I had been running gocyclo via a system call and grepping
+and awking the output before storing the result away for later display.
+And, of course, the user would have to install gocyclo on their systems
+themselves, adding to the barrier to usefulness.
 
 Right now, goTestParser is taking go test -json at its word as to
 how many tests are run, passed failed etc, based on the JSON Action
@@ -50,8 +59,7 @@ largely defeating the point of converting to -json in the first place.
 For now, I am just taking the go test -json output's word and we need to
 realize that the results are approximate. I have not yet found even one
 tool that gets this right.  Just don't be surprised if you think you
-have written 33 tests and 35 get reported. Go test -json is counting the
-subtests parent test, even though testing is only done by the subtests.
+have written 33 tests and 35 get reported.
 
 I have seen many instances where vim-go reports [SUCCESS] when there
 actually were not tests run at all, or when tests were skipped with
@@ -92,3 +100,4 @@ In my set up, <Leader>q toggles the quickfix window and <C-j> and <C-k>
 navigate the quickfix list up and down. <LocalLeader>a takes me to the
 Alternate file.
 
+Life is good.....
