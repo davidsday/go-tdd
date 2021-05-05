@@ -547,6 +547,32 @@ func TestWeHaveHadMoreThanOneFail_zero(t *testing.T) {
 }
 
 //===========================================================================
+// func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
+//===========================================================================
+
+////TestCheckForFAILS_has_FAILS ....
+//func TestCheckForFAILS_has_FAILS(t *testing.T) {
+//	pd := PgmData{}
+
+//	prevJlo := JLObject{}
+//	prevjsonline := []byte(`{"Time":"2021-05-04T20:01:08.694174261-04:00","Action":"output","Package":"github.com/davidsday/go-course","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+//	// Convert line of JSON text to JSON line object (Go struct in this case)
+//	err := json.Unmarshal(prevjsonline, &prevJlo)
+//	chkErr(err, "Error Unmarshaling prevjsonline")
+
+//	jlo := JLObject{}
+//	jsonline := []byte(`{"Time":"2021-05-04T20:01:08.694163726-04:00","Action":"output","Package":"github.com/davidsday/go-course","Test":"TestHello","Output":"    main_test.go:12: Hello() = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+//	// Convert line of JSON text to JSON line object (Go struct in this case)
+//	err = json.Unmarshal(jsonline, &jlo)
+//	chkErr(err, "Error Unmarshaling jsonline")
+
+//	checkForFAILs(&pd, jlo, prevJlo)
+//	if len(pd.Perrors) < 1 {
+//		t.Errorf("pd.Perrors list is empty, should have at least one member")
+//	}
+//}
+
+//===========================================================================
 // func marshallTR(pgmdata PgmData)
 //===========================================================================
 
