@@ -94,7 +94,7 @@ func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	var paths []string
-	paths = append(paths, "./testdata/avgCCmplx/main.go")
+	paths = append(paths, "../gocyclo/avgCCmplx/main.go")
 	got := getAvgCyclomaticComplexity(paths)
 	want := "7.29"
 	if got != want {
