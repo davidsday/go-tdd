@@ -32,10 +32,10 @@ have more to worry about than that on Yellow or Red Bars.
 I have also added Average Cyclomatic Complexity to the Green Bars.
 This has little to do with testing but a lot to do with design and
 it is a metric I want to be aware of.  I find that most Golang projects
-run between 4 and 8.  I here that several well known IDEs start warning
+run between 4 and 8.  I hear that several well known IDEs start warning
 about Cyclomatic Complexity at 10.  I like to keep mine around 2.5.
 Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
-I think perhaps 1.3-1.7 would be a stretch in Golang.
+This project is at 1.91 as I write this.
 
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
 which provides the code for this.  It took one import and exactly two
@@ -51,17 +51,18 @@ fields.  These are wrong sometimes, since they count a main test that
 has subtests right along with the subtests.  It is quite common for
 a test to kick off subtests which do the actual testing.  go test -json
 counts the main test even though it does no testing itself. So a main
-test with 5 subtests count as 6 tests, which is incorrect.  It should
-be possible to discern what the actual count should be, but basically
-requires going back to parsing the non JSON go test -v output, thus
-largely defeating the point of converting to -json in the first place.
+test with 5 subtests count as 6 tests, which is incorrect to my way of
+thinking.  It should be possible to discern what the actual count should
+be, but basically requires going back to parsing the non JSON
+go test -v output, thus largely defeating the point of converting
+to -json in the first place.
 
 For now, I am just taking the go test -json output's word and we need to
 realize that the results are approximate. I have not yet found even one
 tool that gets this right.  Just don't be surprised if you think you
 have written 33 tests and 35 get reported.
 
-I have seen many instances where vim-go reports [SUCCESS] when there
+I have also seen instances where vim-go reports [SUCCESS] when there
 actually were not tests run at all, or when tests were skipped with
 no notification to the programmer.
 
@@ -70,7 +71,10 @@ I do not want my tools delivering overly optimistic reports
 to me.  To me, if a package has 100 tests, but 25 are not even being run,
 I don't want the tools to report that as [SUCCESS]. If go test issues
 messages via STDERR, I want to know that.  The fact that they were issued
-on STDERR is info I want to be explicitly told.
+on STDERR is info I want to be explicitly told.  Right now, vim-go reports
+[SUCCESS] when there are skipped tests test files with no tests and
+directories with no test files at all.  It does catch and relay the
+message indicating there is no go.mod file in the directory though.
 
 goTestParser is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
@@ -88,15 +92,16 @@ list of test failures and/or skipped tests which Vim loads for your use.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so goTestParser loads
-the quickfix list for you, but it does not open it and take you away from
-the file you have open.  I find that in my development work flow,
-I often don't need to go to the test at all, but want to peruse  and
+the quickfix list for you, but it does not force you to go to the failed
+test every time. I find that often in my development work flow,
+I don't need to go to the test at all, but want to peruse  and
 fix the function that caused the failure, and I may already be there.
 
 The RedBar/GreenBar/YellowBar message line lingers until any key is
 pressed (I typically just hit the space bar).
 
-In my set up, <Leader>q toggles the quickfix window and <C-j> and <C-k>
+In my set up, I have told vim-go to use the quickfix window exclusively.
+I have <Leader>q toggle the quickfix window and <C-j> and <C-k>
 navigate the quickfix list up and down. <LocalLeader>a takes me to the
 Alternate file.
 
