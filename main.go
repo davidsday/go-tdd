@@ -234,7 +234,7 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 
 func getAvgCyclomaticComplexity(paths []string) string {
 	// allStats := gocyclo.Analyze(paths, regexp.MustCompile("vendor"))
-	allStats := gocyclo.Analyze(paths, regexp.MustCompile(``))
+	allStats := gocyclo.Analyze(paths, regexp.MustCompile(`vendor`))
 	return fmt.Sprintf("%.3g", allStats.AverageComplexity())
 }
 
