@@ -38,6 +38,9 @@ func main() {
 	// into JSON and send it to Vim via stdout for display
 	// BarMessage lives in barMessage.go
 	var Barmessage BarMessage
+	// initialize Barmessage's QuickFixList to an empty QuickFixList
+	// or it will be null instead of [] when marshaled to JSON.
+	Barmessage.QuickFixList = GtpQfList{}
 
 	// jlo & JLO -> JSON Line Object
 	// go test -json spits these out, one at a time, separated by newlines
@@ -66,9 +69,6 @@ func main() {
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	Results.VimColumns, _ = strconv.Atoi(os.Args[2])
-	// initialize Barmessage's QuickFixList to an empty QuickFixList
-	// or it will be null instead of [] when marshaled to JSON.
-	Barmessage.QuickFixList = GtpQfList{}
 
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
 
