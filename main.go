@@ -52,7 +52,7 @@ func main() {
 	var PackageDirFromVim string
 	// Gocyclo likes to receive lists of paths to search
 	// We don't have any, but to avoid mucking with gocyclo internals
-	// we create an empty list and append PackageDirFromVim to it splitOnSemiColons
+	// we create an empty list and append PackageDirFromVim to it so
 	// gocyclo can be happy
 	var PackageDirsToSearch []string
 
