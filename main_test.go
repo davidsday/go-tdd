@@ -231,9 +231,10 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 func TestDoStdErrMsg(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
+	Barmessage := BarMessage{}
 	msg := "STDERR: This is my message from STDERR."
 	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &Results, PackageDir)
+	doStdErrMsg(msg, &Results, PackageDir, &Barmessage)
 	if len(Results.Errors) == 0 {
 		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
@@ -243,9 +244,10 @@ func TestDoStdErrMsg(t *testing.T) {
 func TestDoStdErrMsgTooLong(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
+	Barmessage := BarMessage{}
 	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &Results, PackageDir)
+	doStdErrMsg(msg, &Results, PackageDir, &Barmessage)
 	if len(Results.Errors) == 0 {
 		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
@@ -460,9 +462,10 @@ func TestHasTestCoverage_no(t *testing.T) {
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 	results := GtpResults{}
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "[no test files]"
-	got := checkErrorCandidates(&results, output)
+	got := checkErrorCandidates(&results, output, PackageDirFromVim)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -471,10 +474,11 @@ func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_yes(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	results := GtpResults{}
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "panic:"
-	got := checkErrorCandidates(&results, output)
+	got := checkErrorCandidates(&results, output, PackageDirFromVim)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -483,9 +487,10 @@ func TestCheckErrorCandidates_yes(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	results := GtpResults{}
 	output := "Part0:Part1:Part2:Part3"
-	got := checkErrorCandidates(&results, output)
+	got := checkErrorCandidates(&results, output, PackageDirFromVim)
 	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -566,6 +571,7 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 func TestHandleOutputLines(t *testing.T) {
 	Results := GtpResults{}
 	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 0}
+	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "PASS\n"}`)
 	jsonlineJlo := []byte(`{"Time": "2021-05-07T23:32:18.412174016-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "coverage: 77.9% of statements\n"}`)
@@ -573,9 +579,10 @@ func TestHandleOutputLines(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonLine")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	packageDir := PackageDirFromVim
 
-	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -585,6 +592,7 @@ func TestHandleOutputLines(t *testing.T) {
 func TestHandleOutputLines_FAIL(t *testing.T) {
 	Results := GtpResults{}
 	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 4, "output": 31}
+	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jsonlineJlo := []byte(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
@@ -592,9 +600,10 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonline_prevJlo")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine_jlo")
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	packageDir := PackageDirFromVim
 
-	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -604,12 +613,13 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 func TestHandleOutputLines_TestFileRef(t *testing.T) {
 	Results := GtpResults{}
 	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -619,12 +629,13 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	Results := GtpResults{}
 	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"panic: "}`)
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != true {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}

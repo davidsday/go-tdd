@@ -90,11 +90,14 @@ func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_errors(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
 
-	results.buildBarMessage(&barmsg)
+	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := results.Errors[0].Color
 	want := "yellow"
@@ -105,6 +108,9 @@ func TestBuildBarMessage_has_errors(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_fails(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
 	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
@@ -112,7 +118,7 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 	results.incCount("fail")
 	results.incCount("skip")
 
-	results.buildBarMessage(&barmsg)
+	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := barmsg.getColor()
 	want := "red"
@@ -123,13 +129,16 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
 	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	results.Counts = Counts
 	results.incCount("skip")
 
-	results.buildBarMessage(&barmsg)
+	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := barmsg.getColor()
 	want := "yellow"
@@ -140,12 +149,15 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_all_pass(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
 	var Counts GtpCounts = map[string]int{"run": 57, "pause": 27, "continue": 27, "skip": 0, "pass": 57, "fail": 0, "output": 135}
 	results.Counts = Counts
 
-	results.buildBarMessage(&barmsg)
+	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := barmsg.getColor()
 	want := "green"
@@ -291,6 +303,7 @@ func TestSetCoverage(t *testing.T) {
 
 //TestGtpError.GetColor ....
 func TestGtpError_GetColor(t *testing.T) {
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	results := GtpResults{}
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getColor()

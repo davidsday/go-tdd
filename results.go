@@ -66,7 +66,7 @@ type GtpComplexity string
 type GtpElapsed float64
 
 // We build the Bar Message here
-func (r *GtpResults) buildBarMessage(bm *BarMessage) {
+func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []string) {
 	if len(r.Errors) > 0 {
 		// each error has its own message and color (right now, all yellow)
 		bm.setColor(r.Errors[0].Color)

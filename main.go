@@ -11,7 +11,6 @@ import (
 	"strings"
 )
 
-// ?    github.com/zchee/nvim-go/pkg/server [no test files]
 var (
 	regexPanic        = regexp.MustCompile(`^panic:`)
 	regexNoTestsToRun = regexp.MustCompile(`no tests to run`)
@@ -23,31 +22,40 @@ var (
 	regexNil          = &regexp.Regexp{}
 )
 
-// This is the whole enchilada
-// These hold all the program's
-// important data.
-
-// Results has all the data from go test
-// It has methods it needs to build the BarMessage
-var Results GtpResults
-
-// Barmessage and QfList are populated by the methods
-// in Results.  They don't "do" anything except hold
-// the data Vim will need.  They are marshaled into
-// JSON and sent to Vim for display
-var Barmessage BarMessage
-
-// jlo & JLO -> JSON Line Object
-// go test -json spits these out, one at a time, separated by newlines
-var jlo JLObject
-var prevJlo JLObject
-
-// PackageDirFromVim is where the current package lives
-// We get it from Vim as os.Args[1]
-var PackageDirFromVim string
-var PackageDirsToSearch []string
-
 func main() {
+	// ===========================================================================
+	// These were global vars
+	// ===========================================================================
+	// ?    github.com/zchee/nvim-go/pkg/server [no test files]
+
+	// This is the whole enchilada
+	// These hold all the program's
+	// important data.
+
+	// Results has all the data from go test
+	// It has methods it needs to build the BarMessage
+	var Results GtpResults
+
+	// Barmessage and QfList are populated by the methods
+	// in Results.  They don't "do" anything except hold
+	// the data Vim will need.  They are marshaled into
+	// JSON and sent to Vim for display
+	var Barmessage BarMessage
+
+	// jlo & JLO -> JSON Line Object
+	// go test -json spits these out, one at a time, separated by newlines
+	var jlo JLObject
+	var prevJlo JLObject
+
+	// PackageDirFromVim is where the current package lives
+	// We get it from Vim as os.Args[1]
+	var PackageDirFromVim string
+	var PackageDirsToSearch []string
+
+	// ===========================================================================
+	// And now they are not!
+	// ===========================================================================
+	// func main() {
 
 	// Initialize map of Counts in Results
 	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
@@ -70,7 +78,7 @@ func main() {
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr, &Results, PackageDirFromVim)
+		doStdErrMsg(stderr, &Results, PackageDirFromVim, &Barmessage)
 	} else {
 		jsonLines := splitIntoLines(stdout)
 
@@ -90,7 +98,7 @@ func main() {
 			var doBreak bool
 
 			if jlo.getAction() == "output" {
-				doBreak, err = HandleOutputLines(&Results, jlo, prevJlo, PackageDirFromJlo)
+				doBreak, err = HandleOutputLines(&Results, jlo, prevJlo, PackageDirFromJlo, &Barmessage)
 				chkErr(err, "Error in HandleOutputLines()")
 				if doBreak {
 					break
@@ -114,7 +122,7 @@ func main() {
 			adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
-		Results.buildBarMessage(&Barmessage)
+		Results.buildBarMessage(&Barmessage, PackageDirsToSearch)
 	} //Endif
 
 	// Turn our Results object into JSON and send it to stdout
@@ -143,14 +151,14 @@ func Shellout(command string) (string, string, error) {
 // go test -json emits these in jlo.Output fields we handle
 // this task here
 func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
-	PackageDirFromVim string) (bool, error) {
+	PackageDirFromVim string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
 	doBreak := false
 
 	Results.incCount("output")
 
-	doBreak = checkErrorCandidates(Results, jlo.getOutput())
+	doBreak = checkErrorCandidates(Results, jlo.getOutput(), PackageDirFromVim)
 	if doBreak {
 		return doBreak, err
 	}
@@ -182,7 +190,7 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string, Results *GtpResults, PackageDir string) {
+func doStdErrMsg(stderr string, Results *GtpResults, PackageDir string, Barmessage *BarMessage) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
@@ -311,7 +319,7 @@ func adjustOutSuperfluousFinalResult(action string, Results *GtpResults) (int, i
 	return passCount, failCount
 }
 
-func checkErrorCandidates(Results *GtpResults, output string) bool {
+func checkErrorCandidates(Results *GtpResults, output string, PackageDirFromVim string) bool {
 	var ErrorCandidates = GtpErrors{
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
