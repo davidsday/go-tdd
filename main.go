@@ -23,42 +23,38 @@ var (
 )
 
 func main() {
-	// ===========================================================================
-	// These were global vars
-	// ===========================================================================
-	// ?    github.com/zchee/nvim-go/pkg/server [no test files]
-
-	// This is the whole enchilada
-	// These hold all the program's
-	// important data.
 
 	// Results has all the data from go test
-	// It has methods it needs to build the BarMessage
+	// It has the methods it needs to build the BarMessage
+	// It lives in results.go
 	var Results GtpResults
 
-	// Barmessage and QfList are populated by the methods
+	// Initialize map of Counts in Results
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+
+	// Barmessage includes QfList. They are populated by the methods
 	// in Results.  They don't "do" anything except hold
-	// the data Vim will need.  They are marshaled into
-	// JSON and sent to Vim for display
+	// the data Vim will need, and they also marshal themselves
+	// into JSON and send it to Vim via stdout for display
+	// BarMessage lives in barMessage.go
 	var Barmessage BarMessage
 
 	// jlo & JLO -> JSON Line Object
 	// go test -json spits these out, one at a time, separated by newlines
+	// These objects live in jsonLineObject.go
 	var jlo JLObject
+	// prevJlo gets populated at the bottom of the for loop in
+	// case we need to look back at the previous object (line)
 	var prevJlo JLObject
 
 	// PackageDirFromVim is where the current package lives
 	// We get it from Vim as os.Args[1]
 	var PackageDirFromVim string
+	// Gocyclo likes to receive lists of paths to search
+	// We don't have any, but to avoid mucking with gocyclo internals
+	// we create an empty list and append PackageDirFromVim to it splitOnSemiColons
+	// gocyclo can be happy
 	var PackageDirsToSearch []string
-
-	// ===========================================================================
-	// And now they are not!
-	// ===========================================================================
-	// func main() {
-
-	// Initialize map of Counts in Results
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
