@@ -10,12 +10,12 @@ to the Vim golang development experience:
 
 The first is via the use of Vim's message line to provide red/green
 bar fail/pass indications. I have also added a yellow bar message which
-I use to convey messages about errors that are not caused by an actual
+I use for messages about errors that are not caused by an actual
 failing test.
 
 Right now these yellow bar messages include
 	[no tests found],
-	[no tests to execute] - basically an empty test file
+	[no tests to execute] - basically empty test file(s)
 	[build failed],
 	[received a panic],
 	[invalid JSON message],
@@ -24,15 +24,16 @@ Right now these yellow bar messages include
 The build tools sometimes will issue important messages on STDERR,
 and I want to know about them immediately.
 
-These messages are not in JSON format.  Since I am parsing
-"go test -v -json -cover" output, goTestParser expects valid JSON.
-I capture stderr and process it as best I can, by showing a snippet of
-the message in a yellow bar.  If the STDERR message is longer than can
-be shown in a one line yellow bar, I capture the entire message in
-stdERR.txt in the package directory.
+These messages are not in JSON format.
+
+Since I am parsing "go test -v -json -cover" output, goTestParser expects
+valid JSON. I capture stderr separately and process it as best I can,
+by showing a snippet of the message in a yellow bar.  If the STDERR message
+is longer than can be shown in a one line yellow bar, I capture the entire
+message in stdERR.txt in the package directory.
 
 If goTestParser encounters non JSON lines on stdout, it issues a yellow
-bar message and quits. That rarely, if ever happens.
+bar message and quits. That I don't remember that happening.
 
 There also are supplemental messages providing detail information in each
 red/green bars.  They report the number of tests run, passed, failed,
@@ -45,11 +46,12 @@ it is a metric I want to be aware of. I hear that several well known IDEs
 start warning about Cyclomatic Complexity at 10.  I like to keep mine
 below 2.5. Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
 I have heard him say he uses Java, Ruby, and Smalltalk.
-This project is at 1.77 as I write this.  Many experienced developers
-find that test driven development, along with low cyclomatic complexities
-help to achieve robust applications more quickly than might otherwise
-be achieved.  I have also found that to be the case, so much so that
-I built this tool to supplement vim-go for my own use.
+This project is at 1.77 as I write this.
+
+Many experienced developers find that test driven development, along with
+low cyclomatic complexities help to achieve robust applications more quickly
+than might otherwise be achieved.  I have also found that to be the case,
+so much so that I built this tool to supplement vim-go for my own use.
 
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
 which provides the code for determining cyclomatic complexity in Golang
@@ -60,24 +62,27 @@ result away for later display. And, of course, the user would have to
 install gocyclo on their systems themselves, adding to the barrier to
 usefulness.
 
-For now, I am just taking the go test -json output's word and we need to
-realize that the results are approximate. I have not yet found even one
-tool that gets this right.  Just don't be surprised if you think you
+For now, I am just taking the go test -json output's word as to the number
+of tests run, passed, failed, etc, and we need to realize that the results
+are approximate. When you write a test with subtests, go test counts the
+mother/father test in addition to all the subtests.  Thing is, the parent
+test doesn't actually do any testing itself and to my way of thinking
+shouldn't actually be counted. Just don't be surprised if you think you
 have written 33 tests and 35 get reported.
 
 I have also seen instances where vim-go reports [SUCCESS] when there
 actually were not tests run at all, or when tests were skipped with
 no notification to the programmer.
 
-My thinking is that if I am a consultant called in to work on a code base,
-I do not want my tools delivering overly optimistic reports
-to me.  To me, if a package has 100 tests, but 25 are not even being run,
+To me, if a package has 100 tests, but 25 are not even being run,
 I don't want the tools to report that as [SUCCESS]. If go test issues
 messages via STDERR, I want to know that.  The fact that they were issued
-on STDERR is info I want to be explicitly told.  Right now, vim-go reports
-[SUCCESS] when there are skipped tests test files with no tests and
-directories with no test files at all.  It does catch and relay the
-message indicating there is no go.mod file in the directory though.
+on STDERR is info I want to be explicitly told.
+
+Right now, vim-go reports [SUCCESS] when there are skipped tests test
+files with no tests and directories with no test files at all.
+It does catch and relay the message indicating there is no go.mod file
+in the directory though.
 
 goTestParser is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
