@@ -79,12 +79,13 @@ function! s:ProcessStdOutput(stdout) abort
 
   let l:json_object = json_decode(a:stdout)
 
-  if l:json_object.counts.fail > 0 || l:json_object.counts.skip > 0
-    call setqflist(l:json_object.qflist,'r')
+  " if l:json_object.counts.fail > 0 || l:json_object.counts.skip > 0
+  if l:json_object.quickfixlist != []
+    call setqflist(l:json_object.quickfixlist,'r')
   endif
 
-  call go#color_bar#DoColorBar(l:json_object.barmessage.color,
-        \ l:json_object.barmessage.message)
+  call go#color_bar#DoColorBar(l:json_object.color,
+        \ l:json_object.message)
 
   " Encode l:pgmdata into JSON and write it out for our inspection
   " let l:tmp_json_object = json_encode(l:json_object)

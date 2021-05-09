@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"reflect"
 	"strconv"
@@ -90,29 +91,6 @@ func TestStdErrMsgTooLongForOneLine_80_cols_short_msg(t *testing.T) {
 }
 
 //===========================================================================
-
-//TestgetAverageCyclomaticComplexity ....
-func TestGetAverageCyclomaticComplexity(t *testing.T) {
-	var paths []string
-	paths = append(paths, "../gocyclotests/avgCCmplx/main.go")
-	got := getAvgCyclomaticComplexity(paths)
-	want := "7.29"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestgetAverageCyclomaticComplexity ....
-func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
-	var paths []string
-	paths = append(paths, "./bin/")
-	got := getAvgCyclomaticComplexity(paths)
-	want := "NaN"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
 //===========================================================================
 // func rcvdMsgOnStdErr(stderror string) bool
 //===========================================================================
@@ -141,118 +119,6 @@ func TestRcvdMsgOnStdErr_yes_one_char(t *testing.T) {
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
-	}
-}
-
-//===========================================================================
-// func skipMsg(skips int) string {
-//===========================================================================
-
-//TestSkipMsg_0 ....
-func TestSkipMsg_0(t *testing.T) {
-	got := skipMsg(0)
-	want := ""
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestSkipMsg_3 ....
-func TestSkipMsg_3(t *testing.T) {
-	got := skipMsg(3)
-	want := ", 3 Skipped"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//===========================================================================
-// func failMsg(skips int) string {
-//===========================================================================
-
-// func failMsg(fails int, fname, lineno string) string {
-
-//TestFailMsg with fails....
-func TestFailMsgWithFails(t *testing.T) {
-	got := failMsg(4, "main_test.go", "87")
-	want := ", 4 Failed, 1st in main_test.go, on line 87"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestFailMsg without fails....
-func TestFailMsgWithOutFails(t *testing.T) {
-	got := failMsg(0, "", "")
-	want := ""
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//===========================================================================
-// func passMsg(passes int) string {
-//===========================================================================
-
-//TestPassMsg_10 ....
-func TestPassMsg_10(t *testing.T) {
-	got := passMsg(10)
-	want := ", 10 Passed"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestPassMsg_0 ....
-func TestPassMsg_0(t *testing.T) {
-	got := passMsg(0)
-	want := ", 0 Passed"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//===========================================================================
-// func runMsg(runs int) string {
-//===========================================================================
-
-//TestRunMsg_10 ....
-func TestRunMsg_10(t *testing.T) {
-	got := runMsg(10)
-	want := "10 Run"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestRunMsg_0 ....
-func TestRunMsg_0(t *testing.T) {
-	got := runMsg(0)
-	want := "0 Run"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//===========================================================================
-// func elapsedMsg(elapsed PDElapsed) string
-//===========================================================================
-
-//TestElapsedMsg_0.005 ....
-func TestElapsedMsg_0_005(t *testing.T) {
-	got := elapsedMsg(0.005)
-	want := ", in 0.005s"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
-	}
-}
-
-//TestElapsedMsg_0.005 ....
-func TestElapsedMsg_0_000(t *testing.T) {
-	got := elapsedMsg(0.000)
-	want := ", in 0.000s"
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
 	}
 }
 
@@ -300,10 +166,10 @@ func TestSplitBytesIntoLines_with_non_empty_last_line(t *testing.T) {
 
 //TestThisIsTheFirstFailure_true ....
 func TestThisIsTheFirstFailure_true(t *testing.T) {
-	var pgmdata PgmData
-	pgmdata.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	pgmdata.Counts["fail"] = 0
-	got := thisIsTheFirstFailure(&pgmdata)
+	var Results GtpResults
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Results.Counts["fail"] = 0
+	got := thisIsTheFirstFailure(&Results)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -312,10 +178,10 @@ func TestThisIsTheFirstFailure_true(t *testing.T) {
 
 //TestThisIsTheFirstFailure_false ....
 func TestThisIsTheFirstFailure_false(t *testing.T) {
-	var pgmdata PgmData
-	pgmdata.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	pgmdata.Counts["fail"] = 1
-	got := thisIsTheFirstFailure(&pgmdata)
+	var Results GtpResults
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Results.Counts["fail"] = 1
+	got := thisIsTheFirstFailure(&Results)
 	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -328,38 +194,22 @@ func TestThisIsTheFirstFailure_false(t *testing.T) {
 
 //TestTakeNoteOfFirstFailure ....
 func TestTakeNoteOfFirstFailure(t *testing.T) {
-	pd := PgmData{}
+	Results := GtpResults{}
 	testName := "thisTest"
 	parts := []string{"firstPart", "secondPart"}
 
-	takeNoteOfFirstFailure(&pd, parts, testName)
+	takeNoteOfFirstFailure(&Results, parts, testName)
 
-	if pd.Firstfailedtest.Tname != testName && pd.Firstfailedtest.Lineno != parts[1] && pd.Firstfailedtest.Fname != parts[0] {
-		t.Errorf("Filename: %s, LineNo: %s, TestName: %s", pd.Firstfailedtest.Fname, pd.Firstfailedtest.Lineno, pd.Firstfailedtest.Tname)
-	}
-}
-
-//TestAddToQuickFixList ....
-func TestAddToQuickFixList(t *testing.T) {
-	var pgmdata PgmData
-	parts := []string{"firstPart", "secondPart", "thirdPart"}
-	args := []string{"programName", "packageDir", "10"}
-	jlo := JLObject{}
-	jlo.Test = "thisTest"
-
-	addToQuickFixList(&pgmdata, args, parts, jlo)
-	if len(pgmdata.QfList) <= 0 {
-		t.Errorf("The length of pgmdata.QfList is  '%d'\n", len(pgmdata.QfList))
-	}
-	if pgmdata.QfList[0].Filename != "packageDir/firstPart" {
-		t.Errorf("Filename:  Got: %s, Wanted: %s\n", pgmdata.QfList[0].Filename, "packageDir/firstPart")
+	if Results.FirstFail.Tname != testName && Results.FirstFail.Lineno != parts[1] && Results.FirstFail.Fname != parts[0] {
+		t.Errorf("Filename: %s, LineNo: %s, TestName: %s", Results.FirstFail.Fname, Results.FirstFail.Lineno, Results.FirstFail.Tname)
 	}
 }
 
 //TestUnneededFAILPrefix_Has_FAIL ....
 func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
 	output := "FAIL:Part1:Part2:Part3"
-	got := removeUnneededFAILPrefix(output)
+	list := splitOnSemiColons(output)
+	got := removeUnneededFAILPrefix(list)
 	want := []string{"Part1", "Part2", "Part3"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got '%v' want '%v'", got, want)
@@ -369,7 +219,8 @@ func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
 //TestUnneededFAILPrefix_Has_No_FAIL ....
 func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 	output := "Part1:Part2:Part3"
-	got := removeUnneededFAILPrefix(output)
+	list := splitOnSemiColons(output)
+	got := removeUnneededFAILPrefix(list)
 	want := []string{"Part1", "Part2", "Part3"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got '%v' want '%v'", got, want)
@@ -378,25 +229,25 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 
 //TestDoStdErrMsg ....
 func TestDoStdErrMsg(t *testing.T) {
-	pgmdata := PgmData{}
-	pgmdata.Barmessage.Columns = 135
+	Results := GtpResults{}
+	Results.VimColumns = 135
 	msg := "STDERR: This is my message from STDERR."
 	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &pgmdata, PackageDir)
-	if len(pgmdata.Perrors) == 0 {
-		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(pgmdata.Perrors)))
+	doStdErrMsg(msg, &Results, PackageDir)
+	if len(Results.Errors) == 0 {
+		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
 }
 
 //TestDoStdErrMsgTooLong ....
 func TestDoStdErrMsgTooLong(t *testing.T) {
-	pgmdata := PgmData{}
-	pgmdata.Barmessage.Columns = 135
+	Results := GtpResults{}
+	Results.VimColumns = 135
 	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &pgmdata, PackageDir)
-	if len(pgmdata.Perrors) == 0 {
-		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(pgmdata.Perrors)))
+	doStdErrMsg(msg, &Results, PackageDir)
+	if len(Results.Errors) == 0 {
+		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
 	_ = os.Remove(PackageDir + "/StdErr.txt")
 }
@@ -437,26 +288,11 @@ func TestMetricsMsg_no_skips_2_fails(t *testing.T) {
 
 //TestBuildAndAppendAnErrorForInvalidJSON ....
 func TestBuildAndAppendAnErrorForInvalidJSON(t *testing.T) {
-	pgmdata := PgmData{}
-	pgmdata.Barmessage.Columns = 135
-	buildAndAppendAnErrorForInvalidJSON(&pgmdata)
-	if len(pgmdata.Perrors) <= 0 {
-		t.Errorf("pgmdata.Perrors has %d elements", len(pgmdata.Perrors))
-	}
-}
-
-//===========================================================================
-// func initializePgmData(pd *PgmData, commandLine string) {
-//===========================================================================
-
-//TestInitializePgmData ....
-func TestInitializePgmData(t *testing.T) {
-	pd := PgmData{}
-	commandLine := "go test -v -json -cover " + PackageDirFromVim
-	pd.initializePgmData(commandLine)
-	host, _ := os.Hostname()
-	if pd.Info.Host != host {
-		t.Errorf("got '%s' as hostname,  want '%s'", pd.Info.Host, host)
+	Results := GtpResults{}
+	Results.VimColumns = 135
+	buildAndAppendAnErrorForInvalidJSON(&Results)
+	if len(Results.Errors) <= 0 {
+		t.Errorf("pgmdata.Perrors has %d elements", len(Results.Errors))
 	}
 }
 
@@ -550,56 +386,227 @@ func TestWeHaveHadMoreThanOneFail_zero(t *testing.T) {
 	}
 }
 
-//===========================================================================
-// func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
-//===========================================================================
+//TestSplitOnSemicolons(str string) []string ....
+func TestSplitOnSemicolons(t *testing.T) {
+	str := "FAIL:1st useful part:2nd useful part:3rd useful part"
+	got := splitOnSemiColons(str)
+	want := []string{"FAIL", "1st useful part", "2nd useful part", "3rd useful part"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got '%v' want '%v'", got, want)
+	}
+}
 
-////TestCheckForFAILS_has_FAILS ....
-//func TestCheckForFAILS_has_FAILS(t *testing.T) {
-//	pd := PgmData{}
-
-//	prevJlo := JLObject{}
-//	prevjsonline := []byte(`{"Time":"2021-05-04T20:01:08.694174261-04:00","Action":"output","Package":"github.com/davidsday/go-course","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
-//	// Convert line of JSON text to JSON line object (Go struct in this case)
-//	err := json.Unmarshal(prevjsonline, &prevJlo)
-//	chkErr(err, "Error Unmarshaling prevjsonline")
-
-//	jlo := JLObject{}
-//	jsonline := []byte(`{"Time":"2021-05-04T20:01:08.694163726-04:00","Action":"output","Package":"github.com/davidsday/go-course","Test":"TestHello","Output":"    main_test.go:12: Hello() = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
-//	// Convert line of JSON text to JSON line object (Go struct in this case)
-//	err = json.Unmarshal(jsonline, &jlo)
-//	chkErr(err, "Error Unmarshaling jsonline")
-
-//	checkForFAILs(&pd, jlo, prevJlo)
-//	if len(pd.Perrors) < 1 {
-//		t.Errorf("pd.Perrors list is empty, should have at least one member")
-//	}
-//}
+//TestShellOut ....
+func TestShellOut(t *testing.T) {
+	got, _, _ := Shellout("cat ./testdata/hello.txt")
+	want := "Hello World!\n"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
 
 //===========================================================================
-// func marshallTR(pgmdata PgmData)
+// func hasTestFileReferences(output string) bool {
 //===========================================================================
 
-//TestMarshallTR() ....
-//func TestMarshallTR() (t *testing.T) {
-// json := {"info":{"host":"dev","user":"dave","begintime":"2021-04-25T07:40:25.484991373-04:00","endtime":"2021-04-25T07:40:26.214428046-04:00","gtp_issued_cmd":"go test -v -json -cover /home/dave/sw/go/hello","gtp_rcvd_args":["/home/dave/.config/nvim/plugged/goTestParser/bin/goTestParser","/home/dave/sw/go/hello"],"test_coverage":"0.0%"},"counts":{"runs":1,"pauses":0,"continues":0,"skips":0,"passes":1,"fails":0,"outputs":8},"firstfailedtest":{"fname":"","tname":"","lineno":""},"elapsed":0.0020000000949949026,"error":{"validjson":true,"notestfiles":false,"panic":false,"buildfailed":false,"msg_stderr":false},"qflist":null,"barmessage":{"color":"green","message":"1 Run, 1 Passed, Test Coverage: 0.0%, in 0.002s"}}
+////TesthasTestFileReferences_true ....
+func TestHasTestFileReferences_true(t *testing.T) {
+	output := "Part1:main_test.go:12:Part4"
+	got := hasTestFileReferences(output)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
 
-//	pd := PgmData{}
-//	pd.Barmessage.Columns = 135
+//TesthasTestFileReferences_none ....
+func TestHasTestFileReferences_none(t *testing.T) {
+	output := "Part0:Part1:Part2:Part3"
+	got := hasTestFileReferences(output)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
 
-//	marshallTR(pd)
-//	want := "What we want"
-//	if got != want {
-//		t.Errorf("got '%s' want '%s'", got, want)
-//	}
-//}
+//===========================================================================
+// func hasTestCoverage(output string) bool {
+//===========================================================================
 
-//// function to perform marshalling
-//func marshallTR(pgmdata PgmData) {
-//	// data, err := json.MarshalIndent(pgmdata, "", "    ")
-//	data, _ := json.Marshal(pgmdata)
-//	_, err := os.Stdout.Write(data)
-//	chkErr(err, "Error writing to Stdout in marshallTR()")
-//	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
-//	//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshallTR()")
-//} // end_marshallTR
+//TestHasTestCoverage ....
+func TestHasTestCoverage_yes(t *testing.T) {
+	output := "coverage: 69.3% of statements"
+	got := hasTestCoverage(output)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestHasTestCoverage ....
+func TestHasTestCoverage_no(t *testing.T) {
+	output := "FAIL:Part1:Part2:Part3"
+	got := hasTestCoverage(output)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func checkErrorCandidates(Results *GtpResults, output string) bool {
+//===========================================================================
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_no_test_files(t *testing.T) {
+	results := GtpResults{}
+	// output := "FAIL:Part1:Part2:Part3"
+	output := "[no test files]"
+	got := checkErrorCandidates(&results, output)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_yes(t *testing.T) {
+	results := GtpResults{}
+	// output := "FAIL:Part1:Part2:Part3"
+	output := "panic:"
+	got := checkErrorCandidates(&results, output)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_no(t *testing.T) {
+	results := GtpResults{}
+	output := "Part0:Part1:Part2:Part3"
+	got := checkErrorCandidates(&results, output)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+// func adjustOutSuperfluousFinalPass(action string, passCount int) int {
+//===========================================================================
+
+//TestAdjustOutSuperfluousFinalPass ....
+func TestAdjustOutSuperfluousFinalPass(t *testing.T) {
+	passCount := 21
+	got := adjustOutSuperfluousFinalPass("pass", passCount)
+	want := 20
+	if got != want {
+		t.Errorf("got '%d' want '%d'", got, want)
+	}
+}
+
+//TestAdjustOutSuperfluousFinalPass ....
+func TestAdjustOutSuperfluousFinalPass_1(t *testing.T) {
+	passCount := 1
+	got := adjustOutSuperfluousFinalPass("pass", passCount)
+	want := 1
+	if got != want {
+		t.Errorf("got '%d' want '%d'", got, want)
+	}
+}
+
+//===========================================================================
+// func adjustOutSuperfluousFinalFail(action string, passCount int) int {
+//===========================================================================
+
+//TestAdjustOutSuperfluousFinalPass ....
+func TestAdjustOutSuperfluousFinalFail(t *testing.T) {
+	failCount := 21
+	got := adjustOutSuperfluousFinalFail("fail", failCount)
+	want := 20
+	if got != want {
+		t.Errorf("got '%d' want '%d'", got, want)
+	}
+}
+
+//TestAdjustOutSuperfluousFinalPass ....
+func TestAdjustOutSuperfluousFinalFail_1(t *testing.T) {
+	failCount := 1
+	got := adjustOutSuperfluousFinalFail("fail", failCount)
+	want := 1
+	if got != want {
+		t.Errorf("got '%d' want '%d'", got, want)
+	}
+}
+
+//===========================================================================
+// func adjustOutSuperfluousFinalResult(action string, Results *GtpResults) (int, int) {
+//===========================================================================
+
+//TestAdjustOutSuperfuousFinalResult ....
+func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
+	Results := GtpResults{}
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 0}
+	action := "pass"
+
+	passes, fails := adjustOutSuperfluousFinalResult(action, &Results)
+
+	if passes != 20 || fails != 0 {
+		t.Errorf("passes:'%d', fails: '%d', wanted: passes: '20', fails: 0", passes, fails)
+	}
+}
+
+//===========================================================================
+// func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
+//	PackageDirFromVim string) (bool, error) {
+//===========================================================================
+
+//TestHandleOutputLines ....
+func TestHandleOutputLines(t *testing.T) {
+	Results := GtpResults{}
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 0}
+	jlo, prevJlo := JLObject{}, JLObject{}
+	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "PASS\n"}`)
+	jsonlineJlo := []byte(`{"Time": "2021-05-07T23:32:18.412174016-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "coverage: 77.9% of statements\n"}`)
+	err := json.Unmarshal(jsonlinePrevJlo, &prevJlo)
+	chkErr(err, "Error Unmarshaling jsonLine")
+	err = json.Unmarshal(jsonlineJlo, &jlo)
+	chkErr(err, "Error Unmarshaling jsonLine")
+	packageDir := PackageDirFromVim
+
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	if doBreak != false {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
+	}
+}
+
+////TestHandleOutputLines ....
+func TestHandleOutputLines_FAIL(t *testing.T) {
+	Results := GtpResults{}
+	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 4, "output": 31}
+	jlo, prevJlo := JLObject{}, JLObject{}
+	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+	jsonlineJlo := []byte(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+	err := json.Unmarshal(jsonlinePrevJlo, &prevJlo)
+	chkErr(err, "Error Unmarshaling jsonline_prevJlo")
+	err = json.Unmarshal(jsonlineJlo, &jlo)
+	chkErr(err, "Error Unmarshaling jsonLine_jlo")
+	packageDir := PackageDirFromVim
+
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	if doBreak != false {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
+	}
+}
+
+// {"Time":"2021-05-08T08:06:40.543522241-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
+// {"Time":"2021-05-08T08:06:40.543653446-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
+// {"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}
+// {"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}
+// {"Time":"2021-05-08T08:06:40.543673412-04:00","Action":"fail","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
+// {"Time":"2021-05-08T08:06:40.543678142-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\n"}
+// {"Time":"2021-05-08T08:06:40.543681244-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
+// {"Time":"2021-05-08T08:06:41.043682815-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"exit status 1\n"}
+// {"Time":"2021-05-08T08:06:41.043783023-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\tgithub.com/davidsday/hello\t0.501s\n"}
+// {"Time":"2021-05-08T08:06:41.043819391-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.501}

@@ -6,56 +6,59 @@ to the Vim golang development experience:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
 
-	A better 'go test' experience than I have received with some other
-	tools.
+	A better 'go test' experience
 
 The first is via the use of Vim's message line to provide red/green
-bar fail/pass indications. There is also a yellow bar message which
-is used to convey messages about errors that are not caused by an
-actual failing tests.
+bar fail/pass indications. I have also added a yellow bar message which
+I use to convey messages about errors that are not caused by an actual
+failing test.
 
-Right now these yellow bar messages include, [no tests found],
-[build failed], [received a panic], and [invalid JSON message],
-and the receipt of a message on STDERR.  The build tools sometimes
-will issue important messages on STDERR, and I want to know about
-them immediately.  These messages are not in JSON format.  They are
-issued from the build system tools in their normal output formats
-and would end up interspersed with the go test -json output, leading
-to goTestParser raising an error due to invalid JSON in its input stream.
+Right now these yellow bar messages include
+	[no tests found],
+	[no tests to execute] - basically an empty test file
+	[build failed],
+	[received a panic],
+	[invalid JSON message],
+	and the receipt of any message on STDERR.
 
-There also are messages providing detail information in each red/green
-bars.  They report the number of tests run, passed, failed, and skipped,
-in addition to the elapsed time for running all the tests as provided
-by go test. Test coverage is reported on Green Bars.  Presumably, you
-have more to worry about than that on Yellow or Red Bars.
+The build tools sometimes will issue important messages on STDERR,
+and I want to know about them immediately.
+
+These messages are not in JSON format.  Since I am parsing
+"go test -v -json -cover" output, goTestParser expects valid JSON.
+I capture stderr and process it as best I can, by showing a snippet of
+the message in a yellow bar.  If the STDERR message is longer than can
+be shown in a one line yellow bar, I capture the entire message in
+stdERR.txt in the package directory.
+
+If goTestParser encounters non JSON lines on stdout, it issues a yellow
+bar message and quits. That rarely, if ever happens.
+
+There also are supplemental messages providing detail information in each
+red/green bars.  They report the number of tests run, passed, failed,
+and skipped, in addition to the elapsed time for running all the tests
+as provided by go test. Test coverage is reported on Green Bars.
 
 I have also added Average Cyclomatic Complexity to the Green Bars.
 This has little to do with testing but a lot to do with design and
-it is a metric I want to be aware of.  I find that most Golang projects
-run between 4 and 8.  I hear that several well known IDEs start warning
-about Cyclomatic Complexity at 10.  I like to keep mine around 2.5.
-Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
-This project is at 1.91 as I write this.
+it is a metric I want to be aware of. I hear that several well known IDEs
+start warning about Cyclomatic Complexity at 10.  I like to keep mine
+below 2.5. Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
+I have heard him say he uses Java, Ruby, and Smalltalk.
+This project is at 1.77 as I write this.  Many experienced developers
+find that test driven development, along with low cyclomatic complexities
+help to achieve robust applications more quickly than might otherwise
+be achieved.  I have also found that to be the case, so much so that
+I built this tool to supplement vim-go for my own use.
 
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
-which provides the code for this.  It took one import and exactly two
-extra lines of code to incorporate this feature into goTestParser.
-Previous to that I had been running gocyclo via a system call and grepping
-and awking the output before storing the result away for later display.
-And, of course, the user would have to install gocyclo on their systems
-themselves, adding to the barrier to usefulness.
-
-Right now, goTestParser is taking go test -json at its word as to
-how many tests are run, passed failed etc, based on the JSON Action
-fields.  These are wrong sometimes, since they count a main test that
-has subtests right along with the subtests.  It is quite common for
-a test to kick off subtests which do the actual testing.  go test -json
-counts the main test even though it does no testing itself. So a main
-test with 5 subtests count as 6 tests, which is incorrect to my way of
-thinking.  It should be possible to discern what the actual count should
-be, but basically requires going back to parsing the non JSON
-go test -v output, thus largely defeating the point of converting
-to -json in the first place.
+which provides the code for determining cyclomatic complexity in Golang
+code.  It took one import and exactly two extra lines of code to incorporate
+this feature into goTestParser. Previous to that I had been running gocyclo
+via a system call and grepping and awking the output before storing the
+result away for later display. And, of course, the user would have to
+install gocyclo on their systems themselves, adding to the barrier to
+usefulness.
 
 For now, I am just taking the go test -json output's word and we need to
 realize that the results are approximate. I have not yet found even one
@@ -100,8 +103,8 @@ fix the function that caused the failure, and I may already be there.
 The RedBar/GreenBar/YellowBar message line lingers until any key is
 pressed (I typically just hit the space bar).
 
-In my set up, I have told vim-go to use the quickfix window exclusively.
-I have <Leader>q toggle the quickfix window and <C-j> and <C-k>
+In my personal set up, I have told vim-go to use the quickfix window
+exclusively. I have <Leader>q toggle the quickfix window and <C-j> and <C-k>
 navigate the quickfix list up and down. <LocalLeader>a takes me to the
 Alternate file.
 

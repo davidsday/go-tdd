@@ -3,28 +3,24 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
-
-	"github.com/fzipp/gocyclo"
 )
 
 // ?    github.com/zchee/nvim-go/pkg/server [no test files]
 var (
-	regexPanic = regexp.MustCompile(`^panic:`)
-	// regexNoTestsToRun   = regexp.MustCompile(`^testing: warning: no tests to run`)
-	regexNoTestsToRun   = regexp.MustCompile(`no tests to run`)
-	regexNoTestFiles    = regexp.MustCompile(`\?\s*\S*\s*\[no test files\]`)
-	regexBuildFailed    = regexp.MustCompile(`\?\s*\S*\s*\[build failed\]`)
-	regexFailorTestFile = regexp.MustCompile(`^\s\+FAIL:|_test.go`)
-	regexTestCoverage   = regexp.MustCompile(`^coverage:`)
-	regexNil            = &regexp.Regexp{}
+	regexPanic        = regexp.MustCompile(`^panic:`)
+	regexNoTestsToRun = regexp.MustCompile(`no tests to run`)
+	regexNoTestFiles  = regexp.MustCompile(`\[no test files\]`)
+	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
+	regexTestFileRef  = regexp.MustCompile(`_test.go`)
+	//"coverage: 76.7% of statements\n"}
+	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,2}\.\d\% of statements`)
+	regexNil          = &regexp.Regexp{}
 )
 
 // JLObject -
@@ -40,35 +36,54 @@ type JLObject struct {
 	Elapsed float32
 }
 
-// PD -> program data
 // This is the whole enchilada
-// It holds all the program's
-// important data.  It is defined
-// in pgmdata.go
-//
-var PD PgmData
+// These hold all the program's
+// important data.
+
+// Results has all the data from go test
+// It has methods it needs to build the BarMessage
+var Results GtpResults
+
+// Barmessage and QfList are populated by the methods
+// in Results.  They don't "do" anything except hold
+// the data Vim will need.  They are marshaled into
+// JSON and sent to Vim for display
+var Barmessage BarMessage
 
 // jlo & JLO -> JSON Line Object
 // go test -json spits these out, one at a time, separated by newlines
 var jlo JLObject
 var prevJlo JLObject
 
-// PackageDir is where the current package lives
+// PackageDirFromVim is where the current package lives
 // We get it from Vim as os.Args[1]
 var PackageDirFromVim string
-var PackagesToSearch []string
+var PackageDirsToSearch []string
 
 func main() {
 
+	// Initialize map of Counts in Results
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+
+	// We get quidance from Vim about where go test and gocyclo
+	// should search, there is really only one dir from Vim,
+	// but gocyclo wants a list of dirs, so we create an empty
+	// list and append the dir we got from Vim to it so
+	// gocyclo will be happy
 	PackageDirFromVim = os.Args[1]
-	PackagesToSearch = append(PackagesToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	// Vim tells us how many columns it has available for messages via the
+	// third command line argument
+	Results.VimColumns, _ = strconv.Atoi(os.Args[2])
+	// initialize Barmessage's QuickFixList to an empty QuickFixList
+	// or it will be null instead of [] when marshaled to JSON.
+	Barmessage.QuickFixList = GtpQfList{}
 
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
-	PD.initializePgmData(commandLine)
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr, &PD, PackageDirFromVim)
+		doStdErrMsg(stderr, &Results, PackageDirFromVim)
 	} else {
 		// stdout & stderr are strings, we need []byte
 		byteString := convertStringToBytes(stdout)
@@ -78,7 +93,7 @@ func main() {
 		for _, jsonLine := range byteLines {
 			// Ensure we're getting valid JSON
 			if !json.Valid(jsonLine) {
-				buildAndAppendAnErrorForInvalidJSON(&PD)
+				buildAndAppendAnErrorForInvalidJSON(&Results)
 				break
 			} else {
 				// Convert line of JSON text to JSON line object (Go struct in this case)
@@ -87,13 +102,13 @@ func main() {
 			}
 
 			PackageDirFromJlo := jlo.Package
-			PD.Counts[jlo.Action]++
+			Results.Counts[jlo.Action]++
 
 			var err error
 			var doBreak bool
 
 			if jlo.Action == "output" {
-				doBreak, err = HandleOutputLines(&PD, jlo, prevJlo, PackageDirFromJlo)
+				doBreak, err = HandleOutputLines(&Results, jlo, prevJlo, PackageDirFromJlo)
 				chkErr(err, "Error in HandleOutputLines()")
 				if doBreak {
 					break
@@ -106,23 +121,21 @@ func main() {
 		} //endfor
 
 		// Make note of the elapsed time, as reported by go test
-		PD.Elapsed = PDElapsed(jlo.Elapsed)
+		Results.Summary.setElapsed(GtpElapsed(jlo.Elapsed))
 
 		// We've completed the for loop,
 		// The last emitted line (JSON Line Object) announces
 		// if the run as a whole was a pass or fail.  It does
 		// not represent a test.  So it throws off our counts
 		// by one.
-		adjustOutSuperfluousFinalResult()
+		Results.Counts["pass"], Results.Counts["fail"] = adjustOutSuperfluousFinalResult(jlo.Action, &Results)
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
-		PD.setBarMessage()
+		Results.buildBarMessage(&Barmessage)
 	} //Endif
 
-	// Endtime for PD.Info
-	PD.Info.Endtime = time.Now().Format(time.RFC3339Nano)
-	// Turn our PD object into JSON and send it to stdout
-	marshallTR(PD)
+	// Turn our Results object into JSON and send it to stdout
+	marshalTR(Barmessage)
 
 } // endmain()
 
@@ -139,91 +152,40 @@ func Shellout(command string) (string, string, error) {
 	return stdout.String(), stderr.String(), err
 } //end_Shellout()
 
-// function to perform marshaling
-func marshallTR(pgmdata PgmData) {
-	// data, err := json.MarshalIndent(pgmdata, "", "    ")
-	data, _ := json.Marshal(pgmdata)
-	_, err := os.Stdout.Write(data)
-	chkErr(err, "Error writing to Stdout in marshallTR()")
-	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshallTR()")
-} // end_marshallTR
-
-// HandlOutputLines() does much of our work, very similarly
+// HandleOutputLines does much of our work, very similarly
 // to how we would search and grep go test -v output.
-// to do a good job reporting to the user, we still have
+// To do a good job reporting to the user, we still have
 // to grep through normal go test -v type outputs.
 // go test -json emits these in jlo.Output fields we handle
 // this task here
-func HandleOutputLines(pgmdata *PgmData, jlo JLObject, prevJlo JLObject,
+func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
 	PackageDirFromVim string) (bool, error) {
 
 	var err error = nil
 	doBreak := false
 
-	pgmdata.Counts["output"]++
+	Results.incCount("output")
 
-	doBreak = checkErrorCandidates(&PD)
+	doBreak = checkErrorCandidates(Results, jlo.Output)
 	if doBreak {
 		return doBreak, err
 	}
 
-	checkTestCoverage(&PD)
+	if hasTestCoverage(jlo.Output) {
+		Results.Summary.setCoverage(jlo.Output)
+	}
 
-	checkForFAILs(&PD, jlo, prevJlo)
-
+	if hasTestFileReferences(jlo.Output) {
+		list := splitOnSemiColons(jlo.Output)
+		list = removeUnneededFAILPrefix(list)
+		if thisIsTheFirstFailure(Results) {
+			takeNoteOfFirstFailure(Results, list, prevJlo.Test)
+		}
+		qfItem := buildQuickFixItem(os.Args, list, jlo)
+		Barmessage.QuickFixList.Add(qfItem)
+	}
 	return doBreak, err
 } // End HandleOutputLines()
-
-func passMsg(passes int) string {
-	oneSpace := " "
-	commaSpace := ", "
-	return commaSpace + strconv.Itoa(passes) + oneSpace + "Passed"
-}
-
-func runMsg(runs int) string {
-	oneSpace := " "
-	return strconv.Itoa(runs) + oneSpace + "Run"
-}
-
-func elapsedMsg(elapsed PDElapsed) string {
-	oneSpace := " "
-	commaSpace := ", "
-	msg := commaSpace + "in" + oneSpace + strconv.FormatFloat(float64(elapsed), 'f', 3, 32) + "s"
-	return msg
-}
-
-func metricsMsg(skips, fails int, coverage, complexity string) string {
-	oneSpace := " "
-	commaSpace := ", "
-	if skips == 0 && fails == 0 && len(coverage) > 0 {
-		msg := commaSpace + "Test Coverage:" + oneSpace + coverage
-		msg += commaSpace + "Average Complexity:" + oneSpace + complexity
-		return msg
-	}
-	return ""
-}
-
-func failMsg(fails int, fname, lineno string) string {
-	if fails > 0 {
-		oneSpace := " "
-		commaSpace := ", "
-		msg := commaSpace + strconv.Itoa(fails) + oneSpace + "Failed"
-		msg += commaSpace + "1st in" + oneSpace + fname
-		msg += commaSpace + "on line" + oneSpace + lineno
-		return msg
-	}
-	return ""
-}
-
-func skipMsg(skips int) string {
-	oneSpace := " "
-	commaSpace := ", "
-	if skips > 0 {
-		return commaSpace + strconv.Itoa(skips) + oneSpace + "Skipped"
-	}
-	return ""
-}
 
 // CheckRegx check for a match described by compiled regx with candidate.
 // Returns true if theres a match, false otherwise
@@ -232,38 +194,32 @@ func CheckRegx(regx *regexp.Regexp, candidate string) bool {
 	return match != ""
 }
 
-func getAvgCyclomaticComplexity(paths []string) string {
-	// allStats := gocyclo.Analyze(paths, regexp.MustCompile("vendor"))
-	allStats := gocyclo.Analyze(paths, regexp.MustCompile(`vendor|testdata`))
-	return fmt.Sprintf("%.3g", allStats.AverageComplexity())
-}
-
 func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string, pd *PgmData, PackageDir string) {
+func doStdErrMsg(stderr string, Results *GtpResults, PackageDir string) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	pd.Barmessage.Color = "yellow"
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, pd.Barmessage.Columns) {
+	Barmessage.Color = "yellow"
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, Results.VimColumns) {
 		writeStdErrMsgToDisk(stderr, PackageDir)
-		pd.Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, pd.Barmessage.Columns)
+		Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, Results.VimColumns)
 	} else {
-		pd.Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
-		pd.Barmessage.Message = strings.TrimSuffix(pd.Barmessage.Message, "|") + stdErrMsgTrailer
+		Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
+		Barmessage.Message = strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgTrailer
 	}
-	gtperror := GTPerror{Name: "StdErrError", Regex: regexNil, Message: pd.Barmessage.Message, Color: "yellow"}
-	pd.Perrors = append(PD.Perrors, gtperror)
+	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
+	Results.Errors = append(Results.Errors, gtperror)
 }
 
 func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg string, cols int) string {
 	oneSpace := " "
 	commaSpace := ", "
 	retMsg := stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
-	retMsg = strings.TrimSuffix(msg, "|")
+	retMsg = strings.TrimSuffix(retMsg, "|")
 	retMsg = retMsg[0 : cols-(len(stdErrMsgPrefix)+len(stdErrMsgTrailer))]
 	retMsg += commaSpace + stdErrMsgTrailer
 	return retMsg
@@ -286,9 +242,9 @@ func chkErr(err error, msg string) {
 	}
 }
 
-func buildAndAppendAnErrorForInvalidJSON(pd *PgmData) {
-	pd.Perrors = append(pd.Perrors,
-		GTPerror{
+func buildAndAppendAnErrorForInvalidJSON(Results *GtpResults) {
+	Results.Errors = append(Results.Errors,
+		GtpError{
 			Name:    "InvalidJSON",
 			Regex:   regexNil,
 			Message: "[Invalid JSON]",
@@ -310,36 +266,26 @@ func convertStringToBytes(s string) []byte {
 	return []byte(s)
 }
 
-func thisIsTheFirstFailure(pgmdata *PgmData) bool {
-	return pgmdata.Counts["fail"] == 0
+func thisIsTheFirstFailure(Results *GtpResults) bool {
+	return Results.Counts["fail"] == 0
 }
 
-func takeNoteOfFirstFailure(pgmdata *PgmData, parts []string, testName string) {
-	pgmdata.Firstfailedtest.Fname = parts[0]
-	pgmdata.Firstfailedtest.Lineno = parts[1]
-	pgmdata.Firstfailedtest.Tname = testName
+func takeNoteOfFirstFailure(Results *GtpResults, parts []string, testName string) {
+	Results.FirstFail.Fname = parts[0]
+	Results.FirstFail.Lineno = parts[1]
+	Results.FirstFail.Tname = testName
 }
 
-func removeUnneededFAILPrefix(output string) []string {
-	parts := strings.Split(strings.TrimSpace(output), ":")
-	if strings.Contains(parts[0], "FAIL") {
+func removeUnneededFAILPrefix(list []string) []string {
+	if strings.Contains(list[0], "FAIL") {
 		// so we take the sublist and continue our work
-		parts = parts[1:]
+		list = list[1:]
 	}
-	return parts
+	return list
 }
 
-func addToQuickFixList(pgmdata *PgmData, args []string, parts []string, jlo JLObject) {
-	var QfItem PDQfDict
-	// Now we can build/fill the QuickFix List
-	// QfItem.Filename = PackageDir + "/" + parts[0]
-	QfItem.Filename = args[1] + "/" + parts[0]
-	QfItem.Lnum, _ = strconv.Atoi(parts[1])
-	QfItem.Col = 1
-	QfItem.Vcol = 1
-	QfItem.Pattern = jlo.Test
-	QfItem.Text = strings.Join(parts[2:], ":")
-	pgmdata.QfList = append(pgmdata.QfList, QfItem)
+func splitOnSemiColons(output string) []string {
+	return strings.Split(strings.TrimSpace(output), ":")
 }
 
 func finalActionWasPass(action string) bool {
@@ -358,60 +304,52 @@ func weHaveHadMoreThanOneFail(fails int) bool {
 	return fails > 1
 }
 
-func adjustOutSuperfluousFinalPass() {
-	if finalActionWasPass(jlo.Action) {
-		if weHaveHadMoreThanOnePass(PD.Counts["pass"]) {
-			PD.Counts["pass"]--
+func adjustOutSuperfluousFinalPass(action string, passCount int) int {
+	if finalActionWasPass(action) {
+		if weHaveHadMoreThanOnePass(passCount) {
+			passCount--
 		}
 	}
+	return passCount
 }
 
-func adjustOutSuperfluousFinalFail() {
-	if finalActionWasFail(jlo.Action) {
-		if weHaveHadMoreThanOneFail(PD.Counts["fail"]) {
-			PD.Counts["fail"]--
+func adjustOutSuperfluousFinalFail(action string, failCount int) int {
+	if finalActionWasFail(action) {
+		if weHaveHadMoreThanOneFail(failCount) {
+			failCount--
 		}
 	}
+	return failCount
 }
 
-func adjustOutSuperfluousFinalResult() {
-	adjustOutSuperfluousFinalPass()
-	adjustOutSuperfluousFinalFail()
+func adjustOutSuperfluousFinalResult(action string, Results *GtpResults) (int, int) {
+	passCount := adjustOutSuperfluousFinalPass(action, Results.getCount("pass"))
+	failCount := adjustOutSuperfluousFinalFail(action, Results.getCount("fail"))
+	return passCount, failCount
 }
 
-func checkErrorCandidates(pd *PgmData) bool {
-	var ErrorCandidates = GTPerrors{
+func checkErrorCandidates(Results *GtpResults, output string) bool {
+	var ErrorCandidates = GtpErrors{
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
 		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
 		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
 	}
 	for _, rx := range ErrorCandidates {
-		if CheckRegx(rx.Regex, jlo.Output) {
-			pd.Perrors = append(pd.Perrors, rx)
+		if CheckRegx(rx.Regex, output) {
+			Results.Errors.Add(rx)
+			// Results.Errors = append(Results.Errors, rx)
 			return true
 		}
 	}
 	return false
 }
 
-func checkTestCoverage(pd *PgmData) {
-	if CheckRegx(regexTestCoverage, jlo.Output) {
-		// Remove trailing '\n'
-		pd.Info.TestCoverage = strings.TrimSuffix(jlo.Output, "\n")
-		// Strip away everything but the percent coverage string ("57.8%", for example)
-		pd.Info.TestCoverage = strings.Replace(pd.Info.TestCoverage, "coverage: ", "", 1)
-		pd.Info.TestCoverage = strings.Replace(pd.Info.TestCoverage, " of statements", "", 1)
-	}
+func hasTestCoverage(output string) bool {
+	return CheckRegx(regexTestCoverage, output)
 }
 
-func checkForFAILs(pd *PgmData, jlo, prevJlo JLObject) {
+func hasTestFileReferences(output string) bool {
 	// one of the surest fail indicators is an output about a "_test.go" file
-	if CheckRegx(regexFailorTestFile, jlo.Output) {
-		parts := removeUnneededFAILPrefix(jlo.Output)
-		if thisIsTheFirstFailure(pd) {
-			takeNoteOfFirstFailure(pd, parts, prevJlo.Test)
-		}
-		addToQuickFixList(pd, os.Args, parts, jlo)
-	}
+	return CheckRegx(regexTestFileRef, output)
 }
