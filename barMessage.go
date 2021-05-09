@@ -38,8 +38,6 @@ func (b *BarMessage) marshalToStdOut() {
 	data, _ := json.Marshal(*b)
 	_, err := os.Stdout.Write(data)
 	chkErr(err, "Error writing to Stdout in BarMessage.marshalToStdOut()")
-	err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
 }
 
 // func (b *BarMessage) writeBarMessageToLogFile() {
