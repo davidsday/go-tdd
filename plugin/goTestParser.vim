@@ -1,20 +1,24 @@
 " Dave's GoLang Testing Stuff
 
 " RunTest(), ProcessStandardOutput(), ColorBar(),
-" and GoTestParser, a Golang program that runs go test -v -json
-" and parses its output for use here,
-" and these few mappings, work together to allow the running of
-" RedBar/GreenBar Golang tests from within Vim.
+" and GoTestParser, a Golang program that runs go test -v -json -color
+" and parses its output for use here, and these few mappings, work
+" together to allow the running of RedBar/GreenBar Golang tests from within
+" Vim.
 "
 " I prefer RedBar/GreenBar Test Driven Development, and missed my
 " comfortable and pleasant development cycle when I moved to Golang.
 "
-" <LocalLeader>t runs 'go test ' and provides RedBar/GreenBar indications
-" of failure or success.  It also provides useful summary info:
+" <LocalLeader>t runs 'go test -v -json -cover ' and provides RedBar/GreenBar
+" indications of failure or success.
+"
+" It also provides useful summary info:
 "   Tests Run
 "   Tests Passed
 "   Tests Skipped
-"   Test Failed
+"   Tests Failed
+"   Test  Coverage
+"   Cyclomatic Complexity
 "   And the file and line number of the first failure or the cause of
 "   the first skip.
 "
@@ -49,7 +53,7 @@ function! s:RunTest(toScreen)
     " left.  So don't delete it.
     chdir %:p:h
     let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    let l:oneSpace=" "
+    let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 
     let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir . oneSpace . l:screencolumns
@@ -74,29 +78,17 @@ endfunction
 " or yellow background, and what messages to show
 
 function! s:ProcessStdOutput(stdout) abort
-
   let l:packageDir = shellescape(expand('%:p:h'))
-
   let l:json_object = json_decode(a:stdout)
-
-  " if l:json_object.counts.fail > 0 || l:json_object.counts.skip > 0
   if l:json_object.quickfixlist != []
     call setqflist(l:json_object.quickfixlist,'r')
   endif
-
   call go#color_bar#DoColorBar(l:json_object.color,
         \ l:json_object.message)
-
-  " Encode l:pgmdata into JSON and write it out for our inspection
-  " let l:tmp_json_object = json_encode(l:json_object)
-  " let l:logPath = expand('%:p:h') . '/gotestlog.json'
-  " call writefile(split(l:tmp_json_object,'\n'), l:logPath, 'b')
 endfunction
 
 noremap <unique> <Plug>(RunGoTestsVerbose) :call <SID>RunTest('True')<CR>
 noremap <unique> <Plug>(RunGoGreenBarTests) :call <SID>RunTest('False')<CR>
-
-
 
 " I try to use <LocalLeader> in ftplugin types of situations
 " This one runs GreenBar/RedBar tests
