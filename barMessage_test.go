@@ -78,7 +78,7 @@ func TestBuildQuickFixItem_filename(t *testing.T) {
 	parts := []string{"firstPart", "secondPart", "thirdPart"}
 	args := []string{"programName", "packageDir", "10"}
 	jlo := JLObject{}
-	jlo.getTest() = "thisTest"
+	jlo.Test = "thisTest"
 
 	QfItem = buildQuickFixItem(args, parts, jlo)
 	if QfItem.Filename != "packageDir/firstPart" {
@@ -92,7 +92,7 @@ func TestBuildQuickFixItem_pattern(t *testing.T) {
 	parts := []string{"firstPart", "secondPart", "thirdPart"}
 	args := []string{"programName", "packageDir", "10"}
 	jlo := JLObject{}
-	jlo.getTest() = "thisTest"
+	jlo.Test = "thisTest"
 
 	QfItem = buildQuickFixItem(args, parts, jlo)
 	if QfItem.Pattern != "thisTest" {
