@@ -107,7 +107,7 @@ func buildQuickFixItem(args []string, parts []string, jlo JLObject) GtpQfItem {
 	QfItem.Lnum, _ = strconv.Atoi(parts[1])
 	QfItem.Col = 1
 	QfItem.Vcol = 1
-	QfItem.Pattern = jlo.Test
+	QfItem.Pattern = jlo.getTest()
 	QfItem.Text = strings.Join(parts[2:], ":")
 	return QfItem
 }

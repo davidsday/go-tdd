@@ -23,19 +23,6 @@ var (
 	regexNil          = &regexp.Regexp{}
 )
 
-// JLObject -
-// go test -json outputs JSON objects instead of lines
-// each JSON object looks like this. Not all fields
-// are emitted for each line
-type JLObject struct {
-	Time    string
-	Action  string
-	Package string
-	Test    string
-	Output  string
-	Elapsed float32
-}
-
 // This is the whole enchilada
 // These hold all the program's
 // important data.
@@ -101,13 +88,13 @@ func main() {
 				chkErr(err, "Error Unmarshaling jsonLine")
 			}
 
-			PackageDirFromJlo := jlo.Package
-			Results.Counts[jlo.Action]++
+			PackageDirFromJlo := jlo.getPackage()
+			Results.Counts[jlo.getAction()]++
 
 			var err error
 			var doBreak bool
 
-			if jlo.Action == "output" {
+			if jlo.getAction() == "output" {
 				doBreak, err = HandleOutputLines(&Results, jlo, prevJlo, PackageDirFromJlo)
 				chkErr(err, "Error in HandleOutputLines()")
 				if doBreak {
@@ -121,14 +108,14 @@ func main() {
 		} //endfor
 
 		// Make note of the elapsed time, as reported by go test
-		Results.Summary.setElapsed(GtpElapsed(jlo.Elapsed))
+		Results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
 
 		// We've completed the for loop,
 		// The last emitted line (JSON Line Object) announces
 		// if the run as a whole was a pass or fail.  It does
 		// not represent a test.  So it throws off our counts
 		// by one.
-		Results.Counts["pass"], Results.Counts["fail"] = adjustOutSuperfluousFinalResult(jlo.Action, &Results)
+		Results.Counts["pass"], Results.Counts["fail"] = adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
 		Results.buildBarMessage(&Barmessage)
@@ -166,20 +153,20 @@ func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
 
 	Results.incCount("output")
 
-	doBreak = checkErrorCandidates(Results, jlo.Output)
+	doBreak = checkErrorCandidates(Results, jlo.getOutput())
 	if doBreak {
 		return doBreak, err
 	}
 
-	if hasTestCoverage(jlo.Output) {
-		Results.Summary.setCoverage(jlo.Output)
+	if hasTestCoverage(jlo.getOutput()) {
+		Results.Summary.setCoverage(jlo.getOutput())
 	}
 
-	if hasTestFileReferences(jlo.Output) {
-		list := splitOnSemiColons(jlo.Output)
+	if hasTestFileReferences(jlo.getOutput()) {
+		list := splitOnSemiColons(jlo.getOutput())
 		list = removeUnneededFAILPrefix(list)
 		if thisIsTheFirstFailure(Results) {
-			takeNoteOfFirstFailure(Results, list, prevJlo.Test)
+			takeNoteOfFirstFailure(Results, list, prevJlo.getTest())
 		}
 		qfItem := buildQuickFixItem(os.Args, list, jlo)
 		Barmessage.QuickFixList.Add(qfItem)
