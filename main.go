@@ -84,8 +84,21 @@ func main() {
 				buildAndAppendAnErrorForInvalidJSON(&Results)
 				break
 			}
-
+			// jsonLine -> jsonLineObject
+			// from here down to the bottom of the for loop,
+			// we are dealing with JLObject structs
 			jlo.unmarshal(jsonLine)
+
+			// Frankly, I'm not sure this is needed or correct
+			// Vim gave us the directory of the file being edited
+			// in PackageDirFromVim.  But go test -json output lines
+			// each have a Package field, and here I switch over
+			// to using go test's take on things.  I don't think
+			// I have ever seen it make any differene either way
+			// as they alway seem to agree.  So what I am saying
+			// is that I think we could change all the PackageDirFromJlo's
+			// and switch them to PackageDirFromVim and we likely
+			// would not notice any difference
 
 			PackageDirFromJlo := jlo.getPackage()
 			Results.incCount(jlo.getAction())
@@ -116,7 +129,7 @@ func main() {
 		// by one.
 		Results.Counts["pass"], Results.Counts["fail"] =
 			adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
-		// Now we check for PD.Errors and create a
+		// Now we check for Results.Errors and create a
 		// yellow bar and  message if appropriate
 		Results.buildBarMessage(&Barmessage, PackageDirsToSearch)
 	} //Endif
