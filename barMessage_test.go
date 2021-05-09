@@ -34,7 +34,7 @@ func Example1() {
 	barmessage.setColor("yellow")
 	barmessage.setMessage("Hello World!")
 
-	marshalTR(barmessage)
+	barmessage.marshalToStdOut()
 	// Output:  {"color":"yellow","message":"Hello World!","quickfixlist":null}
 }
 
@@ -52,7 +52,7 @@ func Example2() {
 	barmessage.QuickFixList[0].Pattern = "thisTest"
 	barmessage.QuickFixList[0].Text = "Hello World!"
 
-	marshalTR(barmessage)
+	barmessage.marshalToStdOut()
 	// Output:  {"color":"yellow","message":"Hello World!","quickfixlist":[{"filename":"Something_test.go","lnum":12,"col":1,"vcol":1,"pattern":"thisTest","text":"Hello World!"}]}
 }
 

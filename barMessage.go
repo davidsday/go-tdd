@@ -25,13 +25,13 @@ func (b *BarMessage) setMessage(message string) {
 	b.Message = message
 }
 
-// func (b *BarMessage) getColor() string {
-//	return b.Color
-// }
+func (b *BarMessage) getColor() string {
+	return b.Color
+}
 
-// func (b *BarMessage) getMessage() string {
-//	return b.Message
-// }
+func (b *BarMessage) getMessage() string {
+	return b.Message
+}
 
 func (b *BarMessage) marshalToStdOut() {
 	// data, err := json.MarshalIndent(pgmdata, "", "    ")
