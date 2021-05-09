@@ -72,24 +72,19 @@ func main() {
 	if rcvdMsgOnStdErr(stderr) {
 		doStdErrMsg(stderr, &Results, PackageDirFromVim)
 	} else {
-		// stdout & stderr are strings, we need []byte
-		byteString := convertStringToBytes(stdout)
-		byteLines := splitBytesIntoLines(byteString)
+		jsonLines := splitIntoLines(stdout)
 
-		// Now we should have valid JSON lines only
-		for _, jsonLine := range byteLines {
+		for _, jsonLine := range jsonLines {
 			// Ensure we're getting valid JSON
-			if !json.Valid(jsonLine) {
+			if !json.Valid(convertStringToBytes(jsonLine)) {
 				buildAndAppendAnErrorForInvalidJSON(&Results)
 				break
-			} else {
-				// Convert line of JSON text to JSON line object (Go struct in this case)
-				err := json.Unmarshal(jsonLine, &jlo)
-				chkErr(err, "Error Unmarshaling jsonLine")
 			}
 
+			jlo.unmarshal(jsonLine)
+
 			PackageDirFromJlo := jlo.getPackage()
-			Results.Counts[jlo.getAction()]++
+			Results.incCount(jlo.getAction())
 
 			var err error
 			var doBreak bool
@@ -115,14 +110,16 @@ func main() {
 		// if the run as a whole was a pass or fail.  It does
 		// not represent a test.  So it throws off our counts
 		// by one.
-		Results.Counts["pass"], Results.Counts["fail"] = adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
+		Results.Counts["pass"], Results.Counts["fail"] =
+			adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
 		// Now we check for PD.Errors and create a
 		// yellow bar and  message if appropriate
 		Results.buildBarMessage(&Barmessage)
 	} //Endif
 
 	// Turn our Results object into JSON and send it to stdout
-	marshalTR(Barmessage)
+	Barmessage.marshalToStdOut()
+	// BarMessage.writeStdErrMsgToDisk()
 
 } // endmain()
 
@@ -238,9 +235,8 @@ func buildAndAppendAnErrorForInvalidJSON(Results *GtpResults) {
 			Color:   "yellow",
 		})
 }
-func splitBytesIntoLines(b []byte) [][]byte {
-	// stdout & stderr are strings, we need []byte
-	lines := bytes.Split(b, []byte("\n"))
+func splitIntoLines(s string) []string {
+	lines := strings.Split(s, "\n")
 	//bytes.Split returns an empty line AFTER the final "\n"
 	// so we drop that one
 	if len(lines[len(lines)-1]) > 0 {

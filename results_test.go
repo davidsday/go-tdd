@@ -138,6 +138,22 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 	}
 }
 
+//TestBuildBarMessage_no_fails_but_skips ....
+func TestBuildBarMessage_all_pass(t *testing.T) {
+	barmsg := BarMessage{}
+	results := GtpResults{}
+	var Counts GtpCounts = map[string]int{"run": 57, "pause": 27, "continue": 27, "skip": 0, "pass": 57, "fail": 0, "output": 135}
+	results.Counts = Counts
+
+	results.buildBarMessage(&barmsg)
+
+	got := barmsg.getColor()
+	want := "green"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
+
 //===========================================================================
 // func skipMsg(skips int) string {
 //===========================================================================

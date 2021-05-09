@@ -25,13 +25,29 @@ func (b *BarMessage) setMessage(message string) {
 	b.Message = message
 }
 
-func (b *BarMessage) getColor() string {
-	return b.Color
+// func (b *BarMessage) getColor() string {
+//	return b.Color
+// }
+
+// func (b *BarMessage) getMessage() string {
+//	return b.Message
+// }
+
+func (b *BarMessage) marshalToStdOut() {
+	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+	data, _ := json.Marshal(*b)
+	_, err := os.Stdout.Write(data)
+	chkErr(err, "Error writing to Stdout in BarMessage.marshalToStdOut()")
+	err = os.WriteFile("./goTestParserLog.json", data, 0664)
+	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
 }
 
-func (b *BarMessage) getMessage() string {
-	return b.Message
-}
+// func (b *BarMessage) writeBarMessageToLogFile() {
+//	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+//	data, _ := json.Marshal(*b)
+//	err := os.WriteFile("./goTestParserLog.json", data, 0664)
+//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
+// }
 
 //============================================================================
 // GtpQfItem  - quickfixitem
@@ -46,45 +62,45 @@ type GtpQfItem struct {
 	Text     string `json:"text"`
 }
 
-func (i *GtpQfItem) getFilename() string {
-	return i.Filename
-}
+// func (i *GtpQfItem) getFilename() string {
+//	return i.Filename
+// }
 
-func (i *GtpQfItem) getLnum() int {
-	return i.Lnum
-}
+// func (i *GtpQfItem) getLnum() int {
+//	return i.Lnum
+// }
 
-func (i *GtpQfItem) getCol() int {
-	return i.Col
-}
+// func (i *GtpQfItem) getCol() int {
+//	return i.Col
+// }
 
-func (i *GtpQfItem) getPattern() string {
-	return i.Pattern
-}
+// func (i *GtpQfItem) getPattern() string {
+//	return i.Pattern
+// }
 
-func (i *GtpQfItem) getText() string {
-	return i.Text
-}
+// func (i *GtpQfItem) getText() string {
+//	return i.Text
+// }
 
-func (i *GtpQfItem) setFilename(name string) {
-	i.Filename = name
-}
+// func (i *GtpQfItem) setFilename(name string) {
+//	i.Filename = name
+// }
 
-func (i *GtpQfItem) setCol(col int) {
-	i.Col = col
-}
+// func (i *GtpQfItem) setCol(col int) {
+//	i.Col = col
+// }
 
-func (i *GtpQfItem) setLnum(lnum int) {
-	i.Lnum = lnum
-}
+// func (i *GtpQfItem) setLnum(lnum int) {
+//	i.Lnum = lnum
+// }
 
-func (i *GtpQfItem) setPattern(pattern string) {
-	i.Text = pattern
-}
+// func (i *GtpQfItem) setPattern(pattern string) {
+//	i.Text = pattern
+// }
 
-func (i GtpQfItem) setText(text string) {
-	i.Text = text
-}
+// func (i GtpQfItem) setText(text string) {
+//	i.Text = text
+// }
 
 //============================================================================
 // GtpQfList  - quickfixlist
@@ -111,13 +127,3 @@ func buildQuickFixItem(args []string, parts []string, jlo JLObject) GtpQfItem {
 	QfItem.Text = strings.Join(parts[2:], ":")
 	return QfItem
 }
-
-// function to perform marshaling
-func marshalTR(barmessage BarMessage) {
-	// data, err := json.MarshalIndent(pgmdata, "", "    ")
-	data, _ := json.Marshal(barmessage)
-	_, err := os.Stdout.Write(data)
-	chkErr(err, "Error writing to Stdout in marshalTR()")
-	err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalTR()")
-} // end_marshalTR

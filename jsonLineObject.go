@@ -1,5 +1,7 @@
 package main
 
+import "encoding/json"
+
 // JLObject -
 // go test -json outputs JSON objects instead of lines
 // each JSON object looks like this. Not all fields
@@ -11,6 +13,12 @@ type JLObject struct {
 	Test    string
 	Output  string
 	Elapsed float32
+}
+
+func (j *JLObject) unmarshal(jsonline string) {
+	// Convert line of JSON text to JSON line object (Go struct in this case)
+	err := json.Unmarshal([]byte(jsonline), j)
+	chkErr(err, "Error Unmarshaling jsonLine")
 }
 
 func (j *JLObject) getOutput() string {

@@ -137,24 +137,24 @@ func TestConvertStringToBytes(t *testing.T) {
 }
 
 //===========================================================================
-// func splitBytesIntoLines(b []byte) [][]byte {
+// func splitIntoLines(b []byte) [][]byte {
 //===========================================================================
 
-//TestSplitBytesIntoLines ....
-func TestSplitBytesIntoLines(t *testing.T) {
-	b := []byte("Strings\nIntegers\nFloats\nBooleans\n")
-	got := splitBytesIntoLines(b)
-	want := [][]byte{[]byte("Strings"), []byte("Integers"), []byte("Floats"), []byte("Booleans")}
+//TestSplitIntoLines ....
+func TestSplitIntoLines(t *testing.T) {
+	s := "Strings\nIntegers\nFloats\nBooleans\n"
+	got := splitIntoLines(s)
+	want := []string{"Strings", "Integers", "Floats", "Booleans"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
 }
 
-//TestSplitBytesIntoLines_with_non_empty_last_line ....
-func TestSplitBytesIntoLines_with_non_empty_last_line(t *testing.T) {
-	b := []byte("Strings\nIntegers\nFloats\nBooleans\nBytes")
-	got := splitBytesIntoLines(b)
-	want := [][]byte{[]byte("Strings"), []byte("Integers"), []byte("Floats"), []byte("Booleans"), []byte("Bytes")}
+//TestSplitIntoLines_with_non_empty_last_line ....
+func TestSplitIntoLines_with_non_empty_last_line(t *testing.T) {
+	s := "Strings\nIntegers\nFloats\nBooleans\nBytes"
+	got := splitIntoLines(s)
+	want := []string{"Strings", "Integers", "Floats", "Booleans", "Bytes"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
@@ -597,6 +597,36 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
+	}
+}
+
+////TestHandleOutputLines ....
+func TestHandleOutputLines_TestFileRef(t *testing.T) {
+	Results := GtpResults{}
+	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	jlo, prevJlo := JLObject{}, JLObject{}
+	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+	packageDir := "/home/dave/sw/go/hello"
+
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	if doBreak != false {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
+	}
+}
+
+////TestHandleOutputLines ....
+func TestHandleOutputLines_received_a_panic(t *testing.T) {
+	Results := GtpResults{}
+	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	jlo, prevJlo := JLObject{}, JLObject{}
+	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"panic: "}`)
+	packageDir := "/home/dave/sw/go/hello"
+
+	doBreak, _ := HandleOutputLines(&Results, jlo, prevJlo, packageDir)
+	if doBreak != true {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}
 }
 
