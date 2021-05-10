@@ -228,7 +228,7 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 }
 
 //TestDoStdErrMsg ....
-func TestDoStdErrMsg(t *testing.T) {
+func TestProcessStdErrMsg(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
 	Barmessage := BarMessage{}
@@ -243,7 +243,7 @@ func TestDoStdErrMsg(t *testing.T) {
 }
 
 //TestDoStdErrMsgTooLong ....
-func TestDoStdErrMsgTooLong(t *testing.T) {
+func TestProcessStdErrMsgTooLong(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
 	Barmessage := BarMessage{}
