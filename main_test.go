@@ -232,28 +232,32 @@ func TestProcessStdErrMsg(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
 	Barmessage := BarMessage{}
-	msg := "STDERR: This is my message from STDERR."
+	Barmessage.QuickFixList = GtpQfList{}
+	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.[See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
+	msg := "This is my message from STDERR."
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
-	if len(Results.Errors) == 0 {
-		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
+	if !reflect.DeepEqual(want, Barmessage) {
+		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
 }
 
 //TestDoStdErrMsgTooLong ....
 func TestProcessStdErrMsgTooLong(t *testing.T) {
 	Results := GtpResults{}
-	Results.VimColumns = 135
+	Results.VimColumns = 72
 	Barmessage := BarMessage{}
-	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+	Barmessage.QuickFixList = GtpQfList{}
+	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
+	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
-	if len(Results.Errors) == 0 {
-		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
+	if !reflect.DeepEqual(want, Barmessage) {
+		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
 	_ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
 }
