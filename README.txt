@@ -54,6 +54,22 @@ than might otherwise be achieved.  I certainly have, so much so that I built
 this tool to supplement vim-go for my own use. This project has ~90% test
 coverage as I write this.
 
+And, as an aside, I have had occasion to go back and retrofit (rewrite)
+a few personal projects in this style recently, and I have been
+surprised at the bugs that writing tests brings to the surface
+even on projects which seem to be working fine.  I suspect that these
+personal projects have only been exercised with my personal use patterns,
+and I had of course corrected the bugs that come to light in my own use
+scenario, so the apps seemed to be bug free to me.  Writing tests to
+substantially cover 85-90% of their code further flushes out bugs I had
+not found.  Humbling....  It has further confirmed to me that TDD is
+a worthwhile style of development and especially when combined with
+the use of cyclomatic complexity metrics to make sure your functions
+stay small, simple and very debuggable.  I have found that having the
+cyclomatic complexity metric more or less ever present in my development
+efforts helps me preemptively keep things simple.  It is also much
+easier to write a simple test for a simple function.
+
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
 which provides the code for determining cyclomatic complexity in Golang
 code.  It is compiled directly into this plugin, so the user need not
@@ -61,9 +77,9 @@ do a thing, except work on the complexity of his/her code.
 
 I am taking the go test -json output's word as to the number
 of tests run, passed, failed, etc, but we need to realize that the results
-are approximate. When you write a test with subtests, go test counts the
-mother/father test in addition to all the subtests.  Thing is, the parent
-test often doesn't actually do any testing itself and to my way of thinking
+are approximate. When you write a test with subtests, go test seems to count
+the mother/father test in addition to all the subtests.  Thing is, the parent
+test often doesn't actually do any testing itself and perhaps
 shouldn't be counted. Just don't be surprised at counts that differ
 slightly from your counts, if you use subtests.
 
