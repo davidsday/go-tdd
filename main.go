@@ -63,8 +63,8 @@ func main() {
 	Results.VimColumns, _ = strconv.Atoi(os.Args[2])
 
 	commandLine := "go test -v -json -cover " + PackageDirFromVim
-
 	stdout, stderr, _ := Shellout(commandLine)
+
 	if rcvdMsgOnStdErr(stderr) {
 		ProcessStdErr(stderr, &Results, PackageDirsToSearch, &Barmessage)
 	} else {
@@ -80,10 +80,11 @@ func main() {
 func ProcessStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	// jlo & JLO -> JSON Line Object
 	// go test -json spits these out, one at a time, separated by newlines
-	// These objects live in jsonLineObject.go
+	// These objects are defined in jsonLineObject.go
 	var jlo JLObject
 	// prevJlo gets populated at the bottom of the for loop in
 	// case we need to look back at the previous object (line)
+	// and we do....
 	var prevJlo JLObject
 
 	jsonLines := splitIntoLines(stdout)
@@ -94,7 +95,7 @@ func ProcessStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 			buildAndAppendAnErrorForInvalidJSON(Results)
 			break
 		}
-		// jsonLine -> jsonLineObject
+		// jsonLine -> jsonLineObject, which is a Go struct
 		// from here down to the bottom of the for loop,
 		// we are dealing with JLObject structs
 		jlo.unmarshal(jsonLine)
@@ -135,8 +136,9 @@ func ProcessStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 	// We've completed the for loop,
 	// The last emitted line (JSON Line Object) announces
 	// if the run as a whole was a pass or fail.  It does
-	// not represent a test.  So it throws off our counts
-	// by one.
+	// not represent a test, but get counted as one.
+	// So it throws off our counts by one.
+	// So we fix that here
 	Results.Counts["pass"], Results.Counts["fail"] =
 		adjustOutSuperfluousFinalResult(jlo.getAction(), Results)
 	// Now we check for Results.Errors and create a
