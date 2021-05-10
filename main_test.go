@@ -227,7 +227,11 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 	}
 }
 
-//TestDoStdErrMsg ....
+//===========================================================================
+//TestProcessStdErrMsg
+//===========================================================================
+
+//TestProcessStdErrMsg
 func TestProcessStdErrMsg(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
@@ -260,6 +264,36 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
 	_ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
+}
+
+//===========================================================================
+//TestProcessStdOutMsg
+//===========================================================================
+
+//TestProcessStdOutMsg
+func TestProcessStdOutMsg(t *testing.T) {
+	Results := GtpResults{}
+	Results.VimColumns = 135
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Barmessage := BarMessage{}
+	Barmessage.QuickFixList = GtpQfList{}
+	want := BarMessage{Color: "green", Message: "1 Run, 1 Passed, Test Coverage: 0.0%, Average Complexity: NaN, in 0.001s", QuickFixList: GtpQfList{}}
+	out := `{"Time":"2021-05-10T09:00:49.114179156-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
+{"Time":"2021-05-10T09:00:49.114321584-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
+{"Time":"2021-05-10T09:00:49.114344537-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- PASS: TestHello (0.00s)\n"}
+{"Time":"2021-05-10T09:00:49.114350428-04:00","Action":"pass","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
+{"Time":"2021-05-10T09:00:49.11435592-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"PASS\n"}
+{"Time":"2021-05-10T09:00:49.114360603-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
+{"Time":"2021-05-10T09:00:49.114412878-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
+{"Time":"2021-05-10T09:00:49.114430234-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	ProcessStdOut(out, &Results, PackageDirsToSearch, &Barmessage)
+	if !reflect.DeepEqual(Barmessage, want) {
+		t.Errorf("'%v'|'%v'", Barmessage, want)
+	}
+	// _ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
 }
 
 //===========================================================================

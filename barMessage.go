@@ -40,12 +40,12 @@ func (b *BarMessage) marshalToStdOut() {
 	chkErr(err, "Error writing to Stdout in BarMessage.marshalToStdOut()")
 }
 
-// func (b *BarMessage) writeBarMessageToLogFile() {
-//	// data, err := json.MarshalIndent(pgmdata, "", "    ")
-//	data, _ := json.Marshal(*b)
-//	err := os.WriteFile("./goTestParserLog.json", data, 0664)
-//	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
-// }
+func (b *BarMessage) marshalToDisk() {
+	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+	data, _ := json.Marshal(*b)
+	err := os.WriteFile("./goTestParserLog.json", data, 0664)
+	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
+}
 
 //============================================================================
 // GtpQfItem  - quickfixitem

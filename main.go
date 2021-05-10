@@ -73,7 +73,7 @@ func main() {
 
 	// Turn our Results object into JSON and send it to stdout
 	Barmessage.marshalToStdOut()
-	// BarMessage.writeStdErrMsgToDisk()
+	Barmessage.marshalToDisk()
 
 } // endmain()
 
