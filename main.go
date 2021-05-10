@@ -71,8 +71,9 @@ func main() {
 		ProcessStdOut(stdout, &Results, PackageDirsToSearch, &Barmessage)
 	}
 
-	// Turn our Results object into JSON and send it to stdout
+	// Turn our Barmessage object into JSON and send it to stdout
 	Barmessage.marshalToStdOut()
+	// and save it to disk
 	Barmessage.marshalToDisk()
 
 } // endmain()
