@@ -6,7 +6,7 @@ to the Vim golang development experience:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
 
-	A better 'go test' experience
+	A marginally better 'go test' experience
 
 The first is via the use of Vim's message line to provide red/green
 bar fail/pass indications. I have also added a yellow bar message which
@@ -27,9 +27,11 @@ and I want to know about them immediately.
 These messages are not in JSON format.
 
 Since I am parsing "go test -v -json -cover" output, goTestParser expects
-valid JSON. I capture stderr separately and process it as best I can,
-by showing a snippet of the message in a yellow bar.  If the STDERR message
-is longer than can be shown in a one line yellow bar, I capture the entire
+valid JSON.
+
+I capture stderr separately and process it as best I can, by showing a
+snippet of the message in a yellow bar.  If the STDERR message is
+longer than can be shown in a one line yellow bar, I capture the entire
 message in stdERR.txt in the package directory.
 
 If goTestParser encounters non JSON lines on stdout, it issues a yellow
@@ -44,26 +46,24 @@ I have also added Average Cyclomatic Complexity to the Green Bars.
 This has little to do with testing but a lot to do with design and
 it is a metric I want to be aware of. I hear that several well known IDEs
 start warning about Cyclomatic Complexity at 10.  I like to keep mine
-below 2.5. Uncle Bob Martin says his teams achieve about 1.3-1.7 routinely.
-I have heard him say he uses Java, Ruby, Python and Smalltalk. I have only
-once heard him mention Golang, and it was just a mention, commenting on
-Golang's speed of compilation. This project is at 1.77 as I write this.
+below 2.5. This project is at 1.77 as I write this.
 
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
-than might otherwise be achieved.  I have also found that to be the case,
-so much so that I built this tool to supplement vim-go for my own use.
+than might otherwise be achieved.  I certainly have, so much so that I built
+this tool to supplement vim-go for my own use. This project has ~90% test
+coverage as I write this.
 
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
 which provides the code for determining cyclomatic complexity in Golang
 code.  It is compiled directly into this plugin, so the user need not
 do a thing, except work on the complexity of his/her code.
 
-I am just taking the go test -json output's word as to the number
+I am taking the go test -json output's word as to the number
 of tests run, passed, failed, etc, but we need to realize that the results
 are approximate. When you write a test with subtests, go test counts the
 mother/father test in addition to all the subtests.  Thing is, the parent
-test doesn't actually do any testing itself and to my way of thinking
+test often doesn't actually do any testing itself and to my way of thinking
 shouldn't be counted. Just don't be surprised at counts that differ
 slightly from your counts, if you use subtests.
 
@@ -84,16 +84,31 @@ list of test failures and/or skipped tests which Vim loads for your use.
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so goTestParser loads
 the quickfix list for you, but it does not force you to go to the failed
-test every time. I find that often in my development work flow,
-I don't need to go to the test at all, but want to peruse  and
+test. I find that often in my development work flow, I sometimes don't need
+to go to the test at all, but instead want to peruse  and
 fix the function that caused the failure, and I may already be there.
 
 The RedBar/GreenBar/YellowBar message line lingers until any key is
 pressed (I typically just hit the space bar).
 
+<Space> (or any other key, for that matter) dismisses the Green/Red/Yellow
+bars.
+
 In my personal set up, I have told vim-go to use the quickfix window
-exclusively. I have <Leader>q toggle the quickfix window and <C-j> and <C-k>
-navigate the quickfix list up and down. <LocalLeader>a takes me to the
-Alternate file.
+exclusively.
+
+	let g:go_list_type = 'quickfix'
+
+	Plug 'Valloric/ListToggle'
+		If you use this, <Leader>q toggles the quickfix window open and closed
+
+	nnoremap <C-j> :cnext<CR>
+	nnoremap <C-k> :cprev<CR>
+		I use <C-j> (down), and <C-k> (up) to navigate the quickfix window
+
+	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
+		go-vim provides for toggling between various alternate files, I only use
+		this one
+
 
 Life is good.....
