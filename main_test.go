@@ -233,8 +233,10 @@ func TestDoStdErrMsg(t *testing.T) {
 	Results.VimColumns = 135
 	Barmessage := BarMessage{}
 	msg := "STDERR: This is my message from STDERR."
-	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &Results, PackageDir, &Barmessage)
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
 	if len(Results.Errors) == 0 {
 		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
@@ -246,12 +248,14 @@ func TestDoStdErrMsgTooLong(t *testing.T) {
 	Results.VimColumns = 135
 	Barmessage := BarMessage{}
 	msg := "STDERR: This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-	PackageDir := "/home/dave/sw/go/goTestParser"
-	doStdErrMsg(msg, &Results, PackageDir, &Barmessage)
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
 	if len(Results.Errors) == 0 {
 		t.Errorf("Length of pgmdata.Perrors = %s\n", strconv.Itoa(len(Results.Errors)))
 	}
-	_ = os.Remove(PackageDir + "/StdErr.txt")
+	_ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
 }
 
 //===========================================================================

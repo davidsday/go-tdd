@@ -42,14 +42,6 @@ func main() {
 	// or it will be null instead of [] when marshaled to JSON.
 	Barmessage.QuickFixList = GtpQfList{}
 
-	// jlo & JLO -> JSON Line Object
-	// go test -json spits these out, one at a time, separated by newlines
-	// These objects live in jsonLineObject.go
-	var jlo JLObject
-	// prevJlo gets populated at the bottom of the for loop in
-	// case we need to look back at the previous object (line)
-	var prevJlo JLObject
-
 	// PackageDirFromVim is where the current package lives
 	// We get it from Vim as os.Args[1]
 	var PackageDirFromVim string
@@ -74,71 +66,83 @@ func main() {
 
 	stdout, stderr, _ := Shellout(commandLine)
 	if rcvdMsgOnStdErr(stderr) {
-		doStdErrMsg(stderr, &Results, PackageDirFromVim, &Barmessage)
+		ProcessStdErr(stderr, &Results, PackageDirsToSearch, &Barmessage)
 	} else {
-		jsonLines := splitIntoLines(stdout)
-
-		for _, jsonLine := range jsonLines {
-			// Ensure we're getting valid JSON
-			if !json.Valid(convertStringToBytes(jsonLine)) {
-				buildAndAppendAnErrorForInvalidJSON(&Results)
-				break
-			}
-			// jsonLine -> jsonLineObject
-			// from here down to the bottom of the for loop,
-			// we are dealing with JLObject structs
-			jlo.unmarshal(jsonLine)
-
-			// Frankly, I'm not sure this is needed or correct
-			// Vim gave us the directory of the file being edited
-			// in PackageDirFromVim.  But go test -json output lines
-			// each have a Package field, and here I switch over
-			// to using go test's take on things.  I don't think
-			// I have ever seen it make any differene either way
-			// as they alway seem to agree.  So what I am saying
-			// is that I think we could change all the PackageDirFromJlo's
-			// and switch them to PackageDirFromVim and we likely
-			// would not notice any difference
-
-			PackageDirFromJlo := jlo.getPackage()
-			Results.incCount(jlo.getAction())
-
-			var err error
-			var doBreak bool
-
-			if jlo.getAction() == "output" {
-				doBreak, err = HandleOutputLines(&Results, jlo, prevJlo, PackageDirFromJlo, &Barmessage)
-				chkErr(err, "Error in HandleOutputLines()")
-				if doBreak {
-					break
-				}
-			}
-			// Bottom of for loop - current JSON Line Object now
-			// becomes the Previous JSON Line Object,
-			// for look back purposes ...
-			prevJlo = jlo
-		} //endfor
-
-		// Make note of the elapsed time, as reported by go test
-		Results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
-
-		// We've completed the for loop,
-		// The last emitted line (JSON Line Object) announces
-		// if the run as a whole was a pass or fail.  It does
-		// not represent a test.  So it throws off our counts
-		// by one.
-		Results.Counts["pass"], Results.Counts["fail"] =
-			adjustOutSuperfluousFinalResult(jlo.getAction(), &Results)
-		// Now we check for Results.Errors and create a
-		// yellow bar and  message if appropriate
-		Results.buildBarMessage(&Barmessage, PackageDirsToSearch)
-	} //Endif
+		ProcessStdOut(stdout, &Results, PackageDirsToSearch, &Barmessage)
+	}
 
 	// Turn our Results object into JSON and send it to stdout
 	Barmessage.marshalToStdOut()
 	// BarMessage.writeStdErrMsgToDisk()
 
 } // endmain()
+
+func ProcessStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+	// jlo & JLO -> JSON Line Object
+	// go test -json spits these out, one at a time, separated by newlines
+	// These objects live in jsonLineObject.go
+	var jlo JLObject
+	// prevJlo gets populated at the bottom of the for loop in
+	// case we need to look back at the previous object (line)
+	var prevJlo JLObject
+
+	jsonLines := splitIntoLines(stdout)
+
+	for _, jsonLine := range jsonLines {
+		// Ensure we're getting valid JSON
+		if !json.Valid(convertStringToBytes(jsonLine)) {
+			buildAndAppendAnErrorForInvalidJSON(Results)
+			break
+		}
+		// jsonLine -> jsonLineObject
+		// from here down to the bottom of the for loop,
+		// we are dealing with JLObject structs
+		jlo.unmarshal(jsonLine)
+
+		// Frankly, I'm not sure this is needed or correct
+		// Vim gave us the directory of the file being edited
+		// in PackageDirFromVim.  But go test -json output lines
+		// each have a Package field, and here I switch over
+		// to using go test's take on things.  I don't think
+		// I have ever seen it make any differene either way
+		// as they alway seem to agree.  So what I am saying
+		// is that I think we could change all the PackageDirFromJlo's
+		// and switch them to PackageDirFromVim and we likely
+		// would not notice any difference
+
+		PackageDirFromJlo := jlo.getPackage()
+		Results.incCount(jlo.getAction())
+
+		var err error
+		var doBreak bool
+
+		if jlo.getAction() == "output" {
+			doBreak, err = HandleOutputLines(Results, jlo, prevJlo, PackageDirFromJlo, Barmessage)
+			chkErr(err, "Error in HandleOutputLines()")
+			if doBreak {
+				break
+			}
+		}
+		// Bottom of for loop - current JSON Line Object now
+		// becomes the Previous JSON Line Object,
+		// for look back purposes ...
+		prevJlo = jlo
+	} //endfor
+
+	// Make note of the elapsed time, as reported by go test
+	Results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
+
+	// We've completed the for loop,
+	// The last emitted line (JSON Line Object) announces
+	// if the run as a whole was a pass or fail.  It does
+	// not represent a test.  So it throws off our counts
+	// by one.
+	Results.Counts["pass"], Results.Counts["fail"] =
+		adjustOutSuperfluousFinalResult(jlo.getAction(), Results)
+	// Now we check for Results.Errors and create a
+	// yellow bar and  message if appropriate
+	Results.buildBarMessage(Barmessage, PackageDirsToSearch)
+}
 
 // Shellout - run a command, capturing stdout, stderr, and errors
 func Shellout(command string) (string, string, error) {
@@ -199,14 +203,14 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func doStdErrMsg(stderr string, Results *GtpResults, PackageDir string, Barmessage *BarMessage) {
+func ProcessStdErr(stderr string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
 	Barmessage.Color = "yellow"
 	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, Results.VimColumns) {
-		writeStdErrMsgToDisk(stderr, PackageDir)
+		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
 		Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, Results.VimColumns)
 	} else {
 		Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
