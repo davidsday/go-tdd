@@ -24,6 +24,9 @@ var (
 
 func main() {
 
+	// user, _ := user.Current()
+	// User := user.Username
+	// HomeDir := user.HomeDir
 	// Results has all the data from go test
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
