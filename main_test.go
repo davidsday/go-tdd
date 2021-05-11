@@ -271,7 +271,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 //===========================================================================
 
 //TestProcessStdOutMsg
-func TestProcessStdOutMsg(t *testing.T) {
+func TestProcessStdOutMsg1(t *testing.T) {
 	Results := GtpResults{}
 	Results.VimColumns = 135
 	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
@@ -294,6 +294,34 @@ func TestProcessStdOutMsg(t *testing.T) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
 	}
 	// _ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
+}
+
+//TestProcessStdOutMsg2
+func TestProcessStdOutMsg2(t *testing.T) {
+	want := []byte(`{"color":"green","message":"1 Run, 1 Passed, Test Coverage: 50.0%, Average Complexity: NaN, in 0.001s","quickfixlist":[]}`)
+
+	input := `{"Time":"2021-05-10T20:55:51.269642384-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"Example"}
+{"Time":"2021-05-10T20:55:51.269779248-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"Example","Output":"=== RUN   Example\n"}
+{"Time":"2021-05-10T20:55:51.269793185-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"Example","Output":"--- PASS: Example (0.00s)\n"}
+{"Time":"2021-05-10T20:55:51.269798857-04:00","Action":"pass","Package":"github.com/davidsday/hello","Test":"Example","Elapsed":0}
+{"Time":"2021-05-10T20:55:51.269808731-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"PASS\n"}
+{"Time":"2021-05-10T20:55:51.269815385-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 50.0% of statements\n"}
+{"Time":"2021-05-10T20:55:51.269858272-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
+{"Time":"2021-05-10T20:55:51.269867388-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
+
+	Results := GtpResults{}
+	Results.VimColumns = 135
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Barmessage := BarMessage{}
+	Barmessage.QuickFixList = GtpQfList{}
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+
+	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
+		t.Errorf("'%v'|'%v'", Barmessage, want)
+	}
 }
 
 //===========================================================================
