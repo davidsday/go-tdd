@@ -324,6 +324,36 @@ func TestProcessStdOutMsg2(t *testing.T) {
 	}
 }
 
+//TestProcessStdOutMsg3
+func TestProcessStdOutMsg3(t *testing.T) {
+	want := []byte(`{"color":"red","message":"1 Run, 0 Passed, 1 Failed, 1st in main_test.go, on line 12, in 0.001s","quickfixlist":[{"filename":"github.com/davidsday/hello/main_test.go","lnum":12,"col":1,"vcol":1,"pattern":"TestHello","text":" Hello() = \"Hello, World!\", want \"!Hello, World!\""}]}`)
+
+	input := `{"Time":"2021-05-10T21:59:06.756183031-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
+{"Time":"2021-05-10T21:59:06.756304132-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
+{"Time":"2021-05-10T21:59:06.756315901-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: Hello() = \"Hello, World!\", want \"!Hello, World!\"\n"}
+{"Time":"2021-05-10T21:59:06.756325542-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}
+{"Time":"2021-05-10T21:59:06.756329908-04:00","Action":"fail","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
+{"Time":"2021-05-10T21:59:06.756336137-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\n"}
+{"Time":"2021-05-10T21:59:06.756340298-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
+{"Time":"2021-05-10T21:59:06.756479034-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"exit status 1\n"}
+{"Time":"2021-05-10T21:59:06.756496915-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\tgithub.com/davidsday/hello\t0.001s\n"}
+{"Time":"2021-05-10T21:59:06.756506088-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.001}`
+
+	Results := GtpResults{}
+	Results.VimColumns = 135
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Barmessage := BarMessage{}
+	Barmessage.QuickFixList = GtpQfList{}
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+
+	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
+		t.Errorf("'%v'|'%v'", Barmessage.marshalToByteString(), want)
+	}
+}
+
 //===========================================================================
 // metricsMsg()
 //===========================================================================
