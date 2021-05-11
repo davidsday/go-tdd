@@ -66,10 +66,10 @@ substantially cover 85-90% of their code further flushes out bugs I had
 not found.  Humbling....  It has further confirmed to me that TDD is
 a worthwhile style of development and especially when combined with
 the use of cyclomatic complexity metrics to make sure your functions
-stay small, simple and very debuggable.  I have found that having the
-cyclomatic complexity metric more or less ever present in my development
-efforts helps me preemptively keep things simple.  It is also much
-easier to write a simple test for a simple function.
+stay small, simple and very debuggable and readable.  I have found that
+having the cyclomatic complexity metric more or less ever present in my
+development efforts helps me preemptively keep things simple.  It is
+also much easier to write a simple test for a simple function.
 
 By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
 which provides the code for determining cyclomatic complexity in Golang
