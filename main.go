@@ -186,8 +186,12 @@ func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
 		Results.Summary.setCoverage(jlo.getOutput())
 	}
 
+	// I a jlo.Output field refers to a _test.go file, there has been a
+	// test failure and it is telling us in which file and on which line
+	// the failure was triggered
 	if hasTestFileReferences(jlo.getOutput()) {
 		list := splitOnSemiColons(jlo.getOutput())
+		// This may be obsolete, we will watch and see...
 		list = removeUnneededFAILPrefix(list)
 		if thisIsTheFirstFailure(Results) {
 			takeNoteOfFirstFailure(Results, list, prevJlo.getTest())
