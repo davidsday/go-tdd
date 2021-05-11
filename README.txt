@@ -45,8 +45,9 @@ as provided by go test. Test coverage is reported on Green Bars.
 I have also added Average Cyclomatic Complexity to the Green Bars.
 This has little to do with testing but a lot to do with design and
 it is a metric I want to be aware of. I hear that several well known IDEs
-start warning about Cyclomatic Complexity at 10.  I like to keep mine
-below 2.5. This project is at 1.77 as I write this.
+start warning about Cyclomatic Complexity at 10.  So are we to conclude
+that complexities below 10 are OK?  I like to keep mine below 2.5.
+This project is at 1.77 as I write this.
 
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
