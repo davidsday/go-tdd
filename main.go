@@ -167,7 +167,7 @@ func Shellout(command string) (string, string, error) {
 // to how we would search and grep go test -v output.
 // To do a good job reporting to the user, we still have
 // to grep through normal go test -v type outputs.
-// go test -json emits these in jlo.Output fields we handle
+// go test -json emits these in jlo.Output fields. We handle
 // this task here
 func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
 	PackageDirFromVim string, Barmessage *BarMessage) (bool, error) {
