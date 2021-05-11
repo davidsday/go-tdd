@@ -47,6 +47,13 @@ func (b *BarMessage) marshalToDisk() {
 	chkErr(err, "Error writing to ./goTestParserLog.json, in marshalToStdOut()")
 }
 
+func (b *BarMessage) marshalToByteString() []byte {
+	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+	data, err := json.Marshal(*b)
+	chkErr(err, "Error in marshalToByteString()")
+	return data
+}
+
 //============================================================================
 // GtpQfItem  - quickfixitem
 //============================================================================
@@ -117,7 +124,8 @@ func (q *GtpQfList) Count() int {
 // Now we can build/fill the QuickFix Item
 func buildQuickFixItem(args []string, parts []string, jlo JLObject) GtpQfItem {
 	QfItem := GtpQfItem{}
-	QfItem.Filename = args[1] + "/" + parts[0]
+	// QfItem.Filename = args[1] + "/" + parts[0]
+	QfItem.Filename = jlo.getPackage() + "/" + parts[0]
 	QfItem.Lnum, _ = strconv.Atoi(parts[1])
 	QfItem.Col = 1
 	QfItem.Vcol = 1

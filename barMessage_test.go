@@ -79,6 +79,7 @@ func TestBuildQuickFixItem_filename(t *testing.T) {
 	args := []string{"programName", "packageDir", "10"}
 	jlo := JLObject{}
 	jlo.Test = "thisTest"
+	jlo.Package = "packageDir"
 
 	QfItem = buildQuickFixItem(args, parts, jlo)
 	if QfItem.Filename != "packageDir/firstPart" {
