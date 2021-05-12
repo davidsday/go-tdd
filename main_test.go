@@ -354,6 +354,31 @@ func TestProcessStdOutMsg3(t *testing.T) {
 	}
 }
 
+//TestProcessStdOutMsg4
+func TestProcessStdOutMsg4(t *testing.T) {
+
+	want := []byte(`{"color":"yellow","message":"In package: values, [Test Files, but No Tests to Run]","quickfixlist":[]}`)
+
+	input := `{"Time":"2021-05-11T22:20:14.727345713-04:00","Action":"output","Package":"values","Output":"testing: warning: no tests to run\n"}
+{"Time":"2021-05-11T22:20:14.727527656-04:00","Action":"output","Package":"values","Output":"PASS\n"}
+{"Time":"2021-05-11T22:20:14.727601779-04:00","Action":"output","Package":"values","Output":"ok  \tvalues\t0.001s\n"}
+{"Time":"2021-05-11T22:20:14.727621504-04:00","Action":"pass","Package":"values","Elapsed":0.001}`
+
+	Results := GtpResults{}
+	Results.VimColumns = 135
+	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Barmessage := BarMessage{}
+	Barmessage.QuickFixList = GtpQfList{}
+	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	PackageDirsToSearch := []string{}
+	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+
+	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
+		t.Errorf("'%v'|'%v'", Barmessage.marshalToByteString(), want)
+	}
+}
+
 //===========================================================================
 // metricsMsg()
 //===========================================================================
@@ -740,14 +765,3 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}
 }
-
-// {"Time":"2021-05-08T08:06:40.543522241-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
-// {"Time":"2021-05-08T08:06:40.543653446-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
-// {"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}
-// {"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}
-// {"Time":"2021-05-08T08:06:40.543673412-04:00","Action":"fail","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
-// {"Time":"2021-05-08T08:06:40.543678142-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\n"}
-// {"Time":"2021-05-08T08:06:40.543681244-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
-// {"Time":"2021-05-08T08:06:41.043682815-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"exit status 1\n"}
-// {"Time":"2021-05-08T08:06:41.043783023-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\tgithub.com/davidsday/hello\t0.501s\n"}
-// {"Time":"2021-05-08T08:06:41.043819391-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.501}
