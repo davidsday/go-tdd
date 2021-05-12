@@ -243,7 +243,7 @@ func TestProcessStdErrMsg(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
-	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
+	processStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(want, Barmessage) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
@@ -260,7 +260,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
-	ProcessStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
+	processStdErr(msg, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(want, Barmessage) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
@@ -290,7 +290,7 @@ func TestProcessStdOutMsg1(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
-	ProcessStdOut(out, &Results, PackageDirsToSearch, &Barmessage)
+	processStdOut(out, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage, want) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
 	}
@@ -319,7 +319,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 
-	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	processStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
 	}
@@ -349,7 +349,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 
-	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	processStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
 		t.Errorf("'%v'|'%v'", Barmessage.marshalToByteString(), want)
 	}
@@ -374,7 +374,7 @@ func TestProcessStdOutMsg4(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 
-	ProcessStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
+	processStdOut(input, &Results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
 		t.Errorf("'%v'|'%v'", Barmessage.marshalToByteString(), want)
 	}

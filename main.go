@@ -27,60 +27,60 @@ func main() {
 	// user, _ := user.Current()
 	// User := user.Username
 	// HomeDir := user.HomeDir
-	// Results has all the data from go test
+	// results has all the data from go test
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
-	var Results GtpResults
+	var results GtpResults
 	// Initialize map of Counts in Results
-	Results.init()
+	results.init()
 
-	// Barmessage includes QfList. They are populated by the methods
+	// barMessage includes QfList. They are populated by the methods
 	// in Results.  They don't "do" anything except hold
 	// the data Vim will need, and they also marshal themselves
 	// into JSON and send it to Vim via stdout for display
 	// BarMessage lives in barMessage.go
-	var Barmessage BarMessage
+	var barMessage BarMessage
 	// initialize Barmessage's QuickFixList to an empty QuickFixList
 	// or it will be null instead of [] when marshaled to JSON.
-	Barmessage.QuickFixList = GtpQfList{}
+	barMessage.QuickFixList = GtpQfList{}
 
-	// PackageDirFromVim is where the current package lives
+	// packageDirFromVim is where the current package lives
 	// We get it from Vim as os.Args[1]
-	var PackageDirFromVim string
+	var packageDirFromVim string
 	// Gocyclo likes to receive lists of paths to search
 	// We don't have any, but to avoid mucking with gocyclo internals
 	// we create an empty list and append PackageDirFromVim to it so
 	// gocyclo can be happy
-	var PackageDirsToSearch []string
+	var packageDirsToSearch []string
 
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
-	PackageDirFromVim = os.Args[1]
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	packageDirFromVim = os.Args[1]
+	packageDirsToSearch = append(packageDirsToSearch, packageDirFromVim)
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
-	Results.VimColumns, _ = strconv.Atoi(os.Args[2])
+	results.VimColumns, _ = strconv.Atoi(os.Args[2])
 
-	commandLine := "go test -v -json -cover " + PackageDirFromVim
+	commandLine := "go test -v -json -cover " + packageDirFromVim
 	stdout, stderr, _ := Shellout(commandLine)
 
 	if rcvdMsgOnStdErr(stderr) {
-		ProcessStdErr(stderr, &Results, PackageDirsToSearch, &Barmessage)
+		processStdErr(stderr, &results, packageDirsToSearch, &barMessage)
 	} else {
-		ProcessStdOut(stdout, &Results, PackageDirsToSearch, &Barmessage)
+		processStdOut(stdout, &results, packageDirsToSearch, &barMessage)
 	}
 
 	// Turn our Barmessage object into JSON and send it to stdout
-	Barmessage.marshalToStdOut()
+	barMessage.marshalToStdOut()
 	// and save it to disk
-	Barmessage.marshalToDisk()
+	barMessage.marshalToDisk()
 
 } // endmain()
 
-func ProcessStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	// jlo & JLO -> JSON Line Object
 	// go test -json spits these out, one at a time, separated by newlines
 	// These objects are defined in jsonLineObject.go
@@ -212,7 +212,7 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func ProcessStdErr(stderr string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+func processStdErr(stderr string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
