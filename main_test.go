@@ -167,7 +167,6 @@ func TestSplitIntoLines_with_non_empty_last_line(t *testing.T) {
 //TestThisIsTheFirstFailure_true ....
 func TestThisIsTheFirstFailure_true(t *testing.T) {
 	results := newResults()
-	results.Counts["fail"] = 0
 	got := thisIsTheFirstFailure(&results)
 	want := true
 	if got != want {
