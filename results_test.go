@@ -87,12 +87,12 @@ func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_errors(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
 	results := newResults()
-	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
+	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + packageDir + ", [No Test Files]", Color: "yellow"})
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
@@ -105,9 +105,9 @@ func TestBuildBarMessage_has_errors(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_fails(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
 	results := newResults()
 
@@ -125,9 +125,9 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
 	results := newResults()
 
@@ -144,9 +144,9 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_all_pass(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
 	results := newResults()
 
@@ -296,9 +296,9 @@ func TestSetCoverage(t *testing.T) {
 
 //TestGtpError.GetColor ....
 func TestGtpError_GetColor(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	results := newResults()
-	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
+	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + packageDir + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getColor()
 	want := "yellow"
 	if got != want {
@@ -312,9 +312,9 @@ func TestGtpError_GetColor(t *testing.T) {
 
 //TestGtpError.GetColor ....
 func TestGtpError_GetMessage(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	results := newResults()
-	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
+	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + packageDir + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getMessage()
 	want := "In package: /home/dave/sw/go/goTestParser, [No Test Files]"
 	if got != want {

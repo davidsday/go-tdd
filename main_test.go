@@ -237,9 +237,9 @@ func TestProcessStdErrMsg(t *testing.T) {
 	Barmessage.QuickFixList = GtpQfList{}
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.[See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdErr(msg, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(want, Barmessage) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
@@ -254,9 +254,9 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 	Barmessage.QuickFixList = GtpQfList{}
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdErr(msg, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(want, Barmessage) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
@@ -283,9 +283,9 @@ func TestProcessStdOutMsg1(t *testing.T) {
 {"Time":"2021-05-10T09:00:49.114360603-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
 {"Time":"2021-05-10T09:00:49.114412878-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
 {"Time":"2021-05-10T09:00:49.114430234-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdOut(out, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage, want) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
@@ -310,9 +310,9 @@ func TestProcessStdOutMsg2(t *testing.T) {
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
 	processStdOut(input, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
@@ -339,9 +339,9 @@ func TestProcessStdOutMsg3(t *testing.T) {
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
 	processStdOut(input, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
@@ -363,9 +363,9 @@ func TestProcessStdOutMsg4(t *testing.T) {
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
+	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
+	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
 	processStdOut(input, &results, PackageDirsToSearch, &Barmessage)
 	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
@@ -581,10 +581,10 @@ func TestHasTestCoverage_no(t *testing.T) {
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 	results := newResults()
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "[no test files]"
-	got := checkErrorCandidates(&results, output, PackageDirFromVim)
+	got := checkErrorCandidates(&results, output, packageDir)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -593,11 +593,11 @@ func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_yes(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	results := newResults()
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "panic:"
-	got := checkErrorCandidates(&results, output, PackageDirFromVim)
+	got := checkErrorCandidates(&results, output, packageDir)
 	want := true
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -606,10 +606,10 @@ func TestCheckErrorCandidates_yes(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no(t *testing.T) {
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/goTestParser"
 	results := newResults()
 	output := "Part0:Part1:Part2:Part3"
-	got := checkErrorCandidates(&results, output, PackageDirFromVim)
+	got := checkErrorCandidates(&results, output, packageDir)
 	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
@@ -683,7 +683,7 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 
 //===========================================================================
 // func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
-//	PackageDirFromVim string) (bool, error) {
+//	packageDir string) (bool, error) {
 //===========================================================================
 
 //TestHandleOutputLines ....
@@ -697,8 +697,7 @@ func TestHandleOutputLines(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonLine")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	packageDir := PackageDirFromVim
+	packageDir := "/home/dave/sw/go/goTestParser"
 
 	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != false {
@@ -717,8 +716,7 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonline_prevJlo")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine_jlo")
-	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	packageDir := PackageDirFromVim
+	packageDir := "/home/dave/sw/go/goTestParser"
 
 	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
 	if doBreak != false {

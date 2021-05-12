@@ -100,17 +100,6 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		// we are dealing with JLObject structs
 		jlo.unmarshal(jsonLine)
 
-		// Frankly, I'm not sure this is needed or correct
-		// Vim gave us the directory of the file being edited
-		// in PackageDirFromVim.  But go test -json output lines
-		// each have a Package field, and here I switch over
-		// to using go test's take on things.  I don't think
-		// I have ever seen it make any differene either way
-		// as they alway seem to agree.  So what I am saying
-		// is that I think we could change all the PackageDirFromJlo's
-		// and switch them to PackageDirFromVim and we likely
-		// would not notice any difference
-
 		PackageDirFromJlo := jlo.getPackage()
 		results.incCount(jlo.getAction())
 
@@ -338,12 +327,12 @@ func adjustOutSuperfluousFinalResult(action string, results *GtpResults) (int, i
 	return passCount, failCount
 }
 
-func checkErrorCandidates(results *GtpResults, output string, PackageDirFromVim string) bool {
+func checkErrorCandidates(results *GtpResults, output string, PackageDir string) bool {
 	var ErrorCandidates = GtpErrors{
-		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"},
-		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
-		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDirFromVim + ", [Build Failed]", Color: "yellow"},
-		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDirFromVim + ", [Received a Panic]", Color: "yellow"},
+		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDir + ", [No Test Files]", Color: "yellow"},
+		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDir + ", [Test Files, but No Tests to Run]", Color: "yellow"},
+		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDir + ", [Build Failed]", Color: "yellow"},
+		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDir + ", [Received a Panic]", Color: "yellow"},
 	}
 	for _, rx := range ErrorCandidates {
 		if CheckRegx(rx.Regex, output) {
