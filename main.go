@@ -31,9 +31,8 @@ func main() {
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
 	var Results GtpResults
-
 	// Initialize map of Counts in Results
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Results.init()
 
 	// Barmessage includes QfList. They are populated by the methods
 	// in Results.  They don't "do" anything except hold

@@ -8,8 +8,7 @@ import "testing"
 
 func TestGetCounts(t *testing.T) {
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	results.Counts = Counts
+	results.init()
 	results.Counts["run"] = 15
 	got := results.getCount("run")
 	want := 15
@@ -24,8 +23,7 @@ func TestGetCounts(t *testing.T) {
 
 func TestIncCount(t *testing.T) {
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	results.Counts = Counts
+	results.init()
 	results.Counts["run"] = 15
 	results.incCount("run")
 	got := results.getCount("run")
@@ -42,8 +40,7 @@ func TestIncCount(t *testing.T) {
 
 func TestDecCount(t *testing.T) {
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	results.Counts = Counts
+	results.init()
 	results.Counts["run"] = 15
 	results.decCount("run")
 	got := results.getCount("run")
@@ -113,8 +110,7 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	results.Counts = Counts
+	results.init()
 	results.incCount("fail")
 	results.incCount("skip")
 
@@ -134,8 +130,7 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	results.Counts = Counts
+	results.init()
 	results.incCount("skip")
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
@@ -154,9 +149,7 @@ func TestBuildBarMessage_all_pass(t *testing.T) {
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
 	results := GtpResults{}
-	var Counts GtpCounts = map[string]int{"run": 57, "pause": 27, "continue": 27, "skip": 0, "pass": 57, "fail": 0, "output": 135}
-	results.Counts = Counts
-
+	results.init()
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := barmsg.getColor()

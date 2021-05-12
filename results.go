@@ -13,6 +13,8 @@ import (
 // Here are data types, structs and maps and methods
 //============================================================================
 
+type GtpCounts map[string]int
+
 type GtpResults struct {
 	Summary    GtpSummary
 	Counts     GtpCounts
@@ -21,7 +23,10 @@ type GtpResults struct {
 	VimColumns int
 }
 
-type GtpCounts map[string]int
+func (r *GtpResults) init() {
+	// Initialize map of Counts in Results
+	r.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+}
 
 type GtpFirstFail struct {
 	Fname  string `json:"fname"`

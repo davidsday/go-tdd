@@ -167,7 +167,7 @@ func TestSplitIntoLines_with_non_empty_last_line(t *testing.T) {
 //TestThisIsTheFirstFailure_true ....
 func TestThisIsTheFirstFailure_true(t *testing.T) {
 	var Results GtpResults
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Results.init()
 	Results.Counts["fail"] = 0
 	got := thisIsTheFirstFailure(&Results)
 	want := true
@@ -179,7 +179,8 @@ func TestThisIsTheFirstFailure_true(t *testing.T) {
 //TestThisIsTheFirstFailure_false ....
 func TestThisIsTheFirstFailure_false(t *testing.T) {
 	var Results GtpResults
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
+	Results.init()
+
 	Results.Counts["fail"] = 1
 	got := thisIsTheFirstFailure(&Results)
 	want := false
@@ -273,8 +274,8 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 //TestProcessStdOutMsg
 func TestProcessStdOutMsg1(t *testing.T) {
 	Results := GtpResults{}
+	Results.init()
 	Results.VimColumns = 135
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
 	want := BarMessage{Color: "green", Message: "1 Run, 1 Passed, Test Coverage: 0.0%, Average Complexity: NaN, in 0.001s", QuickFixList: GtpQfList{}}
@@ -310,8 +311,8 @@ func TestProcessStdOutMsg2(t *testing.T) {
 {"Time":"2021-05-10T20:55:51.269867388-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
 
 	Results := GtpResults{}
+	Results.init()
 	Results.VimColumns = 135
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
@@ -340,8 +341,8 @@ func TestProcessStdOutMsg3(t *testing.T) {
 {"Time":"2021-05-10T21:59:06.756506088-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.001}`
 
 	Results := GtpResults{}
+	Results.init()
 	Results.VimColumns = 135
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
@@ -365,8 +366,8 @@ func TestProcessStdOutMsg4(t *testing.T) {
 {"Time":"2021-05-11T22:20:14.727621504-04:00","Action":"pass","Package":"values","Elapsed":0.001}`
 
 	Results := GtpResults{}
+	Results.init()
 	Results.VimColumns = 135
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser/testdata/hello"
@@ -677,8 +678,9 @@ func TestAdjustOutSuperfluousFinalFail_1(t *testing.T) {
 //TestAdjustOutSuperfuousFinalResult ....
 func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 	Results := GtpResults{}
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 0}
+	Results.init()
 	action := "pass"
+	Results.Counts["pass"] = 21
 
 	passes, fails := adjustOutSuperfluousFinalResult(action, &Results)
 
@@ -695,7 +697,7 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 //TestHandleOutputLines ....
 func TestHandleOutputLines(t *testing.T) {
 	Results := GtpResults{}
-	Results.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 0}
+	Results.init()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "PASS\n"}`)
@@ -716,7 +718,7 @@ func TestHandleOutputLines(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_FAIL(t *testing.T) {
 	Results := GtpResults{}
-	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 4, "output": 31}
+	Results.init()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
@@ -737,7 +739,7 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_TestFileRef(t *testing.T) {
 	Results := GtpResults{}
-	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	Results.init()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
@@ -753,7 +755,7 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	Results := GtpResults{}
-	Results.Counts = map[string]int{"run": 25, "pause": 0, "continue": 0, "skip": 0, "pass": 21, "fail": 0, "output": 31}
+	Results.init()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
