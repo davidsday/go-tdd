@@ -80,7 +80,7 @@ func main() {
 
 } // endmain()
 
-func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	// jlo & JLO -> JSON Line Object
 	// go test -json spits these out, one at a time, separated by newlines
 	// These objects are defined in jsonLineObject.go
@@ -95,7 +95,7 @@ func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 	for _, jsonLine := range jsonLines {
 		// Ensure we're getting valid JSON
 		if !json.Valid(convertStringToBytes(jsonLine)) {
-			buildAndAppendAnErrorForInvalidJSON(Results)
+			buildAndAppendAnErrorForInvalidJSON(results)
 			break
 		}
 		// jsonLine -> jsonLineObject, which is a Go struct
@@ -115,13 +115,13 @@ func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 		// would not notice any difference
 
 		PackageDirFromJlo := jlo.getPackage()
-		Results.incCount(jlo.getAction())
+		results.incCount(jlo.getAction())
 
 		var err error
 		var doBreak bool
 
 		if jlo.getAction() == "output" {
-			doBreak, err = HandleOutputLines(Results, jlo, prevJlo, PackageDirFromJlo, Barmessage)
+			doBreak, err = HandleOutputLines(results, jlo, prevJlo, PackageDirFromJlo, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
@@ -134,7 +134,7 @@ func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 	} //endfor
 
 	// Make note of the elapsed time, as reported by go test
-	Results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
+	results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
 
 	// We've completed the for loop,
 	// The last emitted line (JSON Line Object) announces
@@ -142,11 +142,11 @@ func processStdOut(stdout string, Results *GtpResults, PackageDirsToSearch []str
 	// not represent a test, but get counted as one.
 	// So it throws off our counts by one.
 	// So we fix that here
-	Results.Counts["pass"], Results.Counts["fail"] =
-		adjustOutSuperfluousFinalResult(jlo.getAction(), Results)
-	// Now we check for Results.Errors and create a
+	results.Counts["pass"], results.Counts["fail"] =
+		adjustOutSuperfluousFinalResult(jlo.getAction(), results)
+	// Now we check for results.Errors and create a
 	// yellow bar and  message if appropriate
-	Results.buildBarMessage(Barmessage, PackageDirsToSearch)
+	results.buildBarMessage(Barmessage, PackageDirsToSearch)
 }
 
 // Shellout - run a command, capturing stdout, stderr, and errors
@@ -168,21 +168,21 @@ func Shellout(command string) (string, string, error) {
 // to grep through normal go test -v type outputs.
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
-func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
+func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
 	PackageDirFromVim string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
 	doBreak := false
 
-	Results.incCount("output")
+	results.incCount("output")
 
-	doBreak = checkErrorCandidates(Results, jlo.getOutput(), PackageDirFromVim)
+	doBreak = checkErrorCandidates(results, jlo.getOutput(), PackageDirFromVim)
 	if doBreak {
 		return doBreak, err
 	}
 
 	if hasTestCoverage(jlo.getOutput()) {
-		Results.Summary.setCoverage(jlo.getOutput())
+		results.Summary.setCoverage(jlo.getOutput())
 	}
 
 	// I a jlo.Output field refers to a _test.go file, there has been a
@@ -192,8 +192,8 @@ func HandleOutputLines(Results *GtpResults, jlo JLObject, prevJlo JLObject,
 		list := splitOnSemiColons(jlo.getOutput())
 		// This may be obsolete, we will watch and see...
 		list = removeUnneededFAILPrefix(list)
-		if thisIsTheFirstFailure(Results) {
-			takeNoteOfFirstFailure(Results, list, prevJlo.getTest())
+		if thisIsTheFirstFailure(results) {
+			takeNoteOfFirstFailure(results, list, prevJlo.getTest())
 		}
 		qfItem := buildQuickFixItem(os.Args, list, jlo)
 		Barmessage.QuickFixList.Add(qfItem)
@@ -212,21 +212,21 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func processStdErr(stderr string, Results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
 	Barmessage.Color = "yellow"
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, Results.VimColumns) {
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, results.VimColumns) {
 		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
-		Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, Results.VimColumns)
+		Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, results.VimColumns)
 	} else {
 		Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
 		Barmessage.Message = strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgTrailer
 	}
 	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
-	Results.Errors = append(Results.Errors, gtperror)
+	results.Errors = append(results.Errors, gtperror)
 }
 
 func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg string, cols int) string {
@@ -256,8 +256,8 @@ func chkErr(err error, msg string) {
 	}
 }
 
-func buildAndAppendAnErrorForInvalidJSON(Results *GtpResults) {
-	Results.Errors = append(Results.Errors,
+func buildAndAppendAnErrorForInvalidJSON(results *GtpResults) {
+	results.Errors = append(results.Errors,
 		GtpError{
 			Name:    "InvalidJSON",
 			Regex:   regexNil,
@@ -279,14 +279,14 @@ func convertStringToBytes(s string) []byte {
 	return []byte(s)
 }
 
-func thisIsTheFirstFailure(Results *GtpResults) bool {
-	return Results.Counts["fail"] == 0
+func thisIsTheFirstFailure(results *GtpResults) bool {
+	return results.Counts["fail"] == 0
 }
 
-func takeNoteOfFirstFailure(Results *GtpResults, parts []string, testName string) {
-	Results.FirstFail.Fname = parts[0]
-	Results.FirstFail.Lineno = parts[1]
-	Results.FirstFail.Tname = testName
+func takeNoteOfFirstFailure(results *GtpResults, parts []string, testName string) {
+	results.FirstFail.Fname = parts[0]
+	results.FirstFail.Lineno = parts[1]
+	results.FirstFail.Tname = testName
 }
 
 func removeUnneededFAILPrefix(list []string) []string {
@@ -335,13 +335,13 @@ func adjustOutSuperfluousFinalFail(action string, failCount int) int {
 	return failCount
 }
 
-func adjustOutSuperfluousFinalResult(action string, Results *GtpResults) (int, int) {
-	passCount := adjustOutSuperfluousFinalPass(action, Results.getCount("pass"))
-	failCount := adjustOutSuperfluousFinalFail(action, Results.getCount("fail"))
+func adjustOutSuperfluousFinalResult(action string, results *GtpResults) (int, int) {
+	passCount := adjustOutSuperfluousFinalPass(action, results.getCount("pass"))
+	failCount := adjustOutSuperfluousFinalFail(action, results.getCount("fail"))
 	return passCount, failCount
 }
 
-func checkErrorCandidates(Results *GtpResults, output string, PackageDirFromVim string) bool {
+func checkErrorCandidates(results *GtpResults, output string, PackageDirFromVim string) bool {
 	var ErrorCandidates = GtpErrors{
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDirFromVim + ", [Test Files, but No Tests to Run]", Color: "yellow"},
@@ -350,8 +350,7 @@ func checkErrorCandidates(Results *GtpResults, output string, PackageDirFromVim 
 	}
 	for _, rx := range ErrorCandidates {
 		if CheckRegx(rx.Regex, output) {
-			Results.Errors.Add(rx)
-			// Results.Errors = append(Results.Errors, rx)
+			results.Errors.Add(rx)
 			return true
 		}
 	}

@@ -58,10 +58,10 @@ func TestDecCount(t *testing.T) {
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	paths := []string{}
-	Results := GtpResults{}
+	results := GtpResults{}
 	paths = append(paths, "../gocyclotests/avgCCmplx/main.go")
-	Results.Summary.setComplexity(paths)
-	got := Results.Summary.getComplexity()
+	results.Summary.setComplexity(paths)
+	got := results.Summary.getComplexity()
 	want := "7.29"
 	if string(got) != want {
 		t.Errorf("got '%s' want '%s'", got, want)
@@ -71,10 +71,10 @@ func TestGetAverageCyclomaticComplexity(t *testing.T) {
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 	paths := []string{}
-	Results := GtpResults{}
+	results := GtpResults{}
 	paths = append(paths, "./bin/")
-	Results.Summary.setComplexity(paths)
-	got := Results.Summary.getComplexity()
+	results.Summary.setComplexity(paths)
+	got := results.Summary.getComplexity()
 	want := "NaN"
 	if string(got) != want {
 		t.Errorf("got '%s' want '%s'", got, want)
