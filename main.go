@@ -31,8 +31,8 @@ func main() {
 	// we need to decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
-	// We have build a func, newResults(), which creates and initializes
-	// and returns the results object
+	// We have built a func, newResults(), which creates, initializes
+	// and returns the results for us
 	results := newResults()
 
 	// barMessage includes QfList. They are populated by the methods
@@ -45,12 +45,9 @@ func main() {
 	// or it will be null instead of [] when marshaled to JSON.
 	barMessage.QuickFixList = GtpQfList{}
 
-	// packageDirFromVim is where the current package lives
-	// We get it from Vim as os.Args[1]
-	var packageDirFromVim string
 	// Gocyclo likes to receive lists of paths to search
 	// We don't have any, but to avoid mucking with gocyclo internals
-	// we create an empty list and append PackageDirFromVim to it so
+	// we create an empty list and append os.Args[1] to it so
 	// gocyclo can be happy
 	var packageDirsToSearch []string
 
@@ -59,13 +56,12 @@ func main() {
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
-	packageDirFromVim = os.Args[1]
-	packageDirsToSearch = append(packageDirsToSearch, packageDirFromVim)
+	packageDirsToSearch = append(packageDirsToSearch, os.Args[1])
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	results.VimColumns, _ = strconv.Atoi(os.Args[2])
 
-	commandLine := "go test -v -json -cover " + packageDirFromVim
+	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
 
 	if rcvdMsgOnStdErr(stderr) {
@@ -170,14 +166,14 @@ func Shellout(command string) (string, string, error) {
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
 func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
-	PackageDirFromVim string, Barmessage *BarMessage) (bool, error) {
+	packageDir string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
 	doBreak := false
 
 	results.incCount("output")
 
-	doBreak = checkErrorCandidates(results, jlo.getOutput(), PackageDirFromVim)
+	doBreak = checkErrorCandidates(results, jlo.getOutput(), packageDir)
 	if doBreak {
 		return doBreak, err
 	}
