@@ -30,9 +30,10 @@ func main() {
 	// results has all the data from go test
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
-	var results GtpResults
+	// var results GtpResults
 	// Initialize map of Counts in Results
-	results.init()
+	// results.init()
+	results := newResults()
 
 	// barMessage includes QfList. They are populated by the methods
 	// in Results.  They don't "do" anything except hold

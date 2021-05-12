@@ -7,8 +7,8 @@ import "testing"
 //============================================================================
 
 func TestGetCounts(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.Counts["run"] = 15
 	got := results.getCount("run")
 	want := 15
@@ -22,8 +22,8 @@ func TestGetCounts(t *testing.T) {
 //============================================================================
 
 func TestIncCount(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.Counts["run"] = 15
 	results.incCount("run")
 	got := results.getCount("run")
@@ -39,8 +39,8 @@ func TestIncCount(t *testing.T) {
 //============================================================================
 
 func TestDecCount(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.Counts["run"] = 15
 	results.decCount("run")
 	got := results.getCount("run")
@@ -58,7 +58,7 @@ func TestDecCount(t *testing.T) {
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	paths := []string{}
-	results := GtpResults{}
+	results := newResults()
 	paths = append(paths, "../gocyclotests/avgCCmplx/main.go")
 	results.Summary.setComplexity(paths)
 	got := results.Summary.getComplexity()
@@ -71,7 +71,7 @@ func TestGetAverageCyclomaticComplexity(t *testing.T) {
 //TestgetAverageCyclomaticComplexity ....
 func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 	paths := []string{}
-	results := GtpResults{}
+	results := newResults()
 	paths = append(paths, "./bin/")
 	results.Summary.setComplexity(paths)
 	got := results.Summary.getComplexity()
@@ -91,7 +91,7 @@ func TestBuildBarMessage_has_errors(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
-	results := GtpResults{}
+	results := newResults()
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
@@ -109,8 +109,8 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.incCount("fail")
 	results.incCount("skip")
 
@@ -129,8 +129,8 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.incCount("skip")
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
@@ -148,8 +148,8 @@ func TestBuildBarMessage_all_pass(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, PackageDirFromVim)
 	barmsg := BarMessage{}
-	results := GtpResults{}
-	results.init()
+	results := newResults()
+
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
 	got := barmsg.getColor()
@@ -280,7 +280,7 @@ func TestElapsedMsg_0_000(t *testing.T) {
 
 //TestSetCoverage()
 func TestSetCoverage(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	coverage := "coverage: 58.3% of statements"
 	results.Summary.setCoverage(coverage)
 	got := results.Summary.getCoverage()
@@ -297,7 +297,7 @@ func TestSetCoverage(t *testing.T) {
 //TestGtpError.GetColor ....
 func TestGtpError_GetColor(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	results := GtpResults{}
+	results := newResults()
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getColor()
 	want := "yellow"
@@ -313,7 +313,7 @@ func TestGtpError_GetColor(t *testing.T) {
 //TestGtpError.GetColor ....
 func TestGtpError_GetMessage(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	results := GtpResults{}
+	results := newResults()
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDirFromVim + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getMessage()
 	want := "In package: /home/dave/sw/go/goTestParser, [No Test Files]"
@@ -328,7 +328,7 @@ func TestGtpError_GetMessage(t *testing.T) {
 
 //TestSummarySetElapsed ....
 func TestSummarySetElapsed(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	results.Summary.setElapsed(0.5)
 	got := results.Summary.getElapsed()
 	want := GtpElapsed(0.5)

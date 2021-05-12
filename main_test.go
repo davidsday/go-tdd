@@ -166,8 +166,7 @@ func TestSplitIntoLines_with_non_empty_last_line(t *testing.T) {
 
 //TestThisIsTheFirstFailure_true ....
 func TestThisIsTheFirstFailure_true(t *testing.T) {
-	var results GtpResults
-	results.init()
+	results := newResults()
 	results.Counts["fail"] = 0
 	got := thisIsTheFirstFailure(&results)
 	want := true
@@ -178,8 +177,7 @@ func TestThisIsTheFirstFailure_true(t *testing.T) {
 
 //TestThisIsTheFirstFailure_false ....
 func TestThisIsTheFirstFailure_false(t *testing.T) {
-	var results GtpResults
-	results.init()
+	results := newResults()
 
 	results.Counts["fail"] = 1
 	got := thisIsTheFirstFailure(&results)
@@ -195,7 +193,7 @@ func TestThisIsTheFirstFailure_false(t *testing.T) {
 
 //TestTakeNoteOfFirstFailure ....
 func TestTakeNoteOfFirstFailure(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	testName := "thisTest"
 	parts := []string{"firstPart", "secondPart"}
 
@@ -234,7 +232,7 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 
 //TestProcessStdErrMsg
 func TestProcessStdErrMsg(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -251,7 +249,7 @@ func TestProcessStdErrMsg(t *testing.T) {
 
 //TestDoStdErrMsgTooLong ....
 func TestProcessStdErrMsgTooLong(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	results.VimColumns = 72
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -273,8 +271,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 
 //TestProcessStdOutMsg
 func TestProcessStdOutMsg1(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -310,8 +307,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 {"Time":"2021-05-10T20:55:51.269858272-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
 {"Time":"2021-05-10T20:55:51.269867388-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
 
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -340,8 +336,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 {"Time":"2021-05-10T21:59:06.756496915-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"FAIL\tgithub.com/davidsday/hello\t0.001s\n"}
 {"Time":"2021-05-10T21:59:06.756506088-04:00","Action":"fail","Package":"github.com/davidsday/hello","Elapsed":0.001}`
 
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -365,8 +360,7 @@ func TestProcessStdOutMsg4(t *testing.T) {
 {"Time":"2021-05-11T22:20:14.727601779-04:00","Action":"output","Package":"values","Output":"ok  \tvalues\t0.001s\n"}
 {"Time":"2021-05-11T22:20:14.727621504-04:00","Action":"pass","Package":"values","Elapsed":0.001}`
 
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	results.VimColumns = 135
 	Barmessage := BarMessage{}
 	Barmessage.QuickFixList = GtpQfList{}
@@ -416,7 +410,7 @@ func TestMetricsMsg_no_skips_2_fails(t *testing.T) {
 
 //TestBuildAndAppendAnErrorForInvalidJSON ....
 func TestBuildAndAppendAnErrorForInvalidJSON(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	results.VimColumns = 135
 	buildAndAppendAnErrorForInvalidJSON(&results)
 	if len(results.Errors) <= 0 {
@@ -587,7 +581,7 @@ func TestHasTestCoverage_no(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no_test_files(t *testing.T) {
-	results := GtpResults{}
+	results := newResults()
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "[no test files]"
@@ -601,7 +595,7 @@ func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_yes(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	results := GtpResults{}
+	results := newResults()
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "panic:"
 	got := checkErrorCandidates(&results, output, PackageDirFromVim)
@@ -614,7 +608,7 @@ func TestCheckErrorCandidates_yes(t *testing.T) {
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no(t *testing.T) {
 	PackageDirFromVim := "/home/dave/sw/go/goTestParser"
-	results := GtpResults{}
+	results := newResults()
 	output := "Part0:Part1:Part2:Part3"
 	got := checkErrorCandidates(&results, output, PackageDirFromVim)
 	want := false
@@ -677,8 +671,7 @@ func TestAdjustOutSuperfluousFinalFail_1(t *testing.T) {
 
 //TestAdjustOutSuperfuousFinalResult ....
 func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	action := "pass"
 	results.Counts["pass"] = 21
 
@@ -696,8 +689,7 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 
 //TestHandleOutputLines ....
 func TestHandleOutputLines(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "PASS\n"}`)
@@ -717,8 +709,7 @@ func TestHandleOutputLines(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_FAIL(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
@@ -738,8 +729,7 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_TestFileRef(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
@@ -754,8 +744,7 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_received_a_panic(t *testing.T) {
-	results := GtpResults{}
-	results.init()
+	results := newResults()
 	Barmessage := BarMessage{}
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
