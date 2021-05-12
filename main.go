@@ -27,12 +27,12 @@ func main() {
 	// user, _ := user.Current()
 	// User := user.Username
 	// HomeDir := user.HomeDir
-	// results has all the data from go test
+	// results has all the data we collect from go test
+	// we need to decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
-	// var results GtpResults
-	// Initialize map of Counts in Results
-	// results.init()
+	// We have build a func, newResults(), which creates and initializes
+	// and returns the results object
 	results := newResults()
 
 	// barMessage includes QfList. They are populated by the methods
