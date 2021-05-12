@@ -40,10 +40,8 @@ func main() {
 	// the data Vim will need, and they also marshal themselves
 	// into JSON and send it to Vim via stdout for display
 	// BarMessage lives in barMessage.go
-	var barMessage BarMessage
-	// initialize Barmessage's QuickFixList to an empty QuickFixList
-	// or it will be null instead of [] when marshaled to JSON.
-	barMessage.QuickFixList = GtpQfList{}
+
+	barMessage := newBarMessage()
 
 	// Gocyclo likes to receive lists of paths to search
 	// We don't have any, but to avoid mucking with gocyclo internals

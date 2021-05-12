@@ -133,3 +133,9 @@ func buildQuickFixItem(args []string, parts []string, jlo JLObject) GtpQfItem {
 	QfItem.Text = strings.Join(parts[2:], ":")
 	return QfItem
 }
+
+func newBarMessage() BarMessage {
+	b := new(BarMessage)
+	b.QuickFixList = GtpQfList{}
+	return *b
+}
