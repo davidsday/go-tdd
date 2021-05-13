@@ -270,9 +270,9 @@ func thisIsTheFirstFailure(results *GtpResults) bool {
 }
 
 func takeNoteOfFirstFailure(results *GtpResults, parts []string, testName string) {
-	results.FirstFail.Fname = parts[0]
-	results.FirstFail.Lineno = parts[1]
-	results.FirstFail.Tname = testName
+	results.FirstFail.setFname(parts[0])
+	results.FirstFail.setLineno(parts[1])
+	results.FirstFail.setTname(testName)
 }
 
 func removeUnneededFAILPrefix(list []string) []string {

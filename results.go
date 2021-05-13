@@ -40,17 +40,17 @@ type GtpFirstFail struct {
 	Lineno string `json:"lineno"`
 }
 
-// func (f *GtpFirstFail) setFname(fname string) {
-//	f.Fname = fname
-// }
+func (f *GtpFirstFail) setFname(fname string) {
+	f.Fname = fname
+}
 
-// func (f *GtpFirstFail) setTname(tname string) {
-//	f.Tname = tname
-// }
+func (f *GtpFirstFail) setTname(tname string) {
+	f.Tname = tname
+}
 
-// func (f *GtpFirstFail) setLineno(lineno string) {
-//	f.Lineno = lineno
-// }
+func (f *GtpFirstFail) setLineno(lineno string) {
+	f.Lineno = lineno
+}
 
 func (f *GtpFirstFail) getFname() string {
 	return f.Fname
