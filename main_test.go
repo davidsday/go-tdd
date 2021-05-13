@@ -349,20 +349,16 @@ func TestProcessStdOutMsg3(t *testing.T) {
 	}
 }
 
-//TestProcessStdOutMsg4
-func TestProcessStdOutMsg4(t *testing.T) {
+//TestProcessStdOutMsg5
+func TestProcessStdOutMsg5(t *testing.T) {
 
-	want := []byte(`{"color":"yellow","message":"In package: values, [Test Files, but No Tests to Run]","quickfixlist":[]}`)
+	want := []byte(`{"color":"yellow","message":"In package: values, [No Test Files]","quickfixlist":[]}`)
 
-	input := `{"Time":"2021-05-11T22:20:14.727345713-04:00","Action":"output","Package":"values","Output":"testing: warning: no tests to run\n"}
-{"Time":"2021-05-11T22:20:14.727527656-04:00","Action":"output","Package":"values","Output":"PASS\n"}
-{"Time":"2021-05-11T22:20:14.727601779-04:00","Action":"output","Package":"values","Output":"ok  \tvalues\t0.001s\n"}
-{"Time":"2021-05-11T22:20:14.727621504-04:00","Action":"pass","Package":"values","Elapsed":0.001}`
-
+	input := `{"Time":"2021-05-11T22:30:46.844883222-04:00","Action":"output","Package":"values","Output":"?   \tvalues\t[no test files]\n"}
+{"Time":"2021-05-11T22:30:46.84499945-04:00","Action":"skip","Package":"values","Elapsed":0}`
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
