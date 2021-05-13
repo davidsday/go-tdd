@@ -27,6 +27,7 @@ func main() {
 	// user, _ := user.Current()
 	// User := user.Username
 	// HomeDir := user.HomeDir
+
 	// results has all the results we collect from go test
 	// to help us decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
@@ -39,7 +40,7 @@ func main() {
 	// in Results.  They don't "do" anything except hold
 	// the data Vim will need, and they also marshal themselves
 	// into JSON and send it to Vim via stdout for display
-	// and to disk for logging purposes
+	// or to disk for logging purposes
 	// BarMessage lives in barMessage.go
 
 	barMessage := newBarMessage()
