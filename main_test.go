@@ -233,8 +233,7 @@ func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 func TestProcessStdErrMsg(t *testing.T) {
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.[See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
 	packageDir := "/home/dave/sw/go/goTestParser"
@@ -250,8 +249,7 @@ func TestProcessStdErrMsg(t *testing.T) {
 func TestProcessStdErrMsgTooLong(t *testing.T) {
 	results := newResults()
 	results.VimColumns = 72
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	packageDir := "/home/dave/sw/go/goTestParser"
@@ -272,8 +270,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 func TestProcessStdOutMsg1(t *testing.T) {
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	want := BarMessage{Color: "green", Message: "1 Run, 1 Passed, Test Coverage: 0.0%, Average Complexity: NaN, in 0.001s", QuickFixList: GtpQfList{}}
 	out := `{"Time":"2021-05-10T09:00:49.114179156-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
 {"Time":"2021-05-10T09:00:49.114321584-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
@@ -308,8 +305,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
@@ -337,8 +333,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
@@ -361,8 +356,7 @@ func TestProcessStdOutMsg4(t *testing.T) {
 
 	results := newResults()
 	results.VimColumns = 135
-	Barmessage := BarMessage{}
-	Barmessage.QuickFixList = GtpQfList{}
+	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/goTestParser/testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
@@ -709,7 +703,7 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 //TestHandleOutputLines ....
 func TestHandleOutputLines(t *testing.T) {
 	results := newResults()
-	Barmessage := BarMessage{}
+	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "PASS\n"}`)
 	jsonlineJlo := []byte(`{"Time": "2021-05-07T23:32:18.412174016-04:00", "Action": "output", "Package": "github.com/davidsday/goTestParser", "Output": "coverage: 77.9% of statements\n"}`)
@@ -728,7 +722,7 @@ func TestHandleOutputLines(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_FAIL(t *testing.T) {
 	results := newResults()
-	Barmessage := BarMessage{}
+	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jsonlineJlo := []byte(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
@@ -747,7 +741,7 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_TestFileRef(t *testing.T) {
 	results := newResults()
-	Barmessage := BarMessage{}
+	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
@@ -762,7 +756,7 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	results := newResults()
-	Barmessage := BarMessage{}
+	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"panic: "}`)
