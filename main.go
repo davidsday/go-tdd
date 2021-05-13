@@ -18,7 +18,7 @@ var (
 	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
 	regexTestFileRef  = regexp.MustCompile(`_test.go`)
 	//"coverage: 76.7% of statements\n"}
-	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,2}\.\d\% of statements`)
+	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
 	regexNil          = &regexp.Regexp{}
 )
 
