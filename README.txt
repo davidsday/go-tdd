@@ -47,12 +47,12 @@ This has little to do with testing but a lot to do with design and
 it is a metric I want to be aware of. I hear that several well known IDEs
 start warning about Cyclomatic Complexity at 10.  So are we to conclude
 that complexities below 10 are OK?  I like to keep mine below 2.5.
-This project is at 1.77 as I write this.
+This project is at 1.75 as I write this.
 
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
 than might otherwise be achieved.  I certainly have, so much so that I built
-this tool to supplement vim-go for my own use. This project has ~90% test
+this tool to supplement vim-go for my own use. This project has ~92% test
 coverage as I write this.
 
 And, as an aside, I have had occasion to go back and retrofit (rewrite)
@@ -62,7 +62,7 @@ even on projects which seem to be working fine.  I suspect that these
 personal projects have only been exercised with my personal use patterns,
 and I had of course corrected the bugs that come to light in my own use
 scenario, so the apps seemed to be bug free to me.  Writing tests to
-substantially cover 85-90% of their code further flushes out bugs I had
+substantially cover 85-95% of their code further flushes out bugs I had
 not found.  Humbling....  It has further confirmed to me that TDD is
 a worthwhile style of development and especially when combined with
 the use of cyclomatic complexity metrics to make sure your functions
