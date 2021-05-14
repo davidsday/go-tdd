@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	regexPanic        = regexp.MustCompile(`^panic:`)
+	regexPanic        = regexp.MustCompile(`^(panic: |fatal error: ).*(\[recovered\]){0,1}`)
 	regexNoTestsToRun = regexp.MustCompile(`no tests to run`)
 	regexNoTestFiles  = regexp.MustCompile(`\[no test files\]`)
 	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
