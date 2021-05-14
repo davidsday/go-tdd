@@ -100,6 +100,13 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		// we are dealing with JLObject structs
 		jlo.unmarshal(jsonLine)
 
+		// jlo.Package seems to contain the package dir declared
+		// in go.mod
+		// PackageDirFromJlo is used informationally here, in messages
+		// to the user about errors
+		// I suppose PackageDirsToSearch[0] might also be OK, and would
+		// also give a directory path to go to
+
 		PackageDirFromJlo := jlo.getPackage()
 		results.incCount(jlo.getAction())
 
