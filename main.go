@@ -203,13 +203,13 @@ func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []str
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
-	Barmessage.Color = "yellow"
+	Barmessage.setColor("yellow")
 	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, results.VimColumns) {
 		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
-		Barmessage.Message = buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, results.VimColumns)
+		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, results.VimColumns))
 	} else {
-		Barmessage.Message = stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
-		Barmessage.Message = strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgTrailer
+		Barmessage.setMessage(stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|"))
+		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgTrailer)
 	}
 	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
 	results.Errors = append(results.Errors, gtperror)
