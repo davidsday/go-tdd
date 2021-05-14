@@ -610,7 +610,44 @@ func TestCheckErrorCandidates_yes(t *testing.T) {
 	packageDir := "/home/dave/sw/go/goTestParser"
 	results := newResults()
 	// output := "FAIL:Part1:Part2:Part3"
-	output := "panic:"
+	output := "panic: "
+	got := checkErrorCandidates(&results, output, packageDir)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_panic_recovered(t *testing.T) {
+	packageDir := "/home/dave/sw/go/goTestParser"
+	results := newResults()
+	// output := "FAIL:Part1:Part2:Part3"
+	output := "panic: blah blah blah [recovered]"
+	got := checkErrorCandidates(&results, output, packageDir)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_fatal_error(t *testing.T) {
+	packageDir := "/home/dave/sw/go/goTestParser"
+	results := newResults()
+	output := "fatal error: "
+	got := checkErrorCandidates(&results, output, packageDir)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestCheckErrorCandidates ....
+func TestCheckErrorCandidates_fatal_error_recovered(t *testing.T) {
+	packageDir := "/home/dave/sw/go/goTestParser"
+	results := newResults()
+	output := "fatal error: blah blah blah [recovered]"
 	got := checkErrorCandidates(&results, output, packageDir)
 	want := true
 	if got != want {
