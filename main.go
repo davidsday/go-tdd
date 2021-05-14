@@ -171,7 +171,7 @@ func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
 		results.Summary.setCoverage(jlo.getOutput())
 	}
 
-	// I a jlo.Output field refers to a _test.go file, there has been a
+	// If a jlo.Output field refers to a _test.go file, there has been a
 	// test failure and it is telling us in which file and on which line
 	// the failure was triggered
 	if hasTestFileReferences(jlo.getOutput()) {
