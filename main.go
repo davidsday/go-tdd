@@ -202,32 +202,32 @@ func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []str
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
-	stdErrMsgTrailer := "[See pkgdir/StdErr.txt]"
+	stdErrMsgSuffix := "[See pkgdir/StdErr.txt]"
 	Barmessage.setColor("yellow")
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer, results.VimColumns) {
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix, results.VimColumns) {
 		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
-		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg, results.VimColumns))
+		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg, results.VimColumns))
 	} else {
 		Barmessage.setMessage(stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|"))
-		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgTrailer)
+		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgSuffix)
 	}
 	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
 	results.Errors = append(results.Errors, gtperror)
 }
 
-func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgTrailer, msg string, cols int) string {
+func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg string, cols int) string {
 	oneSpace := " "
 	commaSpace := ", "
 	retMsg := stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
 	retMsg = strings.TrimSuffix(retMsg, "|")
-	retMsg = retMsg[0 : cols-(len(stdErrMsgPrefix)+len(stdErrMsgTrailer))]
-	retMsg += commaSpace + stdErrMsgTrailer
+	retMsg = retMsg[0 : cols-(len(stdErrMsgPrefix)+len(stdErrMsgSuffix))]
+	retMsg += commaSpace + stdErrMsgSuffix
 	return retMsg
 }
 
-func stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgTrailer string, cols int) bool {
+func stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix string, cols int) bool {
 	oneSpace := " "
-	return (len(stderr) > (cols - (len(stdErrMsgTrailer) + len(stdErrMsgPrefix) + len(oneSpace))))
+	return (len(stderr) > (cols - (len(stdErrMsgSuffix) + len(stdErrMsgPrefix) + len(oneSpace))))
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
