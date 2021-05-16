@@ -24,6 +24,9 @@ var (
 
 func main() {
 
+	// if runtime.GOOS = 'windows' {
+	// just thinking about portability.....
+	//}
 	// user, _ := user.Current()
 	// User := user.Username
 	// HomeDir := user.HomeDir
