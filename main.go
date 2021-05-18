@@ -17,6 +17,9 @@ var (
 	regexNoTestFiles  = regexp.MustCompile(`\[no test files\]`)
 	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
 	regexTestFileRef  = regexp.MustCompile(`_test.go`)
+	// regexSubTestPass  = regexp.MustCompile(`(    )\+PASS: `)
+	// regexSubTestFail  = regexp.MustCompile(`(    )\+FAIL: `)
+
 	//"coverage: 76.7% of statements\n"}
 	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
 	regexNil          = &regexp.Regexp{}
