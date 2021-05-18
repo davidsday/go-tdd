@@ -1,6 +1,3 @@
-NOTE:  This plugin is under active development.  I try to keep this
-current. But things change....
-
 This is a Vim plugin that seeks to bring two things
 to the Vim golang development experience:
 
