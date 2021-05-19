@@ -92,11 +92,16 @@ In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
 <LocalLeader>t to activate goTestParser. If I desire to use vim-go's
 :GoTest command, I call it just like that.
 
-goTestParser provides its own go test parser, written in golang, which
+goTestParser provides its own go test parser, written in golang, somewhat
+simpler than vim-go's and synchronous instead of asynchronous, which
 parses the 'go test -v -json' output and in turn, provides a further
 processed JSON structure which details for a small Vimscript what
 message, and in what color to deliver.  It also provides to Vim a quickfix
 list of test failures and/or skipped tests which Vim loads for your use.
+goTestParser's synchronous invocation of 'go test -v -json -cover' has not
+really been noticeable in my use patterns.  I rarely see go test take more
+than a few hundredths of a second to complete even hundreds of tests. Most
+reported times are in the thousandths of seconds.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so goTestParser loads
