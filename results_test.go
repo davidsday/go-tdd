@@ -59,6 +59,8 @@ func TestDecCount(t *testing.T) {
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	paths := []string{}
 	results := newResults()
+	// Normally we "ignore" both vendor and testdata but here we need
+	// to look inside testdata so we omit it from the ignore argument
 	paths = append(paths, "./testdata/avgCCmplx/main.go")
 	results.Summary.setComplexity(paths, `vendor`)
 	got := results.Summary.getComplexity()
