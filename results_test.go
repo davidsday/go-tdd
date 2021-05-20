@@ -59,8 +59,8 @@ func TestDecCount(t *testing.T) {
 func TestGetAverageCyclomaticComplexity(t *testing.T) {
 	paths := []string{}
 	results := newResults()
-	paths = append(paths, "../gocyclotests/avgCCmplx/main.go")
-	results.Summary.setComplexity(paths)
+	paths = append(paths, "./testdata/avgCCmplx/main.go")
+	results.Summary.setComplexity(paths, `vendor`)
 	got := results.Summary.getComplexity()
 	want := "7.29"
 	if string(got) != want {
@@ -73,7 +73,7 @@ func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 	paths := []string{}
 	results := newResults()
 	paths = append(paths, "./bin/")
-	results.Summary.setComplexity(paths)
+	results.Summary.setComplexity(paths, `vendor|testdata`)
 	got := results.Summary.getComplexity()
 	want := "NaN"
 	if string(got) != want {

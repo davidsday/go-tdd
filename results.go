@@ -92,7 +92,7 @@ func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []strin
 		bm.setColor("green")
 		// Since we only show avg cyclomatic complexity on green bars,
 		// only run it for green bars
-		r.Summary.setComplexity(PackageDirsToSearch)
+		r.Summary.setComplexity(PackageDirsToSearch, `testdata|vendor`)
 	}
 
 	// build the message based on how we did ...
@@ -186,8 +186,8 @@ func (s *GtpSummary) setCoverage(coverage string) {
 	s.Coverage = GtpCoverage(cov)
 }
 
-func (s *GtpSummary) setComplexity(paths []string) {
-	allStats := gocyclo.Analyze(paths, regexp.MustCompile(`vendor|testdata`))
+func (s *GtpSummary) setComplexity(paths []string, ignore string) {
+	allStats := gocyclo.Analyze(paths, regexp.MustCompile(ignore))
 	s.Complexity = GtpComplexity(fmt.Sprintf("%.3g", allStats.AverageComplexity()))
 }
 
