@@ -3,7 +3,7 @@ to the Vim golang development experience:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
 
-	A marginally better 'go test' experience
+	A marginally better 'vim-go go test' experience
 
 The first is via the use of Vim's message line to provide red/green
 bar fail/pass indications. I have also added a yellow bar message which
@@ -89,16 +89,40 @@ In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
 <LocalLeader>t to activate goTestParser. If I desire to use vim-go's
 :GoTest command, I call it just like that.
 
-goTestParser provides its own go test parser, written in golang, somewhat
-simpler than vim-go's and synchronous instead of asynchronous, which
-parses the 'go test -v -json' output and in turn, provides a further
-processed JSON structure which details for a small Vimscript what
-message, and in what color to deliver.  It also provides to Vim a quickfix
-list of test failures and/or skipped tests which Vim loads for your use.
-goTestParser's synchronous invocation of 'go test -v -json -cover' has not
-really been noticeable in my use patterns.  I rarely see go test take more
-than a few hundredths of a second to complete even hundreds of tests. Most
-reported times are in the thousandths of seconds.
+The second benefit from above was a "marginally better go test
+experience".  vim-go reports [SUCCESS] in directories with no test files at all
+or where there are test files but they are empty, or where one, or many
+tests are skipped. I am not an old Golang hand, but this does not strike
+me "[SUCCESS]".  Especially if I am looking at a code base that is new to
+me, I don't want my tools reporting these situations as "[SUCCESS]".  So
+in goTestParser I have incorporated a "Yellow Bar", message for situations
+which are not directly due to a failing test but which the developer
+should be aware of, as described above, thus providing that "marginally
+better go test experience" I mentioned above.
+
+To accomplish this, goTestParser provides its own go test parser, written
+in golang, somewhat simpler than vim-go's and synchronous instead of
+asynchronous, which parses the 'go test -v -json' output and in turn,
+provides a further processed JSON structure which details for a small
+Vimscript what message, and in what color to deliver.  It also provides to
+Vim a quickfix list of test failures and/or skipped tests which Vim loads
+for your use. goTestParser's synchronous invocation of
+'go test -v -json -cover' has not really been noticeable in my use patterns.
+I rarely see go test take more than a few hundredths of a second to complete
+even hundreds of tests. Most reported times are in the thousandths of seconds.
+
+I should point out that my goTestParser parser is simpler than vim-go's by
+a good margin.  vim-go bends over backwards to accomodate old Golang
+versions.  Vim-go's code to accomplish launching go test asynchronously
+is over 16K long.  vim-go has code to parse stack traces for panics,
+I simply notify you that there was a panic. That is to say, if you need
+or value these things, you might well find goTestParser is not for you.
+I use it everyday though and have barely even noticed the differences.
+
+Suffice it to say, if there is a skipped, failed, or passed test, you will
+know about it.  You'll know the percentage of code coverage, and
+cyclomatic complexity of your code.  If there are problems not related
+to a failed test, you will be notified in a yellow bar.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so goTestParser loads
