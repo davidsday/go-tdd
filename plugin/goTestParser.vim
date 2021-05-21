@@ -34,7 +34,17 @@ if exists('g:did_gotst_ftplugin')
 endif
 let g:did_gotst_ftplugin = 1
 
- let s:base_dir = expand('<sfile>:p:h:h')
+" NOTE: Important to understand, this will not work
+" inside a function.  Must be done like this, external
+" to any function, prior to them being called.  Once
+" you've got the result in a script var, you can use
+" it in the functions as normal, I spent days.....
+" Here the script is plugindir/plugin/goTestParser.vim
+" the expand removes plugin/goTestParser.vim, leaving us
+" with pathtoplugin, to which I can add '/bin/goTestParser'
+" and have the path to our binary, where ever the plugin
+" manager might have put it.
+let s:base_dir = expand('<sfile>:p:h:h')
 
 " toScreen needs to either be v:true or v:false
 " If toScreen is v:true, stdout goes to the terminal
