@@ -51,8 +51,8 @@ function! s:RunTest(toScreen)
     " Without this, sometimes, when opening opening a file found by FZF
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
-    chdir %:p:h
     let l:goTestParserBinary=expand('<sfile>:p:h:h') . '/bin/goTestParser'
+    chdir %:p:h
     " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
