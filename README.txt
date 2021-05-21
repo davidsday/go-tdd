@@ -1,5 +1,20 @@
-This is a Vim plugin that seeks to bring two things
-to the Vim golang development experience:
+This is a Vim plugin that I wrote for my own use to smooth my Golang 
+learning and development experience.  
+
+I got my start with Golang with:
+	https://quii.gitbook.io/learn-go-with-tests/
+and I stopped in the middle of that book and wrote this Vim/Neovim plugin
+to help me do TDD with Golang.
+
+The plugin is actually about 90+% in Golang, with a small Vimscript and the
+tiniest bit of shell script thrown in.
+
+For me, it has been a definite success, help me to smoothly cycle through the
+steps of TDD quickly and efficiently.  It has been a pleasure to use. Perhaps
+it might be useful for others....
+
+
+It seeks to add two things:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
 
@@ -93,7 +108,7 @@ The second benefit from above was a "marginally better go test
 experience".  vim-go reports [SUCCESS] in directories with no test files at all
 or where there are test files but they are empty, or where one, or many
 tests are skipped. I am not an old Golang hand, but this does not strike
-me "[SUCCESS]".  Especially if I am looking at a code base that is new to
+me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
 me, I don't want my tools reporting these situations as "[SUCCESS]".  So
 in goTestParser I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
@@ -117,7 +132,7 @@ versions.  Vim-go's code to accomplish launching go test asynchronously
 is over 16K long.  vim-go has code to parse stack traces for panics,
 I simply notify you that there was a panic. That is to say, if you need
 or value these things, you might well find goTestParser is not for you.
-I use it everyday though and have barely even noticed the differences.
+Though, I use it everyday though and have barely even noticed the differences.
 
 Suffice it to say, if there is a skipped, failed, or passed test, you will
 know about it.  You'll know the percentage of code coverage, and
