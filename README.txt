@@ -113,8 +113,8 @@ me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
 me, I don't want my tools reporting these situations as "[SUCCESS]".  So
 in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
-should be aware of, as described above, thus providing that "marginally
-better go test experience" I mentioned above.
+should be aware of, thus providing that "marginally better go test 
+experience" I mentioned above.
 
 To accomplish this, go-tdd provides its own go test parser, written
 in golang, somewhat simpler than vim-go's and synchronous instead of
@@ -133,7 +133,7 @@ versions.  Vim-go's code to accomplish launching go test asynchronously
 is over 16K long.  vim-go has code to parse stack traces for panics,
 I simply notify you that there was a panic. That is to say, if you need
 or value these things, you might well find go-tdd is not for you.
-Though, I use it everyday though and have barely even noticed the differences.
+I use it everyday though and have barely even noticed the differences.
 
 Suffice it to say, if there is a skipped, failed, or passed test, you will
 know about it.  You'll know the percentage of code coverage, and
