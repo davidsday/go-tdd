@@ -9,9 +9,10 @@ to help me do TDD with Golang.
 The plugin is actually about 90+% in Golang, with a small Vimscript and the
 tiniest bit of shell script thrown in.
 
-For me, it has been a definite success, help me to smoothly cycle through the
+For me, it has been a definite success, it helps me to smoothly cycle through the
 steps of TDD quickly and efficiently.  It has been a pleasure to use. Perhaps
-it might be useful for others....
+it might be useful for others....  I have benefited greatly from the work
+of others in the Vim community, perhaps one or two folks might find this useful. 
 
 
 It seeks to add two things:
