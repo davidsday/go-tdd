@@ -39,7 +39,7 @@ let g:did_gotst_ftplugin = 1
 " to any function, prior to them being called.  Once
 " you've got the result in a script var, you can use
 " it in the functions as normal, I spent days.....
-" Here the script is plugindir/plugin/goTestParser.vim
+" Here the script is goTestParser/plugin/goTestParser.vim
 " the expand removes plugin/goTestParser.vim, leaving us
 " with pathtoplugin, to which I can add '/bin/goTestParser'
 " and have the path to our binary, where ever the plugin
