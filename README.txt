@@ -48,7 +48,7 @@ longer than can be shown in a one line yellow bar, I capture the entire
 message in stdERR.txt in the package directory.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
-bar message and quits. I don't remember that happening.
+bar message and quits. I don't remember that happening in actual use.
 
 There also are supplemental messages providing detail information in each
 red/green bars.  They report the number of tests run, passed, failed,
