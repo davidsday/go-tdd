@@ -1,5 +1,5 @@
-This is a Vim plugin that I wrote for my own use to smooth my Golang 
-learning and development experience.  
+This is a Vim plugin that I wrote for my own use to smooth my Golang
+learning and development experience.
 
 I got my start with Golang with:
 	https://quii.gitbook.io/learn-go-with-tests/
@@ -12,7 +12,7 @@ tiniest bit of shell script thrown in.
 For me, it has been a definite success, it helps me to smoothly cycle through the
 steps of TDD quickly and efficiently.  It has been a pleasure to use. Perhaps
 it might be useful for others....  I have benefited greatly from the work
-of others in the Vim community, perhaps one or two folks might find this useful. 
+of others in the Vim community, perhaps one or two folks might find this useful.
 
 
 It seeks to add two things:
@@ -48,7 +48,7 @@ longer than can be shown in a one line yellow bar, I capture the entire
 message in stdERR.txt in the package directory.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
-bar message and quits. That I don't remember that happening.
+bar message and quits. I don't remember that happening.
 
 There also are supplemental messages providing detail information in each
 red/green bars.  They report the number of tests run, passed, failed,
@@ -113,7 +113,7 @@ me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
 me, I don't want my tools reporting these situations as "[SUCCESS]".  So
 in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
-should be aware of, thus providing that "marginally better go test 
+should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
 
 To accomplish this, go-tdd provides its own go test parser, written
