@@ -44,7 +44,7 @@ let g:did_gotst_ftplugin = 1
 " with pathtoplugin, to which I can add '/bin/goTestParser'
 " and have the path to our binary, where ever the plugin
 " manager might have put it.
-let s:base_dir = expand('<sfile>:p:h:h')
+let s:plugin_dir = expand('<sfile>:p:h:h')
 
 " toScreen needs to either be v:true or v:false
 " If toScreen is v:true, stdout goes to the terminal
@@ -64,7 +64,7 @@ function! s:RunTest(toScreen)
     " left.  So don't delete it.
     chdir %:p:h
     " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    let l:goTestParserBinary=s:base_dir . '/bin/goTestParser'
+    let l:goTestParserBinary=s:plugin_dir . '/bin/goTestParser'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 
