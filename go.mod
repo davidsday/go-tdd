@@ -1,4 +1,4 @@
-module github.com/davidsday/goTestParser
+module github.com/davidsday/go-tdd
 
 go 1.16
 

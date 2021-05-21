@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# cd "${HOME}/.config/nvim/plugged/goTestParser/go/"
+# cd "${HOME}/.config/nvim/plugged/go-tdd/go/"
 # cd "${0%/*}"
 cd $(dirname "$(readlink -f "$0")")
 
