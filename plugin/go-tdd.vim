@@ -39,9 +39,9 @@ let g:did_gotst_ftplugin = 1
 " to any function, prior to them being called.  Once
 " you've got the result in a script var, you can use
 " it in the functions as normal, I spent days.....
-" Here the script is goTestParser/plugin/goTestParser.vim
-" the expand removes plugin/goTestParser.vim, leaving us
-" with pathtoplugin, to which I can add '/bin/goTestParser'
+" Here the script is go-tdd/plugin/go-tdd.vim
+" the expand removes plugin/go-tdd.vim, leaving us
+" with pathtoplugin, to which I can add '/bin/go-tdd'
 " and have the path to our binary, where ever the plugin
 " manager might have put it.
 let s:plugin_dir = expand('<sfile>:p:h:h')
@@ -63,8 +63,8 @@ function! s:RunTest(toScreen)
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
     chdir %:p:h
-    " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    let l:goTestParserBinary=s:plugin_dir . '/bin/goTestParser'
+    " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/go-tdd/bin/go-tdd"
+    let l:goTestParserBinary=s:plugin_dir . '/bin/go-tdd'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 

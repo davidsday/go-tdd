@@ -8,4 +8,4 @@ mkdir -p ./bin
 
 go build
 
-mv goTestParser ./bin/
+mv go-tdd ./bin/

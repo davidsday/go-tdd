@@ -39,7 +39,7 @@ and I want to know about them immediately.
 
 These messages are not in JSON format.
 
-Since I am parsing "go test -v -json -cover" output, goTestParser expects
+Since I am parsing "go test -v -json -cover" output, go-tdd expects
 valid JSON.
 
 I capture stderr separately and process it as best I can, by showing a
@@ -47,7 +47,7 @@ snippet of the message in a yellow bar.  If the STDERR message is
 longer than can be shown in a one line yellow bar, I capture the entire
 message in stdERR.txt in the package directory.
 
-If goTestParser encounters non JSON lines on stdout, it issues a yellow
+If go-tdd encounters non JSON lines on stdout, it issues a yellow
 bar message and quits. That I don't remember that happening.
 
 There also are supplemental messages providing detail information in each
@@ -97,12 +97,12 @@ test often doesn't actually do any testing itself and perhaps
 shouldn't be counted. Just don't be surprised at counts that differ
 slightly from your counts, if you use subtests.
 
-goTestParser is designed to work alongside of vim-go, since, really,
+go-tdd is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
 
 It does not interfere with vim-go in anyway that I am aware of.
 In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
-<LocalLeader>t to activate goTestParser. If I desire to use vim-go's
+<LocalLeader>t to activate go-tdd. If I desire to use vim-go's
 :GoTest command, I call it just like that.
 
 The second benefit from above was a "marginally better go test
@@ -111,28 +111,28 @@ or where there are test files but they are empty, or where one, or many
 tests are skipped. I am not an old Golang hand, but this does not strike
 me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
 me, I don't want my tools reporting these situations as "[SUCCESS]".  So
-in goTestParser I have incorporated a "Yellow Bar", message for situations
+in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
 should be aware of, as described above, thus providing that "marginally
 better go test experience" I mentioned above.
 
-To accomplish this, goTestParser provides its own go test parser, written
+To accomplish this, go-tdd provides its own go test parser, written
 in golang, somewhat simpler than vim-go's and synchronous instead of
 asynchronous, which parses the 'go test -v -json' output and in turn,
 provides a further processed JSON structure which details for a small
 Vimscript what message, and in what color to deliver.  It also provides to
 Vim a quickfix list of test failures and/or skipped tests which Vim loads
-for your use. goTestParser's synchronous invocation of
+for your use. go-tdd's synchronous invocation of
 'go test -v -json -cover' has not really been noticeable in my use patterns.
 I rarely see go test take more than a few hundredths of a second to complete
 even hundreds of tests. Most reported times are in the thousandths of seconds.
 
-I should point out that my goTestParser parser is simpler than vim-go's by
+I should point out that my go-tdd parser is simpler than vim-go's by
 a good margin.  vim-go bends over backwards to accomodate old Golang
 versions.  Vim-go's code to accomplish launching go test asynchronously
 is over 16K long.  vim-go has code to parse stack traces for panics,
 I simply notify you that there was a panic. That is to say, if you need
-or value these things, you might well find goTestParser is not for you.
+or value these things, you might well find go-tdd is not for you.
 Though, I use it everyday though and have barely even noticed the differences.
 
 Suffice it to say, if there is a skipped, failed, or passed test, you will
@@ -141,7 +141,7 @@ cyclomatic complexity of your code.  If there are problems not related
 to a failed test, you will be notified in a yellow bar.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
-primary layer of communication with the developer, so goTestParser loads
+primary layer of communication with the developer, so go-tdd loads
 the quickfix list for you, but it does not force you to go to the failed
 test. I find that often in my development work flow, I sometimes don't need
 to go to the test at all, but instead want to peruse  and

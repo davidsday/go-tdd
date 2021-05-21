@@ -89,7 +89,7 @@ func TestGetAverageCyclomaticComplexity_no_go_files(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_errors(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
@@ -107,7 +107,7 @@ func TestBuildBarMessage_has_errors(t *testing.T) {
 
 //TestBuildBarMessage ....
 func TestBuildBarMessage_has_fails(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
@@ -127,7 +127,7 @@ func TestBuildBarMessage_has_fails(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
@@ -146,7 +146,7 @@ func TestBuildBarMessage_no_fails_but_skips(t *testing.T) {
 
 //TestBuildBarMessage_no_fails_but_skips ....
 func TestBuildBarMessage_all_pass(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	barmsg := BarMessage{}
@@ -298,7 +298,7 @@ func TestSetCoverage(t *testing.T) {
 
 //TestGtpError.GetColor ....
 func TestGtpError_GetColor(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	results := newResults()
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + packageDir + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getColor()
@@ -314,11 +314,11 @@ func TestGtpError_GetColor(t *testing.T) {
 
 //TestGtpError.GetColor ....
 func TestGtpError_GetMessage(t *testing.T) {
-	packageDir := "/home/dave/sw/go/goTestParser"
+	packageDir := "/home/dave/sw/go/go-tdd"
 	results := newResults()
 	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + packageDir + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getMessage()
-	want := "In package: /home/dave/sw/go/goTestParser, [No Test Files]"
+	want := "In package: /home/dave/sw/go/go-tdd, [No Test Files]"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}

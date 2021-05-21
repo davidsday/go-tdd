@@ -8,7 +8,7 @@ import (
 //TestgetOutput() ....
 func TestGetOutput(t *testing.T) {
 	jlo := JLObject{}
-	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/goTestParser","Output":"PASS\n"}`)
+	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/go-tdd","Output":"PASS\n"}`)
 	err := json.Unmarshal(jsonline, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	got := jlo.getOutput()
@@ -21,11 +21,11 @@ func TestGetOutput(t *testing.T) {
 //TestgetPackage() ....
 func TestGetPackage(t *testing.T) {
 	jlo := JLObject{}
-	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/goTestParser","Output":"PASS\n"}`)
+	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/go-tdd","Output":"PASS\n"}`)
 	err := json.Unmarshal(jsonline, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	got := jlo.getPackage()
-	want := "github.com/davidsday/goTestParser"
+	want := "github.com/davidsday/go-tdd"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
@@ -34,7 +34,7 @@ func TestGetPackage(t *testing.T) {
 //TestgetAction() ....
 func TestGetAction(t *testing.T) {
 	jlo := JLObject{}
-	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/goTestParser","Output":"PASS\n"}`)
+	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615912067-04:00","Action":"output","Package":"github.com/davidsday/go-tdd","Output":"PASS\n"}`)
 	err := json.Unmarshal(jsonline, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	got := jlo.getAction()
@@ -47,7 +47,7 @@ func TestGetAction(t *testing.T) {
 //TestgetElapsed() ....
 func TestGetElapsed(t *testing.T) {
 	jlo := JLObject{}
-	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.616169473-04:00","Action":"pass","Package":"github.com/davidsday/goTestParser","Elapsed":0.005}`)
+	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.616169473-04:00","Action":"pass","Package":"github.com/davidsday/go-tdd","Elapsed":0.005}`)
 	err := json.Unmarshal(jsonline, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	got := jlo.getElapsed()
@@ -60,7 +60,7 @@ func TestGetElapsed(t *testing.T) {
 //TestgetTest() ....
 func TestGetTest(t *testing.T) {
 	jlo := JLObject{}
-	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615458883-04:00","Action":"pass","Package":"github.com/davidsday/goTestParser","Test":"TestGetAverageCyclomaticComplexity_no_go_files","Elapsed":0}`)
+	jsonline := []byte(`{"Time":"2021-05-08T22:19:07.615458883-04:00","Action":"pass","Package":"github.com/davidsday/go-tdd","Test":"TestGetAverageCyclomaticComplexity_no_go_files","Elapsed":0}`)
 	err := json.Unmarshal(jsonline, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	got := jlo.getTest()
