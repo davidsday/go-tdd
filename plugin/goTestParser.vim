@@ -34,6 +34,7 @@ if exists('g:did_gotst_ftplugin')
 endif
 let g:did_gotst_ftplugin = 1
 
+ let s:base_dir = expand('<sfile>:p:h:h')
 
 " toScreen needs to either be v:true or v:false
 " If toScreen is v:true, stdout goes to the terminal
@@ -53,7 +54,6 @@ function! s:RunTest(toScreen)
     " left.  So don't delete it.
     chdir %:p:h
     " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    let s:base_dir=expand('<sfile>:p:h:h')
     let l:goTestParserBinary=s:base_dir . '/bin/goTestParser'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
