@@ -53,7 +53,7 @@ function! s:RunTest(toScreen)
     " left.  So don't delete it.
     chdir %:p:h
     " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/goTestParser/bin/goTestParser"
-    let s:base_dir=expand('<sfile>:h:h')
+    let s:base_dir=expand('<sfile>:p:h:h')
     let l:goTestParserBinary=s:base_dir . '/bin/goTestParser'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
