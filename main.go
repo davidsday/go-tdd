@@ -28,6 +28,7 @@ var debug int
 
 func main() {
 
+	debug = 0
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
 	//}
