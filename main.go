@@ -24,11 +24,11 @@ var (
 	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
 	regexNil          = &regexp.Regexp{}
 )
-var debug int
+var Debug int
 
 func main() {
 
-	debug = 0
+	Debug = 0
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
 	//}
@@ -72,7 +72,7 @@ func main() {
 		results.GocycloIgnore = os.Args[3]
 	}
 	if len(os.Args) > 4 {
-		debug, _ = strconv.Atoi(os.Args[4])
+		Debug, _ = strconv.Atoi(os.Args[4])
 	}
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
