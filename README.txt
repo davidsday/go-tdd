@@ -156,14 +156,20 @@ bars.
 In my personal set up, I have told vim-go to use the quickfix window
 exclusively.
 
+This lives in my ~/.config/nvim/after/ftplugin/go_local.vim file
 	let g:go_list_type = 'quickfix'
 
+For vim-plug:
 	Plug 'Valloric/ListToggle'
 		If you use this, <Leader>q toggles the quickfix window open and closed
 
+This lives in a general mappings file, so it is available for all quickfix
+lists:
 	nnoremap <C-j> :cnext<CR>
 	nnoremap <C-k> :cprev<CR>
 		I use <C-j> (down), and <C-k> (up) to navigate the quickfix window
+
+This is also in that ~/.config/after/ftplugin/go_local.vim file:
 
 	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
 		vim-go provides for toggling between various alternate files, I only use
