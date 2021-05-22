@@ -86,9 +86,9 @@ func main() {
 	// Turn our Barmessage object into JSON and send it to stdout
 	barMessage.marshalToStdOut()
 	// and/or save it to disk
-	if debug == 1 {
-		barMessage.marshalToDisk()
-	}
+	// if debug == 1 {
+	barMessage.marshalToDisk()
+	// }
 
 } // endmain()
 
