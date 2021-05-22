@@ -1,4 +1,4 @@
-This is a Vim plugin that I wrote for my own use to smooth my Golang
+This is a Vim plugin that I wrote in Golang for my own use to smooth my Golang
 learning and development experience.
 
 I got my start with Golang with:
