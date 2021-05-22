@@ -1,7 +1,7 @@
 " Dave's GoLang Testing Stuff
 
 " RunTest(), ProcessStandardOutput(), ColorBar(),
-" and GoTestParser, a Golang program that runs go test -v -json -color
+" and go-tdd, a Golang program that runs go test -v -json -cover
 " and parses its output for use here, and these few mappings, work
 " together to allow the running of RedBar/GreenBar Golang tests from within
 " Vim.
@@ -63,12 +63,11 @@ function! s:RunTest(toScreen)
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
     chdir %:p:h
-    " let l:goTestParserBinary="${HOME}/.config/nvim/plugged/go-tdd/bin/go-tdd"
-    let l:goTestParserBinary=s:plugin_dir . '/bin/go-tdd'
+    let l:go-tdd-binary=s:plugin_dir . '/bin/go-tdd'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 
-    let l:cmdLine=l:goTestParserBinary . oneSpace . l:packageDir . oneSpace . l:screencolumns
+    let l:cmdLine=l:go-tdd-binary . oneSpace . l:packageDir . oneSpace . l:screencolumns
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
