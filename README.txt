@@ -192,6 +192,11 @@ nvim/after/ftplugin/go_local.vim for that purpose. The outermost quotes
 are stripped by the shell on the command line. go-ttd needs to pass
 a string to gocyclo, thus the inner single quotes.  Use them both please.
 
+
+The user can also set a Vim global variable g:go_tdd_debug=1 to turn
+on recording to disk the json output that is being sent to vim.
+g:go_tdd_debug defaults to 0.
+
 I see this readme is excessively long..... perhaps some documentation will
 be a near term project.
 
