@@ -63,11 +63,11 @@ function! s:RunTest(toScreen)
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
     chdir %:p:h
-    let l:go-tdd-binary=s:plugin_dir . '/bin/go-tdd'
+    let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 
-    let l:cmdLine=l:go-tdd-binary . oneSpace . l:packageDir . oneSpace . l:screencolumns
+    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
