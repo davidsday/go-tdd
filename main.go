@@ -27,6 +27,8 @@ var (
 
 func main() {
 
+	debug := "0"
+
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
 	//}
@@ -69,6 +71,9 @@ func main() {
 	if len(os.Args) > 3 {
 		results.GocycloIgnore = os.Args[3]
 	}
+	if len(os.Args) > 4 {
+		debug = os.Args[4]
+	}
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
 
@@ -80,8 +85,10 @@ func main() {
 
 	// Turn our Barmessage object into JSON and send it to stdout
 	barMessage.marshalToStdOut()
-	// and save it to disk
-	// barMessage.marshalToDisk()
+	// and/or save it to disk
+	if debug == "1" {
+		barMessage.marshalToDisk()
+	}
 
 } // endmain()
 

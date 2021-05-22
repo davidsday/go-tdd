@@ -67,11 +67,14 @@ function! s:RunTest(toScreen)
     let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
-    if !exists('g:gocyclo_ignore') || g:gocyclo_ignore == ''
+    if !exists('g:go_tdd_debug')
+      let g:go_tdd_debug=0
+    endif
+    if !exists('g:gocyclo_ignore') || g:gocyclo_ignore ==# ''
       let g:gocyclo_ignore="'vendor|testdata'"
     endif
 
-    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns . oneSpace . g:gocyclo_ignore
+    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns . oneSpace . g:gocyclo_ignore . g:go_tdd_debug
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
