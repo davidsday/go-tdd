@@ -166,7 +166,7 @@ exclusively.
 		I use <C-j> (down), and <C-k> (up) to navigate the quickfix window
 
 	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
-		go-vim provides for toggling between various alternate files, I only use
+		vim-go provides for toggling between various alternate files, I only use
 		this one
 
 
