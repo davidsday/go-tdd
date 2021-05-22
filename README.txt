@@ -178,5 +178,22 @@ This is also in that ~/.config/after/ftplugin/go_local.vim file:
 		vim-go provides for toggling between various alternate files, I only use
 		this one
 
+Additionally, the gocyclo engine takes a regex which tells it which
+directories to ignore.  This regex defaults to 'vendor|testdata'.  You may
+set the global vim variable g:gocyclo_ignore to whatever you wish to
+ignore.  Go test ignores 'testdata' dirs automatically, and we cannot
+control the cyclomatic complexity of our vendor directories don't want
+them included either.  Gocyclo does not automatically skip any directories
+so I have told it to ignore 'vendor|testdata' as our default.
+
+Should you need to alter this you can set g:gocyclo_ignore="'regex'" in a
+config file that gets loaded after plugins are loaded.  I use
+nvim/after/ftplugin/go_local.vim for that purpose. The outermost quotes
+are stripped by the shell on the command line. go-ttd needs to pass
+a string to gocyclo, thus the inner single quotes.  Use them both please.
+
+I see this readme is excessively long..... perhaps some documentation will
+be a near term project.
+
 
 Life is good.....
