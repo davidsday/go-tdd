@@ -29,10 +29,10 @@
 " <LocalLeader>v runs 'go test -v ' verbosely to the screen, allowing you
 " to see the entire output, and inspect more closely.
 "
-if exists('g:did_gotst_ftplugin')
+if exists('g:did_gotdd_ftplugin')
   finish
 endif
-let g:did_gotst_ftplugin = 1
+let g:did_gotdd_ftplugin = 1
 
 " NOTE: Important to understand, this will not work
 " inside a function.  Must be done like this, external
