@@ -46,6 +46,7 @@ let g:did_gotdd_ftplugin = 1
 " manager might have put it.
 let s:plugin_dir = expand('<sfile>:p:h:h')
 
+
 " toScreen needs to either be v:true or v:false
 " If toScreen is v:true, stdout goes to the terminal
 " If not, stdout is captured in a variable 'out'
@@ -67,7 +68,7 @@ function! s:RunTest(toScreen)
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
 
-    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns
+    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns . oneSpace . g:gocyclo_ignore
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
