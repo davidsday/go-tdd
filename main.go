@@ -68,9 +68,18 @@ func main() {
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	results.VimColumns, _ = strconv.Atoi(os.Args[2])
+	// Gocyclo accepts a regex as a request to ignore paths which
+	// match the regex.  There is a vim global g:gocyclo_ignore which
+	// defaults to 'vendor|testdata' which the user may set to his/here
+	// preference and gocyclo will ignore those matching directories
+	// vendor is where go projects keep package dependencies and testdata
+	// is where we keep our, well, testdata, dirs and files that our tests
+	// need
 	if len(os.Args) > 3 {
 		results.GocycloIgnore = os.Args[3]
 	}
+	// The user may also request some debugging logging via
+	// this argument
 	if len(os.Args) > 4 {
 		Debug, _ = strconv.Atoi(os.Args[4])
 	}
