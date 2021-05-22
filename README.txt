@@ -1,5 +1,5 @@
-This is a Vim plugin that I wrote for my own use to smooth my Golang 
-learning and development experience.  
+This is a Vim plugin that I wrote for my own use to smooth my Golang
+learning and development experience.
 
 I got my start with Golang with:
 	https://quii.gitbook.io/learn-go-with-tests/
@@ -12,7 +12,7 @@ tiniest bit of shell script thrown in.
 For me, it has been a definite success, it helps me to smoothly cycle through the
 steps of TDD quickly and efficiently.  It has been a pleasure to use. Perhaps
 it might be useful for others....  I have benefited greatly from the work
-of others in the Vim community, perhaps one or two folks might find this useful. 
+of others in the Vim community, perhaps one or two folks might find this useful.
 
 
 It seeks to add two things:
@@ -48,7 +48,7 @@ longer than can be shown in a one line yellow bar, I capture the entire
 message in stdERR.txt in the package directory.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
-bar message and quits. That I don't remember that happening.
+bar message and quits. I don't remember that happening in actual use.
 
 There also are supplemental messages providing detail information in each
 red/green bars.  They report the number of tests run, passed, failed,
@@ -113,7 +113,7 @@ me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
 me, I don't want my tools reporting these situations as "[SUCCESS]".  So
 in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
-should be aware of, thus providing that "marginally better go test 
+should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
 
 To accomplish this, go-tdd provides its own go test parser, written
@@ -153,20 +153,30 @@ pressed (I typically just hit the space bar).
 <Space> (or any other key, for that matter) dismisses the Green/Red/Yellow
 bars.
 
+If you are using vim-plug:
+	Plug 'davidsday/go-tdd', {'for': [ 'go' ], 'branch': 'master', 'do': './install.sh'}
+
+
 In my personal set up, I have told vim-go to use the quickfix window
 exclusively.
 
+This lives in my ~/.config/nvim/after/ftplugin/go_local.vim file
 	let g:go_list_type = 'quickfix'
 
+For vim-plug:
 	Plug 'Valloric/ListToggle'
 		If you use this, <Leader>q toggles the quickfix window open and closed
 
+This lives in a general mappings file, so it is available for all quickfix
+lists:
 	nnoremap <C-j> :cnext<CR>
 	nnoremap <C-k> :cprev<CR>
 		I use <C-j> (down), and <C-k> (up) to navigate the quickfix window
 
+This is also in that ~/.config/after/ftplugin/go_local.vim file:
+
 	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
-		go-vim provides for toggling between various alternate files, I only use
+		vim-go provides for toggling between various alternate files, I only use
 		this one
 
 
