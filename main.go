@@ -24,10 +24,9 @@ var (
 	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
 	regexNil          = &regexp.Regexp{}
 )
+var debug int
 
 func main() {
-
-	debug := "0"
 
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
@@ -72,7 +71,7 @@ func main() {
 		results.GocycloIgnore = os.Args[3]
 	}
 	if len(os.Args) > 4 {
-		debug = os.Args[4]
+		debug, _ = strconv.Atoi(os.Args[4])
 	}
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
@@ -86,7 +85,7 @@ func main() {
 	// Turn our Barmessage object into JSON and send it to stdout
 	barMessage.marshalToStdOut()
 	// and/or save it to disk
-	if debug == "1" {
+	if debug == 1 {
 		barMessage.marshalToDisk()
 	}
 
