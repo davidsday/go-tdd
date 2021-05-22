@@ -66,8 +66,9 @@ func main() {
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	results.VimColumns, _ = strconv.Atoi(os.Args[2])
-	results.GocycloIgnore = os.Args[3]
-
+	if len(os.Args) > 3 {
+		results.GocycloIgnore = os.Args[3]
+	}
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
 
