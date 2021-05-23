@@ -24,11 +24,10 @@ var (
 	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
 	regexNil          = &regexp.Regexp{}
 )
-var Debug int
+var debug int
 
 func main() {
 
-	Debug = 0
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
 	//}
@@ -78,11 +77,12 @@ func main() {
 	if len(os.Args) > 3 {
 		results.GocycloIgnore = os.Args[3]
 	}
+	// Turn Debug off
+	debug = 0
 	// The user may also request some debugging logging via
 	// this argument
-	if len(os.Args) > 4 {
-		Debug, _ = strconv.Atoi(os.Args[4])
-	}
+	debug = setDebug(debug, os.Args)
+
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
 
@@ -95,7 +95,7 @@ func main() {
 	// Turn our Barmessage object into JSON and send it to stdout
 	barMessage.marshalToStdOut()
 	// and/or save it to disk
-	if Debug != 0 {
+	if debug != 0 {
 		barMessage.marshalToDisk()
 	}
 
@@ -374,4 +374,16 @@ func hasTestCoverage(output string) bool {
 func hasTestFileReferences(output string) bool {
 	// one of the surest fail indicators is an output about a "_test.go" file
 	return CheckRegx(regexTestFileRef, output)
+}
+
+func setDebug(debug int, args []string) int {
+	if len(args) > 4 {
+		err := error(nil)
+		debug, err = strconv.Atoi(args[4])
+		chkErr(err, "error converting 4th argument to int")
+		if debug != 0 && debug != 1 {
+			log.Fatalf("Illegal value, '%d', for Debug argument", debug)
+		}
+	}
+	return debug
 }
