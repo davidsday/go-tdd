@@ -121,10 +121,10 @@ func (q *GtpQfList) Count() int {
 }
 
 // Now we can build/fill the QuickFix Item
-func buildQuickFixItem(args []string, parts []string, jlo JLObject) GtpQfItem {
+func buildQuickFixItem(searchDir string, parts []string, jlo JLObject) GtpQfItem {
 	QfItem := GtpQfItem{}
-	// QfItem.Filename = args[1] + "/" + parts[0]
-	QfItem.Filename = jlo.getPackage() + "/" + parts[0]
+	QfItem.Filename = searchDir + "/" + parts[0]
+	// QfItem.Filename = jlo.getPackage() + "/" + parts[0]
 	QfItem.Lnum, _ = strconv.Atoi(parts[1])
 	QfItem.Col = 1
 	QfItem.Vcol = 1

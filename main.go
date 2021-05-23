@@ -124,21 +124,14 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		// we are dealing with JLObject structs
 		jlo.unmarshal(jsonLine)
 
-		// jlo.Package seems to contain the package dir declared
-		// in go.mod
-		// PackageDirFromJlo is used informationally here, in messages
-		// to the user about errors
-		// I suppose PackageDirsToSearch[0] might also be OK, and would
-		// also give a directory path to go to
-
-		PackageDirFromJlo := jlo.getPackage()
+		PackageDir := PackageDirsToSearch[0]
 		results.incCount(jlo.getAction())
 
 		var err error
 		var doBreak bool
 
 		if jlo.getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jlo, prevJlo, PackageDirFromJlo, Barmessage)
+			doBreak, err = HandleOutputLines(results, jlo, prevJlo, PackageDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
@@ -212,7 +205,7 @@ func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(results, list, prevJlo.getTest())
 		}
-		qfItem := buildQuickFixItem(os.Args, list, jlo)
+		qfItem := buildQuickFixItem(packageDir, list, jlo)
 		Barmessage.QuickFixList.Add(qfItem)
 	}
 	return doBreak, err

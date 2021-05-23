@@ -1,8 +1,0 @@
-{"Time":"2021-05-10T10:34:20.304771367-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
-{"Time":"2021-05-10T10:34:20.304924794-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
-{"Time":"2021-05-10T10:34:20.304941306-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- PASS: TestHello (0.00s)\n"}
-{"Time":"2021-05-10T10:34:20.304946694-04:00","Action":"pass","Package":"github.com/davidsday/hello","Test":"TestHello","Elapsed":0}
-{"Time":"2021-05-10T10:34:20.304952055-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"PASS\n"}
-{"Time":"2021-05-10T10:34:20.304956572-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
-{"Time":"2021-05-10T10:34:20.305088221-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
-{"Time":"2021-05-10T10:34:20.305108119-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}

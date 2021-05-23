@@ -76,12 +76,12 @@ func TestQfList_Add(t *testing.T) {
 func TestBuildQuickFixItem_filename(t *testing.T) {
 	QfItem := GtpQfItem{}
 	parts := []string{"firstPart", "secondPart", "thirdPart"}
-	args := []string{"programName", "packageDir", "10"}
+	pkgDir := "packageDir"
 	jlo := JLObject{}
 	jlo.Test = "thisTest"
 	jlo.Package = "packageDir"
 
-	QfItem = buildQuickFixItem(args, parts, jlo)
+	QfItem = buildQuickFixItem(pkgDir, parts, jlo)
 	if QfItem.Filename != "packageDir/firstPart" {
 		t.Errorf("Filename:  Got: %s, Wanted: %s\n", QfItem.Filename, "packageDir/firstPart")
 	}
@@ -91,11 +91,11 @@ func TestBuildQuickFixItem_filename(t *testing.T) {
 func TestBuildQuickFixItem_pattern(t *testing.T) {
 	QfItem := GtpQfItem{}
 	parts := []string{"firstPart", "secondPart", "thirdPart"}
-	args := []string{"programName", "packageDir", "10"}
+	pkgDir := "packageDir"
 	jlo := JLObject{}
 	jlo.Test = "thisTest"
 
-	QfItem = buildQuickFixItem(args, parts, jlo)
+	QfItem = buildQuickFixItem(pkgDir, parts, jlo)
 	if QfItem.Pattern != "thisTest" {
 		t.Errorf("Pattern:  Got: %s, Wanted: %s\n", QfItem.Pattern, "thisTest")
 	}

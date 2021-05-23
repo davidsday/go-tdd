@@ -1,3 +1,3 @@
-module github.com/davidsday/hello
+module hello
 
 go 1.16
