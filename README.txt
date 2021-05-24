@@ -152,60 +152,32 @@ pressed (I typically just hit the space bar).
 <Space> (or any other key, for that matter) dismisses the Green/Red/Yellow
 bars.
 
+Configuration:
+
 If you are using vim-plug:
 	Plug 'davidsday/go-tdd', {'for': [ 'go' ], 'branch': 'master', 'do': './install.sh'}
-
-
-In my personal set up, I have told vim-go to use the quickfix window
-exclusively.
-
-This lives in my ~/.config/nvim/after/ftplugin/go_local.vim file
-	let g:go_list_type = 'quickfix'
-
-For vim-plug:
 	Plug 'Valloric/ListToggle'
 		If you use this, <Leader>q toggles the quickfix window open and closed
 
-This lives in a general mappings file, so it is available for all quickfix
-lists:
+
+go-tdd comes with a small number of user alterable configuration settings and maps.
+
+I have gathered them all into go-tdd/after/go.vim and it looks like this:
+
+	let g:go_tdd_debug=0 // set to 1 if you want to log JSON sent to vim
+	let g:gocyclo_ignore="'vendor|testdata'"  //regex for gocyclo to ignore
+	let g:go_list_type = 'quickfix'  // my pref is to only use quickfix
+
+	// toggle between mygofile.go and mygofile_test.go
+	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
+	// navigate quickfix list down and up
 	nnoremap <C-j> :cnext<CR>
 	nnoremap <C-k> :cprev<CR>
-		I use <C-j> (down), and <C-k> (up) to navigate the quickfix window
 
-This is also in that ~/.config/after/ftplugin/go_local.vim file:
-
-	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
-		vim-go provides for toggling between various alternate files, I only use
-		this one
-
-Additionally, the gocyclo engine takes a regex which tells it which
-directories to ignore.  This regex defaults to 'vendor|testdata'.  You may
-set the global vim variable g:gocyclo_ignore to whatever you wish to
-ignore.  Go test ignores 'testdata' dirs automatically, and we cannot
-control the cyclomatic complexity of our vendor directories don't want
-them included either.  Gocyclo does not automatically skip any directories
-so I have told it to ignore 'vendor|testdata' as our default.
-
-Should you need to alter this you can set g:gocyclo_ignore="'regex'" in a
-config file that gets loaded after plugins are loaded.  I use
-nvim/after/ftplugin/go_local.vim for that purpose. The outermost quotes
-are stripped by the shell on the command line. go-ttd needs to pass
-a string to gocyclo, thus the inner single quotes.  Use them both please.
-
-
-The user can also set a Vim global variable g:go_tdd_debug=1 to turn
-on recording to disk the json output that is being sent to vim.
-g:go_tdd_debug defaults to 0.
-
-I see this readme is excessively long..... perhaps some documentation will
-be a near term project......
-
-OK, well now there is a VERY rudimentary help
-facility, but it is literally, a first cut.  I have also today, moved
-configuration variables and mappings into go-tdd/after/go.vim so you can
-find them all in one place.  Please do NOT alter them.  Copy that file
-to a place like nvim/after/ftplugin/go_local.vim so that your changes will
-be put in place after go-tdd loads and thus supercede the defaults.
+	// run go-tdd on package in current dir
+	nmap <silent> <LocalLeader>t <Plug>(RunGoGreenBarTests)
+	// run verbosely - just shows go test -v -json -cover verbose output
+	nmap <silent> <LocalLeader>v <Plug>(RunGoTestsVerbose)
 
 
 Life is good.....
