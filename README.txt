@@ -198,7 +198,14 @@ on recording to disk the json output that is being sent to vim.
 g:go_tdd_debug defaults to 0.
 
 I see this readme is excessively long..... perhaps some documentation will
-be a near term project.
+be a near term project......
+
+OK, well now there is a VERY rudimentary help
+facility, but it is literally, a first cut.  I have also today, moved
+configuration variables and mappings into go-tdd/after/go.vim so you can
+find them all in one place.  Please do NOT alter them.  Copy that file
+to a place like nvim/after/ftplugin/go_local.vim so that your changes will
+be put in place after go-tdd loads and thus supercede the defaults.
 
 
 Life is good.....
