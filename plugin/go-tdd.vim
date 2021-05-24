@@ -107,23 +107,3 @@ endfunction
 
 noremap <unique> <Plug>(RunGoTestsVerbose) :call <SID>RunTest('True')<CR>
 noremap <unique> <Plug>(RunGoGreenBarTests) :call <SID>RunTest('False')<CR>
-
-" I try to use <LocalLeader> in ftplugin types of situations
-" This one runs GreenBar/RedBar tests
-nmap <silent> <LocalLeader>t <Plug>(RunGoGreenBarTests)
-" This one opens a window below and pipes 'go test -v ' output so
-" you can see the whole thing
-nmap <silent> <LocalLeader>v <Plug>(RunGoTestsVerbose)
-""nnoremap <silent> <LocalLeader>v :!clear;./runTests<cr>
-
-""=============================================================================
-"" GoTest
-""=============================================================================
-" go test this project
-" nnoremap <silent><LocalLeader>p :GoTest ./... <CR>
-" go test this package
-" nnoremap <silent><LocalLeader>m :GoTest<CR>
-" go test this file
-" nnoremap <silent><LocalLeader>f :GoTest expand('%:p')<CR>
-" go test this function
-" nnoremap <silent><LocalLeader>u :GoTestFunc file<CR>
