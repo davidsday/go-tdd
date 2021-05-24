@@ -1,4 +1,228 @@
-coming soon (more or less) ....
+*go-tdd.txt*  For Vim version 8.1 and Neovim 4.0+ Last change: 2021 May 24
 
-I haven't the slightest idea of how to do documentation so you might have
-to be patient....for a few days... or more....
+
+                                                             *go-tdd_contents*
+                                                                *go-tdd_Intro*
+                                                                *go-tdd_Usage*
+                                                        *go-tdd_Configuration*
+                                                            *g:gocyclo_ignore*
+                                                              *g:go_tdd_debug*
+                                                              *go-tdd_License*
+                                                                 *go-tdd_Bugs*
+                                                              *go-tdd_Credits*
+
+*go-tdd.txt*   Runs go test -v -json -cover from within vim and displays a
+red or green or yellow bar as results with some details as appropriate.
+
+==============================================================================
+CONTENTS                                                      *go-tdd-contents*
+
+    1. Intro .......................... |go-tdd_Intro|
+    2. Usage .......................... |go-tdd_Usage|
+    3. Configuration .................. |go-tdd_Configuration|
+    4. License ........................ |go-tdd_License|
+    5. Bugs ........................... |go-tdd_Bugs|
+    6. Credits ........................ |go-tdd_Credits|
+
+==============================================================================
+1. Intro                                                          *go-tdd_Intro*
+
+This is a Vim plugin that I wrote in Golang for my own use.
+
+It is designed to work conveniently alongside Fatih Arslan's vim-go plugin,
+which I consider to be my main Golang development tool.
+
+go-tdd provides a red bar/green/bar (and yellow bar) Test Driven Development
+programming experience to the Golang developer.  It does this via its own
+parser for 'go test' output, which happens to be written entirely in Golang.
+
+It adds two things to the vim-go/Golang TDD experience:
+
+  RedBar/GreenBar/Refactor Test Driven Development style programming
+
+  A marginally better 'vim-go go test' experience
+
+The first is via the use of Vim's message line to provide red/green
+bar fail/pass indications. I have also added a yellow bar message which
+I use for messages about errors and situations do not represent a Green Bar result
+(all tests passed), or a Red Bar (1 or more tests ran correctly but failed),
+generally some sort of error or failure not related to a failing test.
+
+Right now these yellow bar messages include
+  [no tests found],
+  [no tests to execute] - basically empty test file(s)
+  [build failed] - go test could not successfully build,
+  [received a panic] - successfully built but panic during execution,
+  [invalid JSON message] - go-tdd received invalid JSON from STDIN,
+  and the receipt of any message on STDERR.
+
+Since I am parsing "go test -v -json -cover" output, go-tdd expects
+valid JSON.
+
+I capture stderr separately and process it as best I can, by showing a
+snippet of the message in a yellow bar.  If the STDERR message is
+longer than can be shown in a one line yellow bar, I capture the entire
+message in stdERR.txt in the package directory.
+
+If go-tdd encounters non JSON lines on stdout, it issues a yellow
+bar message to that effect and quits. I don't remember that happening
+in actual use.
+
+There also are supplemental messages providing detail information in each
+red/green bars.  They report the number of tests run, passed, failed,
+and skipped, in addition to the elapsed time for running all the tests
+as provided by go test. Test coverage is reported on Green Bars.
+
+I have also added Average Cyclomatic Complexity to the Green Bars.
+This has little to do with testing but a lot to do with design and
+it is a metric I want to be aware of.
+
+==============================================================================
+2. Usage                                                          *go-tdd_Usage*
+
+If you are using vim-plug:
+  Plug 'davidsday/go-tdd', {'for': [ 'go' ], 'branch': 'master', 'do': './install.sh'}
+  Plug 'Valloric/ListToggle'
+    If you use this 'Valloric/ListToggle', <Leader>q toggles the quickfix window open and closed
+    Use <C-j> (down), and <C-k> (up) to navigate the quickfix window
+
+    I use these mappings:
+
+        <LocalLeader>t  runs RunGoGreenBarTests
+
+        <LocalLeader>v  runs RunGoTestsVerbose
+
+        <LocalLeader>a  toggles between yourfile.go and yourfile_test.go
+
+        <C-j> (down)    navigates the quickfix list up and down
+        <C-k> (up)
+
+        <Leader>q       toggles the quickfix list open and closed
+
+    These mapping live in go-tdd/after/go.vim
+    If you want to change them, it would be best if you put the changes
+    or overwrites in either
+
+        ~/.vim/after/ftplugin/go_local.vim
+        or
+        ~/.config/nvim/after/ftplugin/go_local.vim
+
+    or similar file so your changes will not be overwritten by mine when
+    you refresh the plugin from github.
+
+
+  The RedBar/GreenBar/YellowBar message line lingers until any key is
+  pressed (I typically just hit the space bar).
+
+
+
+==============================================================================
+6. Configuration                                         *go-tdd_Configuration*
+
+go-tdd comes with a simple configuration that the user is free to modify
+
+Each of these global Vim variables and mappings live in
+    go-tdd/after/go.vim
+
+if you need to change them, I suggest you copy that file to
+
+    ~/.vim/after/ftplugin/go_local.vim
+    or
+    ~/.config/nvim/after/ftplugin/go_local.vim
+
+and make your changes there.  That way your changes will not be overwritten
+the next time you refresh this plugin from github, and they will be loaded
+after this plugin is set up, so your preferences will prevail.
+
+                                                           *g:gocyclo_ignore*
+
+Default:
+let g:gocyclo_ignore="'vendor|testdata'"
+
+gocyclo accepts a regex it uses to ignore matching paths.  Golang development
+projects commonly have both vendor and testdata directories which we likely do
+not want gocyclo to analyze.  So I provide it with the regex to ignore these dirs.
+
+
+                                                            *g:go_tdd_debug*
+
+
+Default:
+let g:go_tdd_debug=0
+
+go-tdd checks the Vim global variable g:go_tdd_debug and if it is 1
+it will output the JSON it sends to Vim to disk in go-tdd-log.json in the
+package directory.  This is now not particularly useful, unless you are curious
+to see what is being sent to vim for display.
+
+It is a remnent of a much larger JSON data structure which basically held
+all important state for the program and saved itself to disk at a few key
+points in the program run so as to help with any debugging needs.  Actually,
+that large JSON data structure originated in the original version of go-tdd
+which was written entirely in Vimscript.  I did not know how to test in Vimscript,
+so I fell back on the strategy of "log everything" and I did my logging in
+JSON.
+
+That data structure was successively paired down to just what
+was necessary for execution during the development in Golang and the refactor
+stage of development, and this is all that is left, as testing incrementally
+replaced logging as my primary quality assurance tool.  I may even completely
+remove this in the future.
+
+==============================================================================
+7. License                                                     *go-tdd_License*
+
+MIT License
+
+Copyright (c) 2021 David S. Day (https://github.com/davidsday)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+==============================================================================
+8. Bugs                                                            *go-tdd_Bugs*
+
+If you find a bug please post it on the issue tracker:
+https://github.com/davidsday/go-tdd/issues
+
+You may also email me at david.scott.day@gmail.com, but please also use
+the issue tracker, to help keep things organized and recorded.
+
+==============================================================================
+9. Credits                                                      *go-tdd_Credits*
+
+Thanks to Fatih Arslan for the vim-go Vim plugin.  I have enjoyed using it
+immensely.
+
+Special thanks to https://github.com/fzipp/gocyclo for making it so easy to
+incorporate cyclomatic complexity metrics into go-tdd.  I am vaguely aware that
+there are other versions out there but did not feel qualified to judge between
+them and this is what vim-go's metalinter seemed to be using so I went with it.
+
+Also a hat tip to Alfredo Deza of Pytest.vim fame.  Pytest was my first
+introduction to testing and Python testing in particular, when I took
+MIT's Introduction to Computation and Programming Using Python some years ago
+now. They did not use Pytest in the course, but I did, and I have been a TDDer
+ever since. When I decided to learn Go, I missed my Red and Green Bars.  I didn't
+find any in my searches, thus this plugin.
+==============================================================================
+
+
+
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
