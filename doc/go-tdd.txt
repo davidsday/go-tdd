@@ -1,16 +1,6 @@
 *go-tdd.txt*  For Vim version 8.1 and Neovim 4.0+ Last change: 2021 May 24
 
 
-                                                             *go-tdd_contents*
-                                                                *go-tdd_Intro*
-                                                                *go-tdd_Usage*
-                                                        *go-tdd_Configuration*
-                                                            *g:gocyclo_ignore*
-                                                              *g:go_tdd_debug*
-                                                              *go-tdd_License*
-                                                                 *go-tdd_Bugs*
-                                                              *go-tdd_Credits*
-
 *go-tdd.txt*   Runs go test -v -json -cover from within vim and displays a
 red or green or yellow bar as results with some details as appropriate.
 
