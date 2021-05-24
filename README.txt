@@ -162,7 +162,7 @@ If you are using vim-plug:
 
 go-tdd comes with a small number of user alterable configuration settings and maps.
 
-I have gathered them all into go-tdd/after/go.vim and it looks like this:
+I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks like this:
 
 	let g:go_tdd_debug=0 // set to 1 if you want to log JSON sent to vim
 	let g:gocyclo_ignore="'vendor|testdata'"  //regex for gocyclo to ignore
@@ -179,5 +179,12 @@ I have gathered them all into go-tdd/after/go.vim and it looks like this:
 	// run verbosely - just shows go test -v -json -cover verbose output
 	nmap <silent> <LocalLeader>v <Plug>(RunGoTestsVerbose)
 
+If you need to make changes, please copy this file to
+your config dir (~/.vim/ or
+~/.config/nvim/)after/ftplugin/go_tdd_local.vim and make any changes
+there.  That way your changes will not be overwritten every time you
+refresh this plugin from github.
 
 Life is good.....
+
+Dave

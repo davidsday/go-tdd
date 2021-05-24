@@ -89,7 +89,7 @@ If you are using vim-plug:
 
         <Leader>q       toggles the quickfix list open and closed
 
-    These mapping live in go-tdd/after/go.vim
+    These mapping live in go-tdd/plugin/go-tdd-local.vim
     If you want to change them, it would be best if you put the changes
     or overwrites in either
 
@@ -112,7 +112,7 @@ If you are using vim-plug:
 go-tdd comes with a simple configuration that the user is free to modify
 
 Each of these global Vim variables and mappings live in
-    go-tdd/after/go.vim
+    go-tdd/plugin/go_tdd_local.vim
 
 if you need to change them, I suggest you copy that file to
 
