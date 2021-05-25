@@ -81,7 +81,7 @@ func main() {
 	debug = 0
 	// The user may also request some debugging logging via
 	// this argument
-	debug = setDebug(debug, os.Args)
+	debug = setDebug(os.Args)
 
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
@@ -376,7 +376,8 @@ func hasTestFileReferences(output string) bool {
 	return CheckRegx(regexTestFileRef, output)
 }
 
-func setDebug(debug int, args []string) int {
+func setDebug(args []string) int {
+	debug := 0
 	if len(args) > 4 {
 		err := error(nil)
 		debug, err = strconv.Atoi(args[4])
