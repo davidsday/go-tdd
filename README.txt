@@ -121,10 +121,14 @@ asynchronous, which parses the 'go test -v -json' output and in turn,
 provides a further processed JSON structure which details for a small
 Vimscript what message, and in what color to deliver.  It also provides to
 Vim a quickfix list of test failures and/or skipped tests which Vim loads
-for your use. go-tdd's synchronous invocation of
-'go test -v -json -cover' has not really been noticeable in my use patterns.
-I rarely see go test take more than a few hundredths of a second to complete
-even hundreds of tests. Most reported times are in the thousandths of seconds.
+for your use. 
+
+go-tdd's synchronous invocation of 'go test -v -json -cover' has not really 
+been noticeable in my use patterns.  I rarely see go test take more than a 
+few hundredths of a second to complete even hundreds of tests. 
+Most reported times are in the thousandths of seconds.  This is at least 
+partially because go-tdd's go test parser is written entirely in Golang, 
+and is quick.
 
 I should point out that my go-tdd parser is simpler than vim-go's by
 a good margin.  vim-go bends over backwards to accomodate old Golang
