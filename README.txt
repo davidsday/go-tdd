@@ -160,30 +160,34 @@ If you are using vim-plug:
 		If you use this, <Leader>q toggles the quickfix window open and closed
 
 
-go-tdd comes with a small number of user alterable configuration settings and maps.
+go-tdd comes with a small number of user alterable configuration
+settings and maps.
 
-I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks like this:
+I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks
+like this:
+	" the actual file does not have these comments
+	let g:go_tdd_debug=0 " set to 1 if you want to log JSON sent to vim
+	let g:gocyclo_ignore="'vendor|testdata'"  "regex for gocyclo to ignore
+	let g:go_list_type = 'quickfix'  " my pref is to only use quickfix
 
-	let g:go_tdd_debug=0 // set to 1 if you want to log JSON sent to vim
-	let g:gocyclo_ignore="'vendor|testdata'"  //regex for gocyclo to ignore
-	let g:go_list_type = 'quickfix'  // my pref is to only use quickfix
-
-	// toggle between mygofile.go and mygofile_test.go
+	" toggle between mygofile.go and mygofile_test.go
 	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
-	// navigate quickfix list down and up
+	" navigate quickfix list down and up
 	nnoremap <C-j> :cnext<CR>
 	nnoremap <C-k> :cprev<CR>
 
-	// run go-tdd on package in current dir
+	" run go-tdd on package in current dir
 	nmap <silent> <LocalLeader>t <Plug>(RunGoGreenBarTests)
-	// run verbosely - just shows go test -v -json -cover verbose output
+	" run verbosely - just shows go test -v -json -cover verbose output
 	nmap <silent> <LocalLeader>v <Plug>(RunGoTestsVerbose)
 
 If you need to make changes, please copy this file to
-your config dir (~/.vim/ or
-~/.config/nvim/)after/ftplugin/go_tdd_local.vim and make any changes
-there.  That way your changes will not be overwritten every time you
-refresh this plugin from github.
+your config dir
+
+(~/.vim/ or ~/.config/nvim/)after/ftplugin/go_tdd_local.vim
+
+and make any changes there.  That way your changes will not be overwritten
+every time you refresh this plugin from github.
 
 Life is good.....
 
