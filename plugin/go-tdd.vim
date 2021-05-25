@@ -89,12 +89,10 @@ function! s:RunTest(toScreen)
 endfunction
 
 
-" The stdout arg is a pointer to the stdout stream, indicating that
-" this function operates on that stream.
-" This function operates on the captured stdout stream from the tests
-" and makes decisions about what to show in the message bar, green or red
-" or yellow background, and what messages to show
-
+" This function operates on the JSON object passed back to Vim from
+" the go-tdd binary, creating the quickfixlist if appropriate and
+" calling go#color_bar#DoColorBar() to display a Red/Green/Yellow Bar
+" message as provided by go-tdd.
 function! s:ProcessStdOutput(stdout) abort
   let l:packageDir = shellescape(expand('%:p:h'))
   let l:json_object = json_decode(a:stdout)
