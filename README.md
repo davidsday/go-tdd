@@ -105,6 +105,7 @@ settings and maps.
 
 I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks
 like this:
+
 	" the actual file does not have these comments
 	let g:go_tdd_debug=0 " set to 1 if you want to log JSON sent to vim
 	let g:gocyclo_ignore="'vendor|testdata'"  "regex for gocyclo to ignore
