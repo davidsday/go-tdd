@@ -10,10 +10,11 @@ It seeks to add two things to your Golang TDD development:
 
 	A marginally better 'vim-go go test' experience
 
-The first is via the use of Vim's message line to provide red/green
-bar fail/pass indications. I have also added a yellow bar message which
-I use for messages about errors that are not caused by an actual
-failing test.
+go-tdd runs and parses the output of go test so as to provide Vim/Neovim
+instructions on what message to display, and in what color.
+Green bar messages indicate all tests passed. A red bar message indicates
+that tests ran, but at least one failed. A yellow bar indicates an error
+or concerning circumstance not directly related to a failing test.
 
 Right now these yellow bar messages include
 	[no tests found],
@@ -23,7 +24,7 @@ Right now these yellow bar messages include
 	[invalid JSON message],
 	and the receipt of any message on STDERR.
 
-I capture stderr separately and process it by showing a snippet of the
+If there is output on STDERR,  go-tdd shows a snippet of the
 message in a yellow bar.  If the STDERR message is longer than can be
 shown in a one line yellow bar, I capture the entire message in StdErr.txt
 in the package directory.
@@ -48,42 +49,8 @@ this tool to supplement vim-go for my own use. This project has ~90% test
 coverage as I write this (basically everything but main() and a few
 logFatal() type calls).
 
-And, as an aside, I have had occasion to go back and retrofit (rewrite)
-a few personal projects in this style recently, and I have been
-surprised at the bugs that writing tests brings to the surface
-even on projects which seem to be working fine.  I suspect that these
-personal projects have only been exercised with my personal use patterns,
-and I had of course corrected the bugs that come to light in my own use
-scenario, so the apps seemed to be bug free to me.  Writing tests to
-substantially cover 85-95% of their code further flushes out bugs I had
-not found.  Humbling....  It has further confirmed to me that TDD is
-a worthwhile style of development and especially when combined with
-the use of cyclomatic complexity metrics to make sure your functions
-stay small, simple, debuggable and readable.  I have found that
-having the cyclomatic complexity metric more or less ever present in my
-development efforts helps me preemptively keep things simple.  It is
-easier to write a simple test for a simple function.
-
-By, the way, a hat tip here to the well written github.com/fzipp/gocyclo,
-which provides the code for determining cyclomatic complexity in Golang
-code.  It is compiled directly into this plugin, so the user need not
-do a thing, except work on the complexity of his/her code.
-
-I am taking the go test -json output's word as to the number
-of tests run, passed, failed, etc, but we need to realize that the results
-are approximate. When you write a test with subtests, go test seems to count
-the mother/father test in addition to all the subtests.  Thing is, the parent
-test often doesn't actually do any testing itself and perhaps
-shouldn't be counted. Just don't be surprised at counts that differ
-slightly from your counts, if you use subtests.
-
 go-tdd is designed to work alongside of vim-go, since, really,
 vim-go is my most important golang development tool.
-
-It does not interfere with vim-go in anyway that I am aware of.
-In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
-<LocalLeader>t to activate go-tdd. If I desire to use vim-go's
-:GoTest command, I call it just like that.
 
 The second benefit listed above was a "marginally better go test
 experience".  vim-go reports [SUCCESS] in directories with no test files
