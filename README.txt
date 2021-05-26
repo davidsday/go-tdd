@@ -1,20 +1,10 @@
 This is a Vim plugin that I wrote in Golang for my own use to smooth my Golang
 learning and development experience.
 
-I got my start with Golang with:
-	https://quii.gitbook.io/learn-go-with-tests/
-and I stopped in the middle of that book and wrote this Vim/Neovim plugin
-to help me do TDD with Golang.
-
-The plugin is actually about 90+% in Golang, with a small Vimscript and the
+The plugin is 92+% in Golang and about 7% in Vimscript and the
 tiniest bit of shell script thrown in.
 
-For me, it has been a definite success, it helps me to smoothly cycle through
-the steps of TDD quickly and efficiently.  It has been a pleasure to use.
-I have benefited greatly from the work of others in the Vim community,
-perhaps one or two folks might find this useful.
-
-It seeks to add two things:
+It seeks to add two things to your Golang TDD development:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
 
@@ -33,33 +23,23 @@ Right now these yellow bar messages include
 	[invalid JSON message],
 	and the receipt of any message on STDERR.
 
-The build tools sometimes will issue important messages on STDERR,
-and I want to know about them immediately.
-
-These messages are not in JSON format.
-
-Since I am parsing "go test -v -json -cover" output, go-tdd expects
-valid JSON.
-
-I capture stderr separately and process it as best I can, by showing a
-snippet of the message in a yellow bar.  If the STDERR message is
-longer than can be shown in a one line yellow bar, I capture the entire
-message in StdErr.txt in the package directory.
+I capture stderr separately and process it by showing a snippet of the
+message in a yellow bar.  If the STDERR message is longer than can be
+shown in a one line yellow bar, I capture the entire message in StdErr.txt
+in the package directory.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
 bar message and quits. I don't remember that happening in actual use.
 
-There also are supplemental messages providing detail information in each
-red/green bars.  They report the number of tests run, passed, failed,
+I have added supplemental messages providing detail information in each
+red or green bar.  They report the number of tests run, passed, failed,
 and skipped, in addition to the elapsed time for running all the tests
 as provided by go test. Test coverage is reported on Green Bars.
 
 I have also added Average Cyclomatic Complexity to the Green Bars.
-This has little to do with testing but a lot to do with design and
-it is a metric I want to be aware of. I hear that several well known IDEs
-start warning about Cyclomatic Complexity at 10.  So are we to conclude
-that complexities below 10 are OK?  I like to keep mine below 2.5.
-This project is at 1.75 as I write this.
+It is a metric I want to be aware of. I hear that several well known IDEs
+start warning about Cyclomatic Complexity at 10.  I like to keep mine below
+2.5.  This project is at 1.77 as I write this.
 
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
@@ -104,13 +84,13 @@ In my setup, I have replaced vim-go's <Leader>t (<ESC>:GoTest<CR) with
 <LocalLeader>t to activate go-tdd. If I desire to use vim-go's
 :GoTest command, I call it just like that.
 
-The second benefit from above was a "marginally better go test
-experience".  vim-go reports [SUCCESS] in directories with no test files at all
-or where there are test files but they are empty, or where one, or many
-tests are skipped. I am not an old Golang hand, but this does not strike
-me as "[SUCCESS]".  Especially if I am looking at a code base that is new to
-me, I don't want my tools reporting these situations as "[SUCCESS]".  So
-in go-tdd I have incorporated a "Yellow Bar", message for situations
+The second benefit listed above was a "marginally better go test
+experience".  vim-go reports [SUCCESS] in directories with no test files
+at all or where there are test files but they are empty, or where one, or
+many tests are skipped. I am not an old Golang hand, but this does not
+strike me as "[SUCCESS]".  Especially if I am looking at a code base that
+is new to me, I don't want my tools reporting these situations as "[SUCCESS]".
+So in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
 should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
@@ -124,24 +104,10 @@ Vim a quickfix list of test failures and/or skipped tests which Vim loads
 for your use.
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
-really been noticeable in my use patterns. I rarely see go test take
-more than a few hundredths of a second to complete even hundreds of tests.
-Most reported times are in the thousandths of seconds and go-tdd, written
-almost entirely in Golang itself, does its job and returns control to Vim
-quickly.
-
-I should point out that my go-tdd parser is simpler than vim-go's by
-a good margin.  vim-go bends over backwards to accomodate old Golang
-versions.  Vim-go's code to accomplish launching go test asynchronously
-is over 16K long.  vim-go has code to parse stack traces for panics,
-I simply notify you that there was a panic. That is to say, if you need
-or value these things, you might well find go-tdd is not for you.
-I use it everyday though and have barely even noticed the differences.
-
-Suffice it to say, if there is a skipped, failed, or passed test, you will
-know about it.  You'll know the percentage of code coverage, and
-cyclomatic complexity of your code.  If there are problems not related
-to a failed test, you will be notified in a yellow bar.
+really been noticeable for me. I rarely see go test take more than a few
+hundredths of a second to complete even hundreds of tests. Most reported
+times are in the thousandths of seconds and go-tdd, written almost
+entirely in Golang itself, does its job and returns control to Vim quickly.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so go-tdd loads
