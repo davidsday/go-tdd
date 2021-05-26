@@ -233,7 +233,7 @@ func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []str
 		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg, results.VimColumns))
 	} else {
 		Barmessage.setMessage(stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|"))
-		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|") + stdErrMsgSuffix)
+		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|"))
 	}
 	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
 	results.Errors = append(results.Errors, gtperror)

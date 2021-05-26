@@ -234,7 +234,7 @@ func TestProcessStdErrMsg(t *testing.T) {
 	results := newResults()
 	results.VimColumns = 135
 	Barmessage := newBarMessage()
-	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.[See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
+	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
 	packageDir := "/home/dave/sw/go/go-tdd"
 	PackageDirsToSearch := []string{}
