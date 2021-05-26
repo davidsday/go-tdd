@@ -44,7 +44,7 @@ start warning about Cyclomatic Complexity at 10.  I like to keep mine below
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
 than might otherwise be achieved.  I certainly have, so much so that I built
-this tool to supplement vim-go for my own use. This project has ~92% test
+this tool to supplement vim-go for my own use. This project has ~90% test
 coverage as I write this.
 
 And, as an aside, I have had occasion to go back and retrofit (rewrite)
