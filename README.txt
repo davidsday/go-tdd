@@ -45,7 +45,8 @@ Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
 than might otherwise be achieved.  I certainly have, so much so that I built
 this tool to supplement vim-go for my own use. This project has ~90% test
-coverage as I write this.
+coverage as I write this (basically everything but main() and a few
+logFatal() type calls).
 
 And, as an aside, I have had occasion to go back and retrofit (rewrite)
 a few personal projects in this style recently, and I have been
