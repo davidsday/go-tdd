@@ -4,6 +4,8 @@ learning and development experience.
 The plugin is 92+% in Golang and about 7% in Vimscript and the
 tiniest bit of shell script thrown in.
 
+<img src="images/go-tdd_screenshot.png">
+
 It seeks to add two things to your Golang TDD development:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
