@@ -196,32 +196,18 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		results.Summary.setCoverage(jloSlice[i].getOutput())
 	}
 
+	// Error in an ExampleFunction()?
 	if exampleError(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDeclaration := "func " + testName
 		filename, linenum, testname := findExampleFunc(exampleFuncDeclaration, packageDir)
-		// sparelist := splitOnColons(jloSlice[i].getOutput())
-		// sparelist = removeUnneededFAILPrefix(sparelist)
-		// type GtpQfItem struct {
-		//	Filename string `json:"filename"`
-		//	Lnum     int    `json:"lnum"`
-		//	Col      int    `json:"col"`
-		//	Vcol     int    `json:"vcol"`
-		//	Pattern  string `json:"pattern"`
-		//	Text     string `json:"text"`
-		// }
 
 		text := "Got: " + jloSlice[i+2].getOutput() + oneSpace + "Want: " + jloSlice[i+4].getOutput()
 
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
 		}
-		// searchDir
-		// filename
-		// linenum
-		// pattern
-		// text
 
 		qfItem := buildQuickFixItem("", filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
@@ -242,7 +228,6 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			takeNoteOfFirstFailure(filename, linenum, testname, results)
 		}
 		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
-		// qfItem := buildQuickFixItem(packageDir, list, jloSlice[i])
 		Barmessage.QuickFixList.Add(qfItem)
 	}
 	return doBreak, err
@@ -312,6 +297,7 @@ func buildAndAppendAnErrorForInvalidJSON(results *GtpResults) {
 			Color:   "yellow",
 		})
 }
+
 func splitIntoLines(s string) []string {
 	lines := strings.Split(s, "\n")
 	//bytes.Split returns an empty line AFTER the final "\n"
