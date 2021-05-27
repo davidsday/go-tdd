@@ -265,7 +265,7 @@ func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg string, cols
 	oneSpace := " "
 	commaSpace := ", "
 	tmsg := strings.Split(msg, "\n")
-	if strings.HasPrefix(tmsg[0], "# ") {
+	if strings.HasPrefix(tmsg[0], "#") {
 		tmsg = tmsg[1:]
 	}
 	retMsg := strings.Join(tmsg, "|")
