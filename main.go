@@ -17,6 +17,7 @@ var (
 	regexNoTestFiles  = regexp.MustCompile(`\[no test files\]`)
 	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
 	regexTestFileRef  = regexp.MustCompile(`_test.go`)
+	regexExampleFail  = regexp.MustCompile(`--- FAIL: Example.*\(\d{1,3}\.\d{1,3}s\)`)
 	// regexSubTestPass  = regexp.MustCompile(`(    )\+PASS: `)
 	// regexSubTestFail  = regexp.MustCompile(`(    )\+FAIL: `)
 
