@@ -1,5 +1,4 @@
 go-junit-report
 tags
-bin/
 tests/
 pgmdata.vim_

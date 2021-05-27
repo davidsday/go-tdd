@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"os"
 	"strconv"
-	"strings"
 )
 
 //============================================================================
@@ -120,16 +119,21 @@ func (q *GtpQfList) Count() int {
 	return len(*q)
 }
 
+// searchDir
+// filename
+// linenum
+// pattern
+// text
+
 // Now we can build/fill the QuickFix Item
-func buildQuickFixItem(searchDir string, parts []string, jlo JLObject) GtpQfItem {
+func buildQuickFixItem(searchDir, filename, linenum, pattern, text string) GtpQfItem {
 	QfItem := GtpQfItem{}
-	QfItem.Filename = searchDir + "/" + parts[0]
-	// QfItem.Filename = jlo.getPackage() + "/" + parts[0]
-	QfItem.Lnum, _ = strconv.Atoi(parts[1])
+	QfItem.Filename = searchDir + "/" + filename
+	QfItem.Lnum, _ = strconv.Atoi(linenum)
 	QfItem.Col = 1
 	QfItem.Vcol = 1
-	QfItem.Pattern = jlo.getTest()
-	QfItem.Text = strings.Join(parts[2:], ":")
+	QfItem.Pattern = pattern
+	QfItem.Text = text
 	return QfItem
 }
 

@@ -110,10 +110,9 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 	// prevJlo gets populated at the bottom of the for loop in
 	// case we need to look back at the previous object (line)
 	// and we do....
-	var prevJlo JLObject
+	var jloSlice []JLObject
 
 	jsonLines := splitIntoLines(stdout)
-
 	for _, jsonLine := range jsonLines {
 		// Ensure we're getting valid JSON
 		if !json.Valid(convertStringToBytes(jsonLine)) {
@@ -124,28 +123,29 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		// from here down to the bottom of the for loop,
 		// we are dealing with JLObject structs
 		jlo.unmarshal(jsonLine)
+		jloSlice = append(jloSlice, jlo)
+	}
 
-		PackageDir := PackageDirsToSearch[0]
-		results.incCount(jlo.getAction())
+	PackageDir := PackageDirsToSearch[0]
+
+	for i := 0; i < len(jloSlice); i++ {
+
+		results.incCount(jloSlice[i].getAction())
 
 		var err error
 		var doBreak bool
 
-		if jlo.getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jlo, prevJlo, PackageDir, Barmessage)
+		if jloSlice[i].getAction() == "output" {
+			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
 			}
 		}
-		// Bottom of for loop - current JSON Line Object now
-		// becomes the Previous JSON Line Object,
-		// for look back purposes ...
-		prevJlo = jlo
 	} //endfor
 
 	// Make note of the elapsed time, as reported by go test
-	results.Summary.setElapsed(GtpElapsed(jlo.getElapsed()))
+	results.Summary.setElapsed(GtpElapsed(jloSlice[len(jloSlice)-1].getElapsed()))
 
 	// We've completed the for loop,
 	// The last emitted line (JSON Line Object) announces
@@ -154,7 +154,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 	// So it throws off our counts by one.
 	// So we fix that here
 	results.Counts["pass"], results.Counts["fail"] =
-		adjustOutSuperfluousFinalResult(jlo.getAction(), results)
+		adjustOutSuperfluousFinalResult(jloSlice[len(jloSlice)-1].getAction(), results)
 	// Now we check for results.Errors and create a
 	// yellow bar and  message if appropriate
 	results.buildBarMessage(Barmessage, PackageDirsToSearch)
@@ -163,7 +163,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 // Shellout - run a command, capturing stdout, stderr, and errors
 func Shellout(command string) (string, string, error) {
 	// Force POSIX compliant shell for predictability
-	var ShellToUse string = "/bin/sh"
+	var ShellToUse = "/bin/sh"
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command(ShellToUse, "-c", command)
@@ -179,7 +179,7 @@ func Shellout(command string) (string, string, error) {
 // to grep through normal go test -v type outputs.
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
-func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
+func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	packageDir string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
@@ -187,26 +187,62 @@ func HandleOutputLines(results *GtpResults, jlo JLObject, prevJlo JLObject,
 
 	results.incCount("output")
 
-	doBreak = checkErrorCandidates(results, jlo.getOutput(), packageDir)
+	doBreak = checkErrorCandidates(results, jloSlice[i].getOutput(), packageDir)
 	if doBreak {
 		return doBreak, err
 	}
 
-	if hasTestCoverage(jlo.getOutput()) {
-		results.Summary.setCoverage(jlo.getOutput())
+	if hasTestCoverage(jloSlice[i].getOutput()) {
+		results.Summary.setCoverage(jloSlice[i].getOutput())
+	}
+
+	if exampleError(jloSlice[i].getOutput()) {
+		oneSpace := " "
+		testName := jloSlice[i].getTest()
+		exampleFuncDeclaration := "func " + testName
+		filename, linenum, testname := findExampleFunc(exampleFuncDeclaration, packageDir)
+		// sparelist := splitOnColons(jloSlice[i].getOutput())
+		// sparelist = removeUnneededFAILPrefix(sparelist)
+		// type GtpQfItem struct {
+		//	Filename string `json:"filename"`
+		//	Lnum     int    `json:"lnum"`
+		//	Col      int    `json:"col"`
+		//	Vcol     int    `json:"vcol"`
+		//	Pattern  string `json:"pattern"`
+		//	Text     string `json:"text"`
+		// }
+
+		text := "Got: " + jloSlice[i+2].getOutput() + oneSpace + "Want: " + jloSlice[i+4].getOutput()
+
+		if thisIsTheFirstFailure(results) {
+			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
+		}
+		// searchDir
+		// filename
+		// linenum
+		// pattern
+		// text
+
+		qfItem := buildQuickFixItem("", filename, linenum, testname, text)
+		Barmessage.QuickFixList.Add(qfItem)
 	}
 
 	// If a jlo.Output field refers to a _test.go file, there has been a
 	// test failure and it is telling us in which file and on which line
 	// the failure was triggered
-	if hasTestFileReferences(jlo.getOutput()) {
-		list := splitOnSemiColons(jlo.getOutput())
+	if hasTestFileReferences(jloSlice[i].getOutput()) {
+		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
 		list = removeUnneededFAILPrefix(list)
+		filename := list[0]
+		linenum := list[1]
+		text := strings.Join(list[2:], "|")
+		testname := jloSlice[i-1].getTest()
 		if thisIsTheFirstFailure(results) {
-			takeNoteOfFirstFailure(results, list, prevJlo.getTest())
+			takeNoteOfFirstFailure(filename, linenum, testname, results)
 		}
-		qfItem := buildQuickFixItem(packageDir, list, jlo)
+		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
+		// qfItem := buildQuickFixItem(packageDir, list, jloSlice[i])
 		Barmessage.QuickFixList.Add(qfItem)
 	}
 	return doBreak, err
@@ -294,9 +330,9 @@ func thisIsTheFirstFailure(results *GtpResults) bool {
 	return results.Counts["fail"] == 0
 }
 
-func takeNoteOfFirstFailure(results *GtpResults, parts []string, testName string) {
-	results.FirstFail.setFname(parts[0])
-	results.FirstFail.setLineno(parts[1])
+func takeNoteOfFirstFailure(filename, linenum, testName string, results *GtpResults) {
+	results.FirstFail.setFname(filename)
+	results.FirstFail.setLineno(linenum)
 	results.FirstFail.setTname(testName)
 }
 
@@ -308,7 +344,7 @@ func removeUnneededFAILPrefix(list []string) []string {
 	return list
 }
 
-func splitOnSemiColons(output string) []string {
+func splitOnColons(output string) []string {
 	return strings.Split(strings.TrimSpace(output), ":")
 }
 
@@ -388,4 +424,27 @@ func setDebug(args []string) int {
 		}
 	}
 	return debug
+}
+
+func exampleError(output string) bool {
+	return CheckRegx(regexExampleFail, output)
+}
+
+func findExampleFunc(exampleFuncDecl, path string) (filename, linenum, testname string) {
+	oneSpace := " "
+	curDir, _ := os.Getwd()
+	os.Chdir(path)
+	cmdLine := "ag  --vimgrep" + oneSpace + exampleFuncDecl + oneSpace + path
+	os.Chdir(curDir)
+	out, _, err := Shellout(cmdLine)
+	chkErr(err, "Error in ag searching for an example func declaration")
+
+	return splitExampleFuncSearchResults(out)
+}
+
+func splitExampleFuncSearchResults(result string) (filename, linenum, testname string) {
+	trimmed := strings.TrimSuffix(result, "() {")
+	split := splitOnColons(trimmed)
+	split[3] = strings.TrimPrefix(split[3], "func ")
+	return split[0], split[1], split[3]
 }

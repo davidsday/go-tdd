@@ -75,27 +75,33 @@ func TestQfList_Add(t *testing.T) {
 //TestAddToQuickFixList_length ....
 func TestBuildQuickFixItem_filename(t *testing.T) {
 	QfItem := GtpQfItem{}
-	parts := []string{"firstPart", "secondPart", "thirdPart"}
+	filename := "filename"
+	linenum := "12"
+	pattern := "thisTest"
+	text := "text"
 	pkgDir := "packageDir"
 	jlo := JLObject{}
 	jlo.Test = "thisTest"
 	jlo.Package = "packageDir"
 
-	QfItem = buildQuickFixItem(pkgDir, parts, jlo)
-	if QfItem.Filename != "packageDir/firstPart" {
-		t.Errorf("Filename:  Got: %s, Wanted: %s\n", QfItem.Filename, "packageDir/firstPart")
+	QfItem = buildQuickFixItem(pkgDir, filename, linenum, pattern, text)
+	if QfItem.Filename != "packageDir/filename" {
+		t.Errorf("Filename:  Got: %s, Want: %s\n", QfItem.Filename, "packageDir/firstPart")
 	}
 }
 
 //TestAddToQuickFixList_pattern ....
 func TestBuildQuickFixItem_pattern(t *testing.T) {
 	QfItem := GtpQfItem{}
-	parts := []string{"firstPart", "secondPart", "thirdPart"}
+	filename := "filename"
+	linenum := "12"
+	pattern := "thisTest"
+	text := "text"
 	pkgDir := "packageDir"
 	jlo := JLObject{}
 	jlo.Test = "thisTest"
 
-	QfItem = buildQuickFixItem(pkgDir, parts, jlo)
+	QfItem = buildQuickFixItem(pkgDir, filename, linenum, pattern, text)
 	if QfItem.Pattern != "thisTest" {
 		t.Errorf("Pattern:  Got: %s, Wanted: %s\n", QfItem.Pattern, "thisTest")
 	}

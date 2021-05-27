@@ -194,11 +194,13 @@ func TestThisIsTheFirstFailure_false(t *testing.T) {
 func TestTakeNoteOfFirstFailure(t *testing.T) {
 	results := newResults()
 	testName := "thisTest"
-	parts := []string{"firstPart", "secondPart"}
+	filename := "filename"
+	linenum := "12"
 
-	takeNoteOfFirstFailure(&results, parts, testName)
+	// func takeNoteOfFirstFailure(filename, linenum, testName string, results GtpResults) {
+	takeNoteOfFirstFailure(filename, linenum, testName, &results)
 
-	if results.FirstFail.Tname != testName && results.FirstFail.Lineno != parts[1] && results.FirstFail.Fname != parts[0] {
+	if results.FirstFail.Tname != testName && results.FirstFail.Lineno != linenum && results.FirstFail.Fname != filename {
 		t.Errorf("Filename: %s, LineNo: %s, TestName: %s", results.FirstFail.Fname, results.FirstFail.Lineno, results.FirstFail.Tname)
 	}
 }
@@ -206,7 +208,7 @@ func TestTakeNoteOfFirstFailure(t *testing.T) {
 //TestUnneededFAILPrefix_Has_FAIL ....
 func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
 	output := "FAIL:Part1:Part2:Part3"
-	list := splitOnSemiColons(output)
+	list := splitOnColons(output)
 	got := removeUnneededFAILPrefix(list)
 	want := []string{"Part1", "Part2", "Part3"}
 	if !reflect.DeepEqual(got, want) {
@@ -217,7 +219,7 @@ func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
 //TestUnneededFAILPrefix_Has_No_FAIL ....
 func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
 	output := "Part1:Part2:Part3"
-	list := splitOnSemiColons(output)
+	list := splitOnColons(output)
 	got := removeUnneededFAILPrefix(list)
 	want := []string{"Part1", "Part2", "Part3"}
 	if !reflect.DeepEqual(got, want) {
@@ -521,10 +523,10 @@ func TestWeHaveHadMoreThanOneFail_zero(t *testing.T) {
 	}
 }
 
-//TestSplitOnSemicolons(str string) []string ....
-func TestSplitOnSemicolons(t *testing.T) {
+//TestSplitOnColons(str string) []string ....
+func TestSplitOnColons(t *testing.T) {
 	str := "FAIL:1st useful part:2nd useful part:3rd useful part"
-	got := splitOnSemiColons(str)
+	got := splitOnColons(str)
 	want := []string{"FAIL", "1st useful part", "2nd useful part", "3rd useful part"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got '%v' want '%v'", got, want)
@@ -748,9 +750,10 @@ func TestHandleOutputLines(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonLine")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
+	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -767,9 +770,10 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	chkErr(err, "Error Unmarshaling jsonline_prevJlo")
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine_jlo")
+	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -782,9 +786,10 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -797,9 +802,10 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"panic: "}`)
+	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jlo, prevJlo, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
 	if doBreak != true {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}
@@ -822,5 +828,55 @@ func TestSetDebug_0(t *testing.T) {
 	want := 0
 	if got != want {
 		t.Errorf("got '%d' want '%d'", got, want)
+	}
+}
+
+//===========================================================================
+//TestExampleError
+//===========================================================================
+
+//TestExampleError ....
+func TestExampleError(t *testing.T) {
+	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"--- FAIL: ExampleHelloWorld (0.00s)\n"}`
+	jlo := JLObject{}
+	jlo.unmarshal(input)
+
+	got := exampleError(jlo.getOutput())
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//===========================================================================
+//TestFindExample
+//===========================================================================
+
+//TestFindExampleFunc ....
+func TestFindExampleFunc(t *testing.T) {
+	exampleFuncDecl := `func ExampleHelloWorld`
+	path := "/home/dave/sw/go/go-tdd/testdata/example/"
+	curDir, _ := os.Getwd()
+	os.Chdir(path)
+	got1, _, _ := findExampleFunc(exampleFuncDecl, ".")
+	os.Chdir(curDir)
+
+	want := `example_test.go`
+	if got1 != want {
+		t.Errorf("got '%s' want '%s'", got1, want)
+	}
+}
+
+//===========================================================================
+//TestSplitExampleFuncSearchResults
+//===========================================================================
+
+func TestSplitExampleFuncSearchResults(t *testing.T) {
+	results := `example_test.go:7:1:func ExampleHelloWorld() {`
+	want := "example_test.go"
+	got1, _, _ := splitExampleFuncSearchResults(results)
+
+	if !reflect.DeepEqual(got1, want) {
+		t.Errorf("Got: '%s', Want: '%s'", got1, want)
 	}
 }
