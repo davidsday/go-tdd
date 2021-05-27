@@ -264,7 +264,12 @@ func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []str
 func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg string, cols int) string {
 	oneSpace := " "
 	commaSpace := ", "
-	retMsg := stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|")
+	tmsg := strings.Split(msg, "\n")
+	if strings.HasPrefix(tmsg[0], "# ") {
+		tmsg = tmsg[1:]
+	}
+	retMsg := strings.Join(tmsg, "|")
+	retMsg = stdErrMsgPrefix + oneSpace + retMsg
 	retMsg = strings.TrimSuffix(retMsg, "|")
 	retMsg = retMsg[0 : cols-(len(stdErrMsgPrefix)+len(stdErrMsgSuffix))]
 	retMsg += commaSpace + stdErrMsgSuffix
