@@ -24,7 +24,9 @@ var (
 
 	//"coverage: 76.7% of statements\n"}
 	regexTestCoverage = regexp.MustCompile(`^coverage: \d{1,3}\.\d{0,1}\% of statements`)
-	regexNil          = &regexp.Regexp{}
+	// "coverage: [no statements]\n"
+	regexCoverageNoStmts = regexp.MustCompile(`^coverage: \[no statements\]`)
+	regexNil             = &regexp.Regexp{}
 )
 var debug int
 
@@ -401,7 +403,7 @@ func checkErrorCandidates(results *GtpResults, output string, PackageDir string)
 }
 
 func hasTestCoverage(output string) bool {
-	return CheckRegx(regexTestCoverage, output)
+	return CheckRegx(regexTestCoverage, output) || CheckRegx(regexCoverageNoStmts, output)
 }
 
 func hasTestFileReferences(output string) bool {
