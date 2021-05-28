@@ -206,7 +206,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		exampleFuncDeclaration := "func " + testName
 		filename, linenum, testname := findExampleFunc(exampleFuncDeclaration, packageDir)
 
-		text := "Got: " + jloSlice[i+2].getOutput() + oneSpace + "Want: " + jloSlice[i+4].getOutput()
+		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
