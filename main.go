@@ -265,6 +265,8 @@ func buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg string, cols
 	oneSpace := " "
 	commaSpace := ", "
 	tmsg := strings.Split(msg, "\n")
+	// So far I haven't found much use for the first lines which start with #
+	// So we skip them to conserve space on the barMessage
 	if strings.HasPrefix(tmsg[0], "#") {
 		tmsg = tmsg[1:]
 	}
