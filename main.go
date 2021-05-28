@@ -222,6 +222,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 
 		qfItem := buildQuickFixItem("", filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
+		return doBreak, err
 	}
 
 	// If a jlo.Output field refers to a _test.go file, there has been a
@@ -239,6 +240,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		}
 		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
+		return doBreak, err
 	}
 	return doBreak, err
 } // End HandleOutputLines()
