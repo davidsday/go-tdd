@@ -10,9 +10,10 @@ CONTENTS                                                      *go-tdd-contents*
     1. Intro .......................... |go-tdd_Intro|
     2. Usage .......................... |go-tdd_Usage|
     3. Configuration .................. |go-tdd_Configuration|
-    4. License ........................ |go-tdd_License|
-    5. Bugs ........................... |go-tdd_Bugs|
-    6. Credits ........................ |go-tdd_Credits|
+    4. Internals and Behavior ..........|go-tdd_Behavior|
+    5. License ........................ |go-tdd_License|
+    6. Bugs ........................... |go-tdd_Bugs|
+    7. Credits ........................ |go-tdd_Credits|
 
 ==============================================================================
 1. Intro                                                          *go-tdd_Intro*
@@ -108,7 +109,7 @@ If you are using vim-plug:
 
 
 ==============================================================================
-6. Configuration                                         *go-tdd_Configuration*
+3. Configuration                                         *go-tdd_Configuration*
 
 go-tdd comes with a simple configuration that the user is free to modify
 
@@ -161,7 +162,72 @@ replaced logging as my primary quality assurance tool.  I may even completely
 remove this in the future.
 
 ==============================================================================
-7. License                                                     *go-tdd_License*
+4. Internals and Behavior                                    *go-tdd_Behavior*
+
+go-tdd parses the output from 'go test -v -json -cover'
+
+It decides what Vim needs to know to properly display the color bar and
+load Vim's Quickfix List appropriately and passes that to Vim via JSON encoded
+strings via STDOUT.
+
+'go test -v -json -cover' outputs one continous string of '\n' separated JSON
+encoded objects to go-tdd.  go-tdd converts that long string into a slice of
+strings, one to a line, which it then converts to a slice of structs which
+are equivalent to the incoming JSON.
+
+go-tdd does its work by looking at the individual structs in this slice one
+at a time, in sequence.  Since it feels its way along this slice of structs by
+index, if needed, it can both look forward and back any appropriate amount for
+look ahead or look back purposes.
+
+A good example of this is go test's handling of Example Functions.  Go has
+the ability to embed actual working functions directly in either its
+documentation or in its tests.
+
+Example functions take no arguments and always output to STDOUT, often with
+fmt.PrintF("%s", resultString) or similar.  We can embed a Golang comment
+in the body of the Example Function which can specify the expected output of
+the function, for use in evaluating if the function worked as we expected.
+
+Unfortunately, the Go Team elected to handle Example Functions quite a bit
+differently than other tests, thus making it difficult, but not impossible
+to present Example Function tests results seemlessly with the other more
+"Normal" tests.
+
+For all "Normal" failing tests, go test outputs the test name, test file,
+test line number, and a "fail" message, making it easy to load Vim's Quickfix
+List with the info it needs.  But for Example tests, no file name, & no line
+numbers, both of which Vim needs for a proper Quickfix List entry.
+
+So you will notice that there is a binary copy of ag, The Silver Searcher,
+in this plugin's bin directory.  It is there so we can take the info that
+go test does give us, failing test name, and use The Silver Searcher to go
+looking for it. Once found, The Silver Searcher returns to us the filename
+and line number. I chose The Silver Searcher because it is by far the
+smallest of the commonly available choices, 93K vs 140K vs 3.5M, for the
+ones I considered using.
+
+Additionally, as just mentioned, these "Normal" failing tests output a
+message on the same line which is put out by the tests as it fails.
+This is the "Got: 101, Want: 100" message that helps illuminate for the
+programmer why the test failed.  Once again, the Go Team elected to handle
+Example Functions quite a bit differently.  Instead of outputting a
+convenient message right along with the other failed test info, they did
+output what we need but over the next four lines of JSON.  This is why
+I elected to handle our go test output in a slice of structs and traverse
+it with an index.  This way we can simply index +1, +2, +3 and +4 and
+extract the info we need.  Easy Peasy.  Actually we only need +2 and +4,
+as +1 and +3 are the aformentioned strings "Got: " and "Want: ".
+
+Because of all these issues, most go test drivers treat Golang's
+Example Functions as lesser entities and either ignore them or give very
+little info to the developer about them.  But we can treat them as full
+fledged equals and the developer needn't know the difference.
+
+(This section just started May 28, 2021 and I'll expand it as I go)
+
+==============================================================================
+5. License                                                    *go-tdd_License*
 
 MIT License
 
@@ -185,7 +251,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ==============================================================================
-8. Bugs                                                            *go-tdd_Bugs*
+6. Bugs                                                            *go-tdd_Bugs*
 
 If you find a bug please post it on the issue tracker:
 https://github.com/davidsday/go-tdd/issues
@@ -194,7 +260,7 @@ You may also email me at david.scott.day@gmail.com, but please also use
 the issue tracker, to help keep things organized and recorded.
 
 ==============================================================================
-9. Credits                                                      *go-tdd_Credits*
+7. Credits                                                      *go-tdd_Credits*
 
 Thanks to Fatih Arslan for the vim-go Vim plugin.  I have enjoyed using it
 immensely.
