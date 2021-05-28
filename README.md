@@ -20,11 +20,11 @@ or concerning circumstance not directly related to a failing test.
 
 Right now these yellow bar messages include
 	[no tests found],
-	[no tests to execute] - basically empty test file(s)
-	[build failed],
-	[received a panic],
-	[invalid JSON message],
-	and the receipt of any message on STDERR.
+	[no tests to execute] - basically empty test file(s) [build failed],
+	[received a panic]
+	[test timed out panic]
+	[invalid JSON message], and the
+	receipt of any message on STDERR.
 
 If there is output on STDERR,  go-tdd shows a snippet of the
 message in a yellow bar.  If the STDERR message is longer than can be
@@ -42,12 +42,12 @@ as provided by go test. Test coverage is reported on Green Bars.
 I have also added Average Cyclomatic Complexity to the Green Bars.
 It is a metric I want to be aware of. I hear that several well known IDEs
 start warning about Cyclomatic Complexity at 10.  I like to keep mine below
-2.5.  This project is at 1.77 as I write this.
+2.5.  This project is at 1.8 as I write this.
 
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
 than might otherwise be achieved.  I certainly have, so much so that I built
-this tool to supplement vim-go for my own use. This project has ~90% test
+this tool to supplement vim-go for my own use. This project has ~87% test
 coverage as I write this (basically everything but main() and a few
 logFatal() type calls).
 
