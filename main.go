@@ -222,7 +222,6 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
 		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
-		list = removeUnneededFAILPrefix(list)
 		filename := list[0]
 		linenum := list[1]
 		text := strings.Join(list[2:], "|")
@@ -330,14 +329,6 @@ func takeNoteOfFirstFailure(filename, linenum, testName string, results *GtpResu
 	results.FirstFail.setFname(filename)
 	results.FirstFail.setLineno(linenum)
 	results.FirstFail.setTname(testName)
-}
-
-func removeUnneededFAILPrefix(list []string) []string {
-	if strings.Contains(list[0], "FAIL") {
-		// so we take the sublist and continue our work
-		list = list[1:]
-	}
-	return list
 }
 
 func splitOnColons(output string) []string {

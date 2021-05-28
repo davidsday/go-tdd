@@ -205,28 +205,6 @@ func TestTakeNoteOfFirstFailure(t *testing.T) {
 	}
 }
 
-//TestUnneededFAILPrefix_Has_FAIL ....
-func TestUnneededFAILPrefix_Has_FAIL(t *testing.T) {
-	output := "FAIL:Part1:Part2:Part3"
-	list := splitOnColons(output)
-	got := removeUnneededFAILPrefix(list)
-	want := []string{"Part1", "Part2", "Part3"}
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("got '%v' want '%v'", got, want)
-	}
-}
-
-//TestUnneededFAILPrefix_Has_No_FAIL ....
-func TestUnneededFAILPrefix_Has_No_FAIL(t *testing.T) {
-	output := "Part1:Part2:Part3"
-	list := splitOnColons(output)
-	got := removeUnneededFAILPrefix(list)
-	want := []string{"Part1", "Part2", "Part3"}
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("got '%v' want '%v'", got, want)
-	}
-}
-
 //===========================================================================
 //TestProcessStdErrMsg
 //===========================================================================
