@@ -1,0 +1,49 @@
+=== RUN   TestTopSubHelper
+=== RUN   TestTopSubHelper/sub
+    play_test.go:12: log message
+    play_test.go:13: sub badness
+=== CONT  TestTopSubHelper
+    play_test.go:15: badness
+    play_test.go:16: helper badness
+--- FAIL: TestTopSubHelper (0.00s)
+    --- FAIL: TestTopSubHelper/sub (0.00s)
+=== RUN   TestMultiline
+    play_test.go:20: this is an error
+        and a second line, too
+    play_test.go:21: 
+        this is another error
+--- FAIL: TestMultiline (0.00s)
+=== RUN   TestSub
+=== RUN   TestSub/indented
+    play_test.go:26: this is a sub-test error
+        and a second line, too
+--- FAIL: TestSub (0.00s)
+    --- FAIL: TestSub/indented (0.00s)
+=== RUN   TestOK
+=== RUN   TestOK/log
+    play_test.go:32: goodness
+--- PASS: TestOK (0.00s)
+    --- PASS: TestOK/log (0.00s)
+=== RUN   TestMocked
+    controller.go:6: another package badness
+--- FAIL: TestMocked (0.00s)
+=== RUN   TestPanic
+--- FAIL: TestPanic (0.00s)
+panic: worst ever [recovered]
+	panic: worst ever
+
+goroutine 26 [running]:
+testing.tRunner.func1.2(0x51c9a0, 0x56e780)
+	/usr/local/go/src/testing/testing.go:1143 +0x332
+testing.tRunner.func1(0xc000083500)
+	/usr/local/go/src/testing/testing.go:1146 +0x4b6
+panic(0x51c9a0, 0x56e780)
+	/usr/local/go/src/runtime/panic.go:965 +0x1b9
+vim-go.test/play.TestPanic(0xc000083500)
+	/home/dave/sw/go/go-tdd/testdata/play/play_test.go:43 +0x39
+testing.tRunner(0xc000083500, 0x54fa70)
+	/usr/local/go/src/testing/testing.go:1193 +0xef
+created by testing.(*T).Run
+	/usr/local/go/src/testing/testing.go:1238 +0x2b3
+exit status 2
+FAIL	vim-go.test/play	0.003s
