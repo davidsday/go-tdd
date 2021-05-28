@@ -74,7 +74,13 @@ function! s:RunTest(toScreen)
       let g:gocyclo_ignore="'vendor|testdata'"
     endif
 
-    let l:cmdLine=l:go_tdd_binary . oneSpace . l:packageDir . oneSpace . l:screencolumns . oneSpace . g:gocyclo_ignore . oneSpace . string(g:go_tdd_debug)
+    let l:cmdLine=l:go_tdd_binary
+    let l:cmdLine.= oneSpace . l:packageDir
+    let l:cmdLine.= oneSpace . l:screencolumns
+    let l:cmdLine.= oneSpace . g:gocyclo_ignore
+    let l:cmdLine.= oneSpace . string(g:go_tdd_debug)
+    let l:cmdLine.= oneSpace . s:plugin_dir
+
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
