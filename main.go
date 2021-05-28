@@ -438,8 +438,8 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum
 	out, _, err := Shellout(cmdLine)
 	os.Chdir(curDir)
 	chkErr(err, "Error in ag searching for an example func declaration")
-	println(exampleFuncDecl)
-	println(out)
+	// println(exampleFuncDecl)
+	// println(out)
 	return splitExampleFuncSearchResults(out)
 }
 
