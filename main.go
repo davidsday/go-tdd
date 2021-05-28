@@ -110,11 +110,11 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 	// go test -json spits these out, one at a time, separated by newlines
 	// These objects are defined in jsonLineObject.go
 	var jlo JLObject
-	// prevJlo gets populated at the bottom of the for loop in
-	// case we need to look back at the previous object (line)
-	// and we do....
 	var jloSlice []JLObject
 
+	// the var stdout is one long line, separated by newlines
+	// split them and convert each to a JLObject and append
+	// to jloSlice
 	jsonLines := splitIntoLines(stdout)
 	for _, jsonLine := range jsonLines {
 		// Ensure we're getting valid JSON
@@ -125,12 +125,16 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		// jsonLine -> jsonLineObject, which is a Go struct
 		// from here down to the bottom of the for loop,
 		// we are dealing with JLObject structs
+		// in jloSlice
 		jlo.unmarshal(jsonLine)
 		jloSlice = append(jloSlice, jlo)
 	}
 
 	PackageDir := PackageDirsToSearch[0]
-
+	// loop through the slice
+	// for ExampleFunctions, we may have to
+	// peak ahead up to four lines (jloObjects)
+	// so item := range jloSlice wouldn't work
 	for i := 0; i < len(jloSlice); i++ {
 
 		results.incCount(jloSlice[i].getAction())
