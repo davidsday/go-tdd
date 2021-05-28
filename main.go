@@ -45,7 +45,7 @@ func main() {
 	// It has the methods it needs to build the BarMessage
 	// It lives in results.go
 	// We have built a func, newResults(), which creates, initializes
-	// and returns the results for us
+	// and returns a new results to us
 	results := newResults()
 
 	// barMessage includes QfList. They are populated by the methods
