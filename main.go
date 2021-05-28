@@ -432,8 +432,8 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
 	cmdLine := pluginDir + "/bin/ag  --vimgrep" + oneSpace + exampleFuncDecl + oneSpace + path
-	os.Chdir(curDir)
 	out, _, err := Shellout(cmdLine)
+	os.Chdir(curDir)
 	chkErr(err, "Error in ag searching for an example func declaration")
 
 	return splitExampleFuncSearchResults(out)
