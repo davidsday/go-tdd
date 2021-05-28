@@ -13,6 +13,7 @@ import (
 
 var (
 	regexPanic        = regexp.MustCompile(`^(panic: |fatal error: ).*(\[recovered\]){0,1}`)
+	regexTimeOutPanic = regexp.MustCompile(`^(panic: |fatal error: )test timed out .*(\[recovered\]){0,1}`)
 	regexNoTestsToRun = regexp.MustCompile(`no tests to run`)
 	regexNoTestFiles  = regexp.MustCompile(`\[no test files\]`)
 	regexBuildFailed  = regexp.MustCompile(`\[build failed\]`)
@@ -386,6 +387,8 @@ func checkErrorCandidates(results *GtpResults, output string, PackageDir string)
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDir + ", [No Test Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDir + ", [Test Files, but No Tests to Run]", Color: "yellow"},
 		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDir + ", [Build Failed]", Color: "yellow"},
+		// order for these next two are important, the last one would also match the first
+		{Name: "Panic", Regex: regexTimeOutPanic, Message: "In package: " + PackageDir + ", [Received a Test Time Out Panic]", Color: "yellow"},
 		{Name: "Panic", Regex: regexPanic, Message: "In package: " + PackageDir + ", [Received a Panic]", Color: "yellow"},
 	}
 	for _, rx := range ErrorCandidates {
