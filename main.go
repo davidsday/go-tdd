@@ -220,7 +220,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
 		}
 
-		qfItem := buildQuickFixItem("", filename, linenum, testname, text)
+		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
 	}
@@ -438,8 +438,6 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum
 	out, _, err := Shellout(cmdLine)
 	os.Chdir(curDir)
 	chkErr(err, "Error in ag searching for an example func declaration")
-	// println(exampleFuncDecl)
-	// println(out)
 	return splitExampleFuncSearchResults(out)
 }
 
