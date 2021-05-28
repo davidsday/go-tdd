@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -815,7 +816,7 @@ func TestSetDebug_0(t *testing.T) {
 
 //TestExampleError ....
 func TestExampleError(t *testing.T) {
-	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"--- FAIL: ExampleHelloWorld (0.00s)\n"}`
+	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"--- FAIL: ExampleHW (0.00s)\n"}`
 	jlo := JLObject{}
 	jlo.unmarshal(input)
 
@@ -832,7 +833,7 @@ func TestExampleError(t *testing.T) {
 
 //TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
-	exampleFuncDecl := `func ExampleHelloWorld`
+	exampleFuncDecl := `func ExampleHW`
 	path := "/home/dave/sw/go/go-tdd/testdata/example/"
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
@@ -850,11 +851,16 @@ func TestFindExampleFunc(t *testing.T) {
 //===========================================================================
 
 func TestSplitExampleFuncSearchResults(t *testing.T) {
-	results := `example_test.go:7:1:func ExampleHelloWorld() {`
+	results := `example_test.go:7:1:func ExampleHW() {`
 	want := "example_test.go"
 	got1, _, _ := splitExampleFuncSearchResults(results)
 
 	if !reflect.DeepEqual(got1, want) {
 		t.Errorf("Got: '%s', Want: '%s'", got1, want)
 	}
+}
+
+func ExampleTestXXXX() {
+	fmt.Println("Hello, World")
+	// Output: What's shakin
 }
