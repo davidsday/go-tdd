@@ -128,7 +128,10 @@ func (q *GtpQfList) Count() int {
 // Now we can build/fill the QuickFix Item
 func buildQuickFixItem(searchDir, filename, linenum, pattern, text string) GtpQfItem {
 	QfItem := GtpQfItem{}
-	QfItem.Filename = searchDir + "/" + filename
+	if searchDir != "" {
+		QfItem.Filename = searchDir + "/"
+	}
+	QfItem.Filename += filename
 	QfItem.Lnum, _ = strconv.Atoi(linenum)
 	QfItem.Col = 1
 	QfItem.Vcol = 1
