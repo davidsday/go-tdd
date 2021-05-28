@@ -43,6 +43,7 @@ Right now these yellow bar messages include
   [no tests to execute] - basically empty test file(s)
   [build failed] - go test could not successfully build,
   [received a panic] - successfully built but panic during execution,
+  [test timed out] - go tests have a 15 second timeout by default
   [invalid JSON message] - go-tdd received invalid JSON from STDIN,
   and the receipt of any message on STDERR.
 
