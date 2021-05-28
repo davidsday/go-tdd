@@ -29,6 +29,7 @@ var (
 	regexNil             = &regexp.Regexp{}
 )
 var debug int
+var pluginDir string
 
 func main() {
 
@@ -81,11 +82,14 @@ func main() {
 	if len(os.Args) > 3 {
 		results.GocycloIgnore = os.Args[3]
 	}
+
 	// Turn Debug off
 	debug = 0
 	// The user may also request some debugging logging via
 	// this argument
 	debug = setDebug(os.Args)
+
+	pluginDir = os.Args[5]
 
 	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
 	stdout, stderr, _ := Shellout(commandLine)
@@ -208,7 +212,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDeclaration := "func " + testName
-		filename, linenum, testname := findExampleFunc(exampleFuncDeclaration, packageDir)
+		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDeclaration, packageDir)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
@@ -423,11 +427,11 @@ func exampleError(output string) bool {
 	return CheckRegx(regexExampleFail, output)
 }
 
-func findExampleFunc(exampleFuncDecl, path string) (filename, linenum, testname string) {
+func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum, testname string) {
 	oneSpace := " "
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
-	cmdLine := "ag  --vimgrep" + oneSpace + exampleFuncDecl + oneSpace + path
+	cmdLine := pluginDir + "/bin/ag  --vimgrep" + oneSpace + exampleFuncDecl + oneSpace + path
 	os.Chdir(curDir)
 	out, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")

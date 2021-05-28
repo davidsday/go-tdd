@@ -836,7 +836,7 @@ func TestFindExampleFunc(t *testing.T) {
 	path := "/home/dave/sw/go/go-tdd/testdata/example/"
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
-	got1, _, _ := findExampleFunc(exampleFuncDecl, ".")
+	got1, _, _ := findExampleFunc(pluginDir, exampleFuncDecl, ".")
 	os.Chdir(curDir)
 
 	want := `example_test.go`
