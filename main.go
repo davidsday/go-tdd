@@ -228,6 +228,8 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
 		}
 
+		// sometimes the paths can make the messages too long to fit on one
+		// screen so, just use the filename
 		filename = path.Base(filename)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
@@ -247,6 +249,8 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(filename, linenum, testname, results)
 		}
+		// sometimes the paths can make the messages too long to fit on one
+		// screen so, just use the filename
 		filename = path.Base(filename)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
