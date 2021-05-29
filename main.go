@@ -442,8 +442,6 @@ func setupLogging() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	log.SetOutput(file)
-
 	log.Println("Logging initiated.")
 }
