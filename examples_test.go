@@ -43,7 +43,7 @@ func TestFindExampleFunc(t *testing.T) {
 	pkgDir := `/home/dave/sw/go/go-tdd`
 	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir)
 
-	want := `examples_test.go`
+	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
 	}
