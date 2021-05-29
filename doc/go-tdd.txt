@@ -86,6 +86,8 @@ If you are using vim-plug:
 
         <LocalLeader>a  toggles between yourfile.go and yourfile_test.go
 
+        <LocalLeader>e  edits StdErr.txt
+
         <C-j> (down)    navigates the quickfix list up and down
         <C-k> (up)
 
