@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"path"
 	"regexp"
 	"strconv"
 	"strings"
@@ -141,7 +142,7 @@ func failMsg(fails int, fname, lineno string) string {
 		oneSpace := " "
 		commaSpace := ", "
 		msg := commaSpace + strconv.Itoa(fails) + oneSpace + "Failed"
-		msg += commaSpace + "1st in" + oneSpace + fname
+		msg += commaSpace + "1st in" + oneSpace + path.Base(fname)
 		msg += commaSpace + "on line" + oneSpace + lineno
 		return msg
 	}
