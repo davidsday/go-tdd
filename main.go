@@ -30,6 +30,7 @@ var (
 )
 var debug int
 var pluginDir string
+var packageDir string
 
 func main() {
 	// If the file doesn't exist, create it or append to the file
@@ -143,7 +144,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		jloSlice = append(jloSlice, jlo)
 	}
 
-	PackageDir := PackageDirsToSearch[0]
+	packageDir = PackageDirsToSearch[0]
 	// loop through the slice
 	// for ExampleFunctions, we may have to
 	// peak ahead up to four lines (jloObjects)
@@ -156,7 +157,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		var doBreak bool
 
 		if jloSlice[i].getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, pluginDir, Barmessage)
+			doBreak, err = HandleOutputLines(results, jloSlice, i, packageDir, pluginDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
