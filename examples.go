@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -11,12 +12,12 @@ func exampleError(output string) bool {
 }
 
 func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum, testname string) {
-	oneSpace := " "
+	// oneSpace := " "
 	// exampleFuncDecl = strconv.Quote(exampleFuncDecl)
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
-	// cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep --ignore '%s' '%s' %s/*.go", pluginDir, `testdata`, exampleFuncDecl, path)
-	cmdLine := pluginDir + "/bin/ag --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
+	cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep --ignore '%s' '%s' %s/*.go", pluginDir, `testdata`, exampleFuncDecl, path)
+	// cmdLine := pluginDir + "/bin/ag --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
 	log.Printf("In findExampleFunc, cmdLine: '%s'\n", cmdLine)
 	// cmdLine := pluginDir + "/bin/ag  --vimgrep --ignore testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
 	out, _, err := Shellout(cmdLine)
