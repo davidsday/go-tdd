@@ -30,7 +30,7 @@ var (
 )
 var debug int
 var pluginDir string
-var packageDir string
+var PackageDir string
 
 func main() {
 	// If the file doesn't exist, create it or append to the file
@@ -144,7 +144,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		jloSlice = append(jloSlice, jlo)
 	}
 
-	packageDir = PackageDirsToSearch[0]
+	PackageDir = PackageDirsToSearch[0]
 	// loop through the slice
 	// for ExampleFunctions, we may have to
 	// peak ahead up to four lines (jloObjects)
@@ -157,7 +157,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		var doBreak bool
 
 		if jloSlice[i].getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jloSlice, i, packageDir, pluginDir, Barmessage)
+			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, pluginDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
@@ -202,14 +202,14 @@ func Shellout(command string) (string, string, error) {
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
 func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
-	packageDir, pluginDir string, Barmessage *BarMessage) (bool, error) {
+	PackageDir, pluginDir string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
 	doBreak := false
 
 	results.incCount("output")
 
-	doBreak = checkErrorCandidates(results, jloSlice[i].getOutput(), packageDir)
+	doBreak = checkErrorCandidates(results, jloSlice[i].getOutput(), PackageDir)
 	if doBreak {
 		return doBreak, err
 	}
@@ -223,8 +223,8 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDecl := testName
-		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', packageDir: '%s'\n", pluginDir, exampleFuncDecl, packageDir)
-		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, packageDir)
+		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', PackageDir: '%s'\n", pluginDir, exampleFuncDecl, PackageDir)
+		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
@@ -232,7 +232,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
 		}
 
-		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
+		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
 	}
@@ -250,7 +250,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(filename, linenum, testname, results)
 		}
-		qfItem := buildQuickFixItem(packageDir, filename, linenum, testname, text)
+		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
 	}
