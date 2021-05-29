@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-// Output: Hello, World
+// Output: What's shakin
 func ExampleTestXXXX() {
 	fmt.Println("Hello, World")
-	// Output: What's shakin
+	// Output: Hello, World
 }
 
 //===========================================================================
