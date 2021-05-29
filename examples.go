@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
 )
@@ -14,6 +15,7 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
 	cmdLine := pluginDir + "/bin/ag  --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
+	log.Printf("In findExampleFunc, cmdLine: '%s'\n", cmdLine)
 	// cmdLine := pluginDir + "/bin/ag  --vimgrep --ignore testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
 	out, _, err := Shellout(cmdLine)
 	os.Chdir(curDir)
