@@ -35,7 +35,9 @@ func TestExampleError(t *testing.T) {
 
 //TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
-	setupLogging()
+	if debug {
+		setupLogging()
+	}
 	exampleFuncDecl := `func ExampleHW`
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
 	pkgDir := `/home/dave/sw/go/go-tdd`
