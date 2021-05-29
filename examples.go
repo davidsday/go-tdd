@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -13,7 +12,7 @@ func exampleError(output string) bool {
 
 func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum, testname string) {
 	oneSpace := " "
-	exampleFuncDecl = strconv.Quote(exampleFuncDecl)
+	// exampleFuncDecl = strconv.Quote(exampleFuncDecl)
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
 	cmdLine := pluginDir + "/bin/ag  --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
