@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 )
 
 func exampleError(output string) bool {
@@ -14,9 +15,11 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, s
 	if debug {
 		log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	}
-	out, _, err := Shellout(cmdLine)
+	result, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
-	split := splitOnColons(out)
-	// filename, lineno, function signature
+	trimmed := strings.TrimSuffix(result, "() {")
+	split := splitOnColons(trimmed)
+	split[3] = strings.TrimPrefix(split[3], "func ")
+	// filename, lineno, testName
 	return split[0], split[1], split[3]
 }
