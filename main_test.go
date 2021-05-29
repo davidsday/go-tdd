@@ -731,7 +731,7 @@ func TestHandleOutputLines(t *testing.T) {
 	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -751,7 +751,7 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -767,7 +767,7 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -783,7 +783,7 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	jloSlice := []JLObject{prevJlo, jlo}
 	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
 	if doBreak != true {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}
