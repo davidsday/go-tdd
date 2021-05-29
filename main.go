@@ -34,17 +34,7 @@ var pluginDir string
 var PackageDir string
 
 func main() {
-	// // If the file doesn't exist, create it or append to the file
-	// file, err := os.OpenFile("go-tdd.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	// if err != nil {
-	//	log.Fatal(err)
-	// }
 
-	// log.SetOutput(file)
-
-	// log.Println("Logging initiated.")
-
-	setupLogging()
 	// if runtime.GOOS = 'windows' {
 	// just thinking about portability.....
 	//}
@@ -100,6 +90,9 @@ func main() {
 	// The user may also request some debugging logging via
 	// this argument
 	debug = setDebug(os.Args)
+	if debug == 1 {
+		setupLogging()
+	}
 
 	pluginDir = os.Args[5]
 
