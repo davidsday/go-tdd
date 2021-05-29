@@ -171,9 +171,17 @@ load Vim's Quickfix List appropriately and passes that to Vim via JSON encoded
 strings via STDOUT.
 
 'go test -v -json -cover' outputs one continous string of '\n' separated JSON
-encoded objects to go-tdd.  go-tdd converts that long string into a slice of
-strings, one to a line, which it then converts to a slice of structs which
-are equivalent to the incoming JSON.
+encoded objects to STDOUT.
+
+I have looked at a number of go test parsers, and they all process these objects
+one line at a time and discard them when they move on to the next line.  Some
+buffer the previous line so they can look back at it if needed.  A few use
+regular expressions that can span multiple lines.  None of this will work for
+parsing go test's JSON output, which is an actual data structure, instead of
+plain text output.
+
+go-tdd converts that long string into a slice of strings, one to a line, which
+it then converts to a slice of structs which are equivalent to the incoming JSON.
 
 go-tdd does its work by looking at the individual structs in this slice one
 at a time, in sequence.  Since it feels its way along this slice of structs by
@@ -221,8 +229,8 @@ as +1 and +3 are the aformentioned strings "Got: " and "Want: ".
 
 Because of all these issues, most go test drivers treat Golang's
 Example Functions as lesser entities and either ignore them or give very
-little info to the developer about them.  But we can treat them as full
-fledged equals and the developer needn't know the difference.
+little info to the developer about them.  But go-tdd treats them as equals
+and the developer needn't know the difference.
 
 (This section just started May 28, 2021 and I'll expand it as I go)
 
