@@ -221,6 +221,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDecl := "func " + testName
+		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', packageDir: '%s'\n", pluginDir, exampleFuncDecl, packageDir)
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, packageDir)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
