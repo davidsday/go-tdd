@@ -17,5 +17,6 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, s
 	out, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
 	split := splitOnColons(out)
+	// filename, lineno, function signature
 	return split[0], split[1], split[3]
 }
