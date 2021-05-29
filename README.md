@@ -79,17 +79,16 @@ normal tests.
 To accomplish this, go-tdd provides its own go test parser, written
 entirely in golang, somewhat simpler than vim-go's and synchronous instead
 of asynchronous, which parses the 'go test -v -json' output and in turn,
-provides a further processed JSON structure which details for Vim what
-message, and in what color to deliver.  It also provides Vim a quickfix
-list of test failures and/or skipped tests which Vim loads for your use.
+provides a JSON structure which details for Vim what message, and in what
+color to deliver.  It also provides Vim a quickfix list of test failures
+and/or skipped tests which Vim loads for your use.
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
 hundredths of a second to complete even hundreds of tests. Most reported
 times are in the thousandths of seconds and go-tdd, written almost
-entirely in Golang itself, does its job and returns control to Vim
-probably orders of magnitude more quickly than a tool written in Vimscript
-could.
+entirely in Golang itself, does its job probably orders of magnitude more
+quickly than a tool written in Vimscript could.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so go-tdd loads
@@ -119,7 +118,7 @@ I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks
 like this:
 
 	" the actual file does not have these comments
-	let g:go_tdd_debug=0 " set to 1 if you want to log JSON sent to vim
+	let g:go_tdd_debug=v:false " set to v:true if you want to log JSON sent to vim
 	let g:gocyclo_ignore="'vendor|testdata'"  "regex for gocyclo to ignore
 	let g:go_list_type = 'quickfix'  " my pref is to only use quickfix
 
