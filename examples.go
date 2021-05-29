@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -13,12 +12,12 @@ func exampleError(output string) bool {
 func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum, testname string) {
 	// oneSpace := " "
 	// exampleFuncDecl = strconv.Quote(exampleFuncDecl)
-	curDir, _ := os.Getwd()
-	os.Chdir(path)
-	cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' '%s'", pluginDir, `testdata|vendor`, exampleFuncDecl, path)
+	// curDir, _ := os.Getwd()
+	// os.Chdir(path)
+	cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s", pluginDir, `testdata|vendor`, exampleFuncDecl, path)
 	// log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	out, _, err := Shellout(cmdLine)
-	os.Chdir(curDir)
+	// os.Chdir(curDir)
 	chkErr(err, "Error in ag searching for an example func declaration")
 	return splitExampleFuncSearchResults(out)
 }
