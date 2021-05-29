@@ -19,7 +19,6 @@ func ExampleTestXXXX() {
 
 //TestExampleError ....
 func TestExampleError(t *testing.T) {
-	setupLogging()
 	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"--- FAIL: ExampleHW (0.00s)\n"}`
 	jlo := JLObject{}
 	jlo.unmarshal(input)
@@ -37,7 +36,6 @@ func TestExampleError(t *testing.T) {
 
 //TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
-	setupLogging()
 	exampleFuncDecl := `func ExampleHW`
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
 	pkgDir := `/home/dave/sw/go/go-tdd`
