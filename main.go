@@ -92,6 +92,7 @@ func main() {
 	// this argument
 	debug = setDebug(os.Args)
 	if debug == 1 {
+		setupLogging()
 	}
 
 	pluginDir = os.Args[5]
@@ -217,7 +218,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if exampleError(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
-		exampleFuncDecl := fmt.Sprintf("func +%s", testName)
+		exampleFuncDecl := fmt.Sprintf("func +%s() +{ *", testName)
 		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', PackageDir: '%s', Ignore: '%s'\n", pluginDir, exampleFuncDecl, PackageDir, results.GocycloIgnore)
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.GocycloIgnore)
 
