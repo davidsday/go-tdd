@@ -16,7 +16,7 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
 	// cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep --ignore '%s' '%s' %s/*.go", pluginDir, `testdata`, exampleFuncDecl, path)
-	cmdLine := pluginDir + "/bin/ag -G `*.go` --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path
+	cmdLine := pluginDir + "/bin/ag -G `_test.go` --vimgrep --ignore " + "testdata" + oneSpace + exampleFuncDecl + oneSpace + path
 	log.Printf("In findExampleFunc, cmdLine: '%s'\n", cmdLine)
 	// cmdLine := pluginDir + "/bin/ag  --vimgrep --ignore testdata" + oneSpace + exampleFuncDecl + oneSpace + path + `/*.go`
 	out, _, err := Shellout(cmdLine)
