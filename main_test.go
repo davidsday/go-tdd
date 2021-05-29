@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -860,7 +859,7 @@ func TestSplitExampleFuncSearchResults(t *testing.T) {
 	}
 }
 
-func ExampleTestXXXX() {
-	fmt.Println("Hello, World")
-	// Output: What's shakin
-}
+// func ExampleTestXXXX() {
+//	fmt.Println("Hello, World")
+//	// Output: What's shakin
+// }
