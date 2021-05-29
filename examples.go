@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -14,7 +13,7 @@ func exampleError(output string) bool {
 
 func findExampleFunc(pluginDir, exampleFuncDecl, path string) (filename, linenum, testname string) {
 	// oneSpace := " "
-	exampleFuncDecl = strconv.Quote(exampleFuncDecl)
+	// exampleFuncDecl = strconv.Quote(exampleFuncDecl)
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
 	cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep -G '*_test.go' --ignore '%s' '%s' %s", `/home/dave/.config/nvim/plugged/go-tdd`, `testdata`, exampleFuncDecl, `/home/dave/sw/go/go-tdd`)
