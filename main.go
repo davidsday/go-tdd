@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"regexp"
 	"strconv"
 	"strings"
@@ -227,6 +228,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
 		}
 
+		filename = path.Base(filename)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
@@ -245,6 +247,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		if thisIsTheFirstFailure(results) {
 			takeNoteOfFirstFailure(filename, linenum, testname, results)
 		}
+		filename = path.Base(filename)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
