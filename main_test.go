@@ -790,21 +790,21 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 }
 
 //TestSetDebug() ....
-func TestSetDebug_1(t *testing.T) {
+func TestSetDebug_true(t *testing.T) {
 	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "1"}
 	got := setDebug(args)
-	want := 1
+	want := true
 	if got != want {
-		t.Errorf("got '%d' want '%d'", got, want)
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
 }
 
 //TestSetDebug() ....
-func TestSetDebug_0(t *testing.T) {
+func TestSetDebug_false(t *testing.T) {
 	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "0"}
 	got := setDebug(args)
-	want := 0
+	want := false
 	if got != want {
-		t.Errorf("got '%d' want '%d'", got, want)
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
 }
