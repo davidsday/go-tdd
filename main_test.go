@@ -833,10 +833,11 @@ func TestExampleError(t *testing.T) {
 //TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
 	exampleFuncDecl := `func ExampleHW`
+	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
 	path := "/home/dave/sw/go/go-tdd/testdata/example/"
 	curDir, _ := os.Getwd()
 	os.Chdir(path)
-	got1, _, _ := findExampleFunc(pluginDir, exampleFuncDecl, ".")
+	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, ".")
 	os.Chdir(curDir)
 
 	want := `example_test.go`
