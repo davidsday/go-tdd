@@ -13,12 +13,6 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (filename,
 	// log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	out, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
-	return splitExampleFuncSearchResults(out)
-}
-
-func splitExampleFuncSearchResults(result string) (filename, linenum, testname string) {
-	// trimmed := strings.TrimSuffix(result, "() {")
-	split := splitOnColons(result)
-	// split[3] = strings.TrimPrefix(split[3], "func ")
+	split := splitOnColons(out)
 	return split[0], split[1], split[3]
 }

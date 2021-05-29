@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 	"strconv"
 	"testing"
 )
@@ -46,19 +45,5 @@ func TestFindExampleFunc(t *testing.T) {
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
-	}
-}
-
-//===========================================================================
-//TestSplitExampleFuncSearchResults
-//===========================================================================
-
-func TestSplitExampleFuncSearchResults(t *testing.T) {
-	results := `example_test.go:7:1:func ExampleHW() {`
-	want := "example_test.go"
-	got1, _, _ := splitExampleFuncSearchResults(results)
-
-	if !reflect.DeepEqual(got1, want) {
-		t.Errorf("Got: '%s', Want: '%s'", got1, want)
 	}
 }
