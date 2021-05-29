@@ -12,6 +12,7 @@ let g:gocyclo_ignore="'vendor|testdata'"
 let g:go_list_type = 'quickfix'
 
 nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
+nnoremap <LocalLeader>e <ESC>:e StdErr.txt<CR>
 nnoremap <C-j> :cnext<CR>
 nnoremap <C-k> :cprev<CR>
 
