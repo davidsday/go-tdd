@@ -840,7 +840,7 @@ func TestFindExampleFunc(t *testing.T) {
 	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, ".")
 	os.Chdir(curDir)
 
-	want := `example_test.go`
+	want := `/home/dave/sw/go/go-tdd/example_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
 	}
