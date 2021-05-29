@@ -156,7 +156,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		var doBreak bool
 
 		if jloSlice[i].getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, Barmessage)
+			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, pluginDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
@@ -200,7 +200,7 @@ func Shellout(command string) (string, string, error) {
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
 func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
-	packageDir string, Barmessage *BarMessage) (bool, error) {
+	packageDir, pluginDir string, Barmessage *BarMessage) (bool, error) {
 
 	var err error = nil
 	doBreak := false
@@ -220,8 +220,8 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if exampleError(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
-		exampleFuncDeclaration := "func " + testName
-		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDeclaration, packageDir)
+		exampleFuncDecl := "func " + testName
+		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, packageDir)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
