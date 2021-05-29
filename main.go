@@ -184,7 +184,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 func Shellout(command string) (string, string, error) {
 	// Force POSIX compliant shell for predictability
 	// var ShellToUse = "/bin/sh"
-	var ShellToUse = "/bin/bash"
+	var ShellToUse = "/bin/sh"
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command(ShellToUse, "-c", command)
