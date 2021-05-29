@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -223,7 +224,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if exampleError(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
-		exampleFuncDecl := testName
+		exampleFuncDecl := fmt.Sprintf("func +%s", testName)
 		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', PackageDir: '%s'\n", pluginDir, exampleFuncDecl, PackageDir)
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir)
 
