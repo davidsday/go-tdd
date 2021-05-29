@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"strconv"
+	"strings"
 )
 
 //============================================================================
@@ -129,7 +130,9 @@ func (q *GtpQfList) Count() int {
 func buildQuickFixItem(searchDir, filename, linenum, pattern, text string) GtpQfItem {
 	QfItem := GtpQfItem{}
 	if searchDir != "" {
-		QfItem.Filename = searchDir + "/"
+		if !strings.HasSuffix(searchDir, "/") {
+			QfItem.Filename = searchDir + "/"
+		}
 	}
 	QfItem.Filename += filename
 	QfItem.Lnum, _ = strconv.Atoi(linenum)
