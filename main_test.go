@@ -791,7 +791,7 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 
 //TestSetDebug() ....
 func TestSetDebug_true(t *testing.T) {
-	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "1"}
+	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "true"}
 	got := setDebug(args)
 	want := true
 	if got != want {
