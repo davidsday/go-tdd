@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 func exampleError(output string) bool {
@@ -18,8 +17,8 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (filename,
 }
 
 func splitExampleFuncSearchResults(result string) (filename, linenum, testname string) {
-	trimmed := strings.TrimSuffix(result, "() {")
-	split := splitOnColons(trimmed)
-	split[3] = strings.TrimPrefix(split[3], "func ")
+	// trimmed := strings.TrimSuffix(result, "() {")
+	split := splitOnColons(result)
+	// split[3] = strings.TrimPrefix(split[3], "func ")
 	return split[0], split[1], split[3]
 }
