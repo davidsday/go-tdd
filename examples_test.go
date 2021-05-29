@@ -40,7 +40,8 @@ func TestFindExampleFunc(t *testing.T) {
 	setupLogging()
 	exampleFuncDecl := `func ExampleHW`
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
-	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, PackageDir)
+	pkgDir := `/home/dave/sw/go/go-tdd`
+	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir)
 
 	want := `examples_test.go`
 	if got1 != want {
