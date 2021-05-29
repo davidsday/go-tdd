@@ -858,8 +858,3 @@ func TestSplitExampleFuncSearchResults(t *testing.T) {
 		t.Errorf("Got: '%s', Want: '%s'", got1, want)
 	}
 }
-
-// func ExampleTestXXXX() {
-//	fmt.Println("Hello, World")
-//	// Output: What's shakin
-// }
