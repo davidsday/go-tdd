@@ -43,7 +43,7 @@ func TestFindExampleFunc(t *testing.T) {
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
 	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, PackageDir)
 
-	want := `/home/dave/sw/go/go-tdd/examples_test.go`
+	want := `examples_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
 	}
