@@ -65,19 +65,31 @@ which are not directly due to a failing test but which the developer
 should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
 
+go-tdd also improves on your go test experience by treating Go's Example
+tests as full fledged equals in the testing environment.  For some reason
+the Go Team elected to treat Example functions differently than the normal
+full fledged tests, and only provide the Example function's name and not
+the name of the file it resides in and the line number it can be found at.
+They do provide the error message the failing Example function puts out,
+but spread over the next four lines of output after the failure
+announcement. go-tdd does the necessary leg work to gather the missing and
+wayward info so it can elevate the Example function to the same level as
+normal tests.
+
 To accomplish this, go-tdd provides its own go test parser, written
-in golang, somewhat simpler than vim-go's and synchronous instead of
-asynchronous, which parses the 'go test -v -json' output and in turn,
-provides a further processed JSON structure which details for a small
-Vimscript what message, and in what color to deliver.  It also provides to
-Vim a quickfix list of test failures and/or skipped tests which Vim loads
-for your use.
+entirely in golang, somewhat simpler than vim-go's and synchronous instead
+of asynchronous, which parses the 'go test -v -json' output and in turn,
+provides a further processed JSON structure which details for Vim what
+message, and in what color to deliver.  It also provides Vim a quickfix
+list of test failures and/or skipped tests which Vim loads for your use.
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
 hundredths of a second to complete even hundreds of tests. Most reported
 times are in the thousandths of seconds and go-tdd, written almost
-entirely in Golang itself, does its job and returns control to Vim quickly.
+entirely in Golang itself, does its job and returns control to Vim
+probably orders of magnitude more quickly than a tool written in Vimscript
+could.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so go-tdd loads
