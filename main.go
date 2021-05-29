@@ -29,7 +29,7 @@ var (
 	regexCoverageNoStmts = regexp.MustCompile(`^coverage: \[no statements\]`)
 	regexNil             = &regexp.Regexp{}
 )
-var debug int
+var debug bool
 var pluginDir string
 var PackageDir string
 
@@ -86,11 +86,11 @@ func main() {
 	}
 
 	// Turn Debug off
-	debug = 0
+	debug = false
 	// The user may also request some debugging logging via
 	// this argument
 	debug = setDebug(os.Args)
-	if debug == 1 {
+	if debug {
 		setupLogging()
 	}
 
@@ -108,7 +108,7 @@ func main() {
 	// Turn our Barmessage object into JSON and send it to stdout
 	barMessage.marshalToStdOut()
 	// and/or save it to disk
-	if debug != 0 {
+	if debug {
 		barMessage.marshalToDisk()
 	}
 
@@ -419,14 +419,11 @@ func hasTestFileReferences(output string) bool {
 	return CheckRegx(regexTestFileRef, output)
 }
 
-func setDebug(args []string) int {
-	debug := 0
+func setDebug(args []string) bool {
+	debug := false
 	if len(args) > 4 {
-		err := error(nil)
-		debug, err = strconv.Atoi(args[4])
-		chkErr(err, "error converting 4th argument to int")
-		if debug != 0 && debug != 1 {
-			log.Fatalf("Illegal value, '%d', for Debug argument", debug)
+		if args[4] == "true" {
+			debug = true
 		}
 	}
 	return debug

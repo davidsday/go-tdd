@@ -68,7 +68,7 @@ function! s:RunTest(toScreen)
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
     if !exists('g:go_tdd_debug')
-      let g:go_tdd_debug=0
+      let g:go_tdd_debug=v:false
     endif
     if !exists('g:gocyclo_ignore') || g:gocyclo_ignore ==# ''
       let g:gocyclo_ignore="'vendor|testdata'"

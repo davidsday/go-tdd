@@ -6,7 +6,8 @@
 " and make the changes there, that way, your changes
 " will not be overwritten every time you refresh this plugin from github.
 
-let g:go_tdd_debug=0
+" Vim has its own true/false, (the v: stands for Vim )
+let g:go_tdd_debug=v:false
 let g:gocyclo_ignore="'vendor|testdata'"
 let g:go_list_type = 'quickfix'
 
