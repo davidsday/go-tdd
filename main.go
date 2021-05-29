@@ -220,7 +220,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if exampleError(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
-		exampleFuncDecl := "func " + testName
+		exampleFuncDecl := testName
 		log.Printf("Before call to findExamplefunc, pluginDir: '%s', exampleFuncDecl: '%s', packageDir: '%s'\n", pluginDir, exampleFuncDecl, packageDir)
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, packageDir)
 
