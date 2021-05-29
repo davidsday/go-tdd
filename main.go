@@ -87,7 +87,6 @@ func main() {
 
 	// Turn Debug off
 	debug = 0
-	setupLogging()
 	// The user may also request some debugging logging via
 	// this argument
 	debug = setDebug(os.Args)
