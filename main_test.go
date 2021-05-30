@@ -808,3 +808,31 @@ func TestSetDebug_false(t *testing.T) {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
 }
+
+// func safeToLookAhead(jloSlice []JLObject, i, incr int) bool {
+
+//TestSafeToLookAhead_true
+func TestSafeToLookAhead_true(t *testing.T) {
+	jlo, prevJlo := JLObject{}, JLObject{}
+	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+	jloSlice := []JLObject{prevJlo, jlo}
+	got := safeToLookAhead(jloSlice, 0, 1)
+	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestSafeToLookAhead_false
+func TestSafeToLookAhead_false(t *testing.T) {
+	jlo, prevJlo := JLObject{}, JLObject{}
+	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
+	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
+	jloSlice := []JLObject{prevJlo, jlo}
+	got := safeToLookAhead(jloSlice, 0, 3)
+	want := false
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
