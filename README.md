@@ -141,6 +141,8 @@ like this:
 
 	" toggle between mygofile.go and mygofile_test.go
 	nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
+  " edit StdErr.txt
+	nnoremap <LocalLeader>e  <ESC>:e StdErr.txt<CR>
 	" navigate quickfix list down and up
 	nnoremap <C-j> :cnext<CR>
 	nnoremap <C-k> :cprev<CR>
