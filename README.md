@@ -15,8 +15,9 @@ It seeks to add two things to your Golang TDD development:
 go-tdd runs and parses the output of go test so as to provide Vim/Neovim
 instructions on what message to display, and in what color.
 Green bar messages indicate all tests passed. A red bar message indicates
-that tests ran, but at least one failed. A yellow bar indicates an error
-or concerning circumstance not directly related to a failing test.
+that tests ran, but at least one failed. If any tests are skipped, that is
+reported on a yellow bar.   A yellow bar also can indicate an error or
+concerning circumstance not directly related to a failing test.
 
 Right now these yellow bar messages include
 	[no tests found],
@@ -29,7 +30,8 @@ Right now these yellow bar messages include
 If there is output on STDERR,  go-tdd shows a snippet of the
 message in a yellow bar.  If the STDERR message is longer than can be
 shown in a one line yellow bar, I capture the entire message in StdErr.txt
-in the package directory.
+in the package directory. There is a key mapping of <LocalLeader>e that
+loads StdErr.txt into the editor for your perusal.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
 bar message and quits. I don't remember that happening in actual use.
@@ -52,7 +54,7 @@ coverage as I write this (basically everything but main() and a few
 logFatal() type calls).
 
 go-tdd is designed to work alongside of vim-go, since, really,
-vim-go is my most important golang development tool.
+vim-go is my most important Golang development tool.
 
 The second benefit listed above was a "marginally better go test
 experience".  vim-go reports [SUCCESS] in directories with no test files
@@ -64,6 +66,15 @@ So in go-tdd I have incorporated a "Yellow Bar", message for situations
 which are not directly due to a failing test but which the developer
 should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
+
+Here is go-tdd's presentation of an Example Function failure:
+
+<img src="images/go-tdd_ExHello.png">
+
+And here is go-tdd's presentation of the Vim QuickFix List with the
+gathered up failure message, filename, and line number:
+
+<img src="images/go-tdd_ExHelloQfList.png">
 
 go-tdd also improves on your go test experience by treating Go's Example
 tests as full fledged equals in the testing environment.  For some reason
@@ -79,17 +90,22 @@ normal tests.
 To accomplish this, go-tdd provides its own go test parser, written
 entirely in golang, somewhat simpler than vim-go's and synchronous instead
 of asynchronous, which parses the 'go test -v -json' output and in turn,
-provides a further processed JSON structure which details for Vim what
-message, and in what color to deliver.  It also provides Vim a quickfix
-list of test failures and/or skipped tests which Vim loads for your use.
+provides a JSON structure which details for Vim what message, and in what
+color to deliver.  It also provides Vim a quickfix list of test failures
+and/or skipped tests which Vim loads for your use.
+
+Below illustrates how vim-go presents Example Function failures:
+
+<img src="images/vim-go_ExHello.png">
+
+This is typical of how Example Functions are handled by editors and IDEs.
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
 hundredths of a second to complete even hundreds of tests. Most reported
 times are in the thousandths of seconds and go-tdd, written almost
-entirely in Golang itself, does its job and returns control to Vim
-probably orders of magnitude more quickly than a tool written in Vimscript
-could.
+entirely in Golang itself, does its job probably orders of magnitude more
+quickly than a tool written in Vimscript could.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so go-tdd loads
@@ -119,7 +135,7 @@ I have gathered them all into go-tdd/plugin/go_tdd_local.vim and it looks
 like this:
 
 	" the actual file does not have these comments
-	let g:go_tdd_debug=0 " set to 1 if you want to log JSON sent to vim
+	let g:go_tdd_debug=v:false " set to v:true if you want to log JSON sent to vim
 	let g:gocyclo_ignore="'vendor|testdata'"  "regex for gocyclo to ignore
 	let g:go_list_type = 'quickfix'  " my pref is to only use quickfix
 
