@@ -240,7 +240,6 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	// test failure and it is telling us in which file and on which line
 	// the failure was triggered
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
-		length := len(jloSlice)
 		oneSpace := " "
 		indent := "    "
 		list := splitOnColons(jloSlice[i].getOutput())
@@ -249,7 +248,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		linenum := list[1]
 		text := strings.Join(list[2:], "|")
 		// check that we are not reaching past the end of jloSlice
-		if i+1 < length-1 {
+		if safeToLookAhead(jloSlice, i, 1) {
 			secondLine := jloSlice[i+1].getOutput()
 			if strings.HasPrefix(secondLine, indent+indent) {
 				text += oneSpace + "|" + oneSpace + strings.TrimSpace(secondLine)
@@ -456,4 +455,9 @@ func setupLogging() {
 	log.SetOutput(file)
 
 	log.Println("Logging initiated.")
+}
+
+func safeToLookAhead(jloSlice []JLObject, i, incr int) bool {
+	length := len(jloSlice)
+	return length-1 >= i+incr
 }
