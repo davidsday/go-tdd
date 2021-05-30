@@ -54,7 +54,7 @@ coverage as I write this (basically everything but main() and a few
 logFatal() type calls).
 
 go-tdd is designed to work alongside of vim-go, since, really,
-vim-go is my most important golang development tool.
+vim-go is my most important Golang development tool.
 
 The second benefit listed above was a "marginally better go test
 experience".  vim-go reports [SUCCESS] in directories with no test files
