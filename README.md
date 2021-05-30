@@ -65,7 +65,12 @@ which are not directly due to a failing test but which the developer
 should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
 
+Here is go-tdd's presentation of an Example Function failure:
+
 <img src="images/go-tdd_ExHello.png">
+
+And here is go-tdd's presentation of the Vim QuickFix List with the
+gathered up failure message, filename, and line number:
 
 <img src="images/go-tdd_ExHelloQfList.png">
 
@@ -88,7 +93,6 @@ color to deliver.  It also provides Vim a quickfix list of test failures
 and/or skipped tests which Vim loads for your use.
 
 Below illustrates how vim-go presents Example Function failures:
-
 
 <img src="images/vim-go_ExHello.png">
 
