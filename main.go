@@ -250,7 +250,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		if i+1 < length-1 {
 			secondLine := jloSlice[i+1].getOutput()
 			if strings.HasPrefix(secondLine, "        ") {
-				text += "|" + oneSpace + strings.TrimSpace(text)
+				text += "|" + oneSpace + strings.TrimSpace(secondLine)
 			}
 		}
 		testname := jloSlice[i-1].getTest()
