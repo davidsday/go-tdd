@@ -240,19 +240,20 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	// test failure and it is telling us in which file and on which line
 	// the failure was triggered
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
-		oneSpace := " "
+		// oneSpace := " "
 		indent := "    "
 		secondLine := ""
 		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
 		filename := list[0]
 		linenum := list[1]
-		text := strings.Join(list[2:], "|")
+		text := strings.Join(list[2:], " | ")
 		// check that we are not reaching past the end of jloSlice
 		if safeToLookAhead(jloSlice, i, 1) {
 			secondLine = jloSlice[i+1].getOutput()
 			if strings.HasPrefix(secondLine, indent+indent) {
-				text += oneSpace + "|" + oneSpace + strings.TrimSpace(secondLine)
+				//	text += oneSpace + "|" + oneSpace + strings.TrimSpace(secondLine)
+				secondLine = strings.TrimSpace(secondLine)
 			}
 		}
 		testname := jloSlice[i-1].getTest()
@@ -265,7 +266,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		if secondLine != "" {
-			qfItem := buildQuickFixItem("", "", "", "", strings.TrimSpace(secondLine))
+			qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, secondLine)
 			Barmessage.QuickFixList.Add(qfItem)
 		}
 		return doBreak, err
