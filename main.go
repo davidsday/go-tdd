@@ -242,6 +242,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
 		oneSpace := " "
 		indent := "    "
+		secondLine := ""
 		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
 		filename := list[0]
@@ -249,7 +250,7 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		text := strings.Join(list[2:], "|")
 		// check that we are not reaching past the end of jloSlice
 		if safeToLookAhead(jloSlice, i, 1) {
-			secondLine := jloSlice[i+1].getOutput()
+			secondLine = jloSlice[i+1].getOutput()
 			if strings.HasPrefix(secondLine, indent+indent) {
 				text += oneSpace + "|" + oneSpace + strings.TrimSpace(secondLine)
 			}
@@ -263,6 +264,10 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		filename = path.Base(filename)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
+		if secondLine != "" {
+			qfItem := buildQuickFixItem("", "", "", "", strings.TrimSpace(secondLine))
+			Barmessage.QuickFixList.Add(qfItem)
+		}
 		return doBreak, err
 	}
 	return doBreak, err
