@@ -11,7 +11,13 @@ func exampleError(output string) bool {
 }
 
 func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, string, string) {
-	cmdLine := fmt.Sprintf("%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s", pluginDir, ignore, exampleFuncDecl, path)
+	cmdLine := fmt.Sprintf(
+		"%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s",
+		pluginDir,
+		ignore,
+		exampleFuncDecl,
+		path,
+	)
 	if debug {
 		log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	}
