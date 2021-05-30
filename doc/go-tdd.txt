@@ -142,9 +142,9 @@ not want gocyclo to analyze.  So I provide it with the regex to ignore these dir
 
 
 Default:
-let g:go_tdd_debug=0
+let g:go_tdd_debug=v:false
 
-go-tdd checks the Vim global variable g:go_tdd_debug and if it is 1
+go-tdd checks the Vim global variable g:go_tdd_debug and if it is true
 it will output the JSON it sends to Vim to disk in go-tdd-log.json in the
 package directory.  This is now not particularly useful, unless you are curious
 to see what is being sent to vim for display.
@@ -175,7 +175,7 @@ strings via STDOUT.
 'go test -v -json -cover' outputs one continous string of '\n' separated JSON
 encoded objects to STDOUT.
 
-I have looked at a number of go test parsers, and they all process these objects
+I have looked at a number of go test parsers, and they process these objects
 one line at a time and discard them when they move on to the next line.  Some
 buffer the previous line so they can look back at it if needed.  A few use
 regular expressions that can span multiple lines.  None of this will work for
