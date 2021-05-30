@@ -65,6 +65,10 @@ which are not directly due to a failing test but which the developer
 should be aware of, thus providing that "marginally better go test
 experience" I mentioned above.
 
+<img src="images/go-tdd_ExHello.png">
+
+<img src="images/go-tdd_ExHelloQfList.png">
+
 go-tdd also improves on your go test experience by treating Go's Example
 tests as full fledged equals in the testing environment.  For some reason
 the Go Team elected to treat Example functions differently than the normal
@@ -82,6 +86,11 @@ of asynchronous, which parses the 'go test -v -json' output and in turn,
 provides a JSON structure which details for Vim what message, and in what
 color to deliver.  It also provides Vim a quickfix list of test failures
 and/or skipped tests which Vim loads for your use.
+
+Below illustrates how vim-go presents Example Function failures:
+
+
+<img src="images/vim-go_ExHello.png">
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
