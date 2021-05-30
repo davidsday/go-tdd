@@ -30,7 +30,8 @@ Right now these yellow bar messages include
 If there is output on STDERR,  go-tdd shows a snippet of the
 message in a yellow bar.  If the STDERR message is longer than can be
 shown in a one line yellow bar, I capture the entire message in StdErr.txt
-in the package directory.
+in the package directory. There is a key mapping of <LocalLeader>e that
+loads StdErr.txt into the editor for your perusal.
 
 If go-tdd encounters non JSON lines on stdout, it issues a yellow
 bar message and quits. I don't remember that happening in actual use.
@@ -96,6 +97,8 @@ and/or skipped tests which Vim loads for your use.
 Below illustrates how vim-go presents Example Function failures:
 
 <img src="images/vim-go_ExHello.png">
+
+This is typical of how Example Functions are handled by editors and IDEs.
 
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
