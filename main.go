@@ -240,15 +240,18 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	// test failure and it is telling us in which file and on which line
 	// the failure was triggered
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
+		length := len(jloSlice)
 		oneSpace := " "
 		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
 		filename := list[0]
 		linenum := list[1]
 		text := strings.Join(list[2:], "|")
-		secondLine := jloSlice[i+1].getOutput()
-		if strings.HasPrefix(secondLine, "        ") {
-			text += "|" + oneSpace + strings.TrimSpace(text)
+		if i+1 < length-1 {
+			secondLine := jloSlice[i+1].getOutput()
+			if strings.HasPrefix(secondLine, "        ") {
+				text += "|" + oneSpace + strings.TrimSpace(text)
+			}
 		}
 		testname := jloSlice[i-1].getTest()
 		if thisIsTheFirstFailure(results) {
