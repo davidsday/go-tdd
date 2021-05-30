@@ -242,15 +242,17 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	if hasTestFileReferences(jloSlice[i].getOutput()) {
 		length := len(jloSlice)
 		oneSpace := " "
+		indent := "    "
 		list := splitOnColons(jloSlice[i].getOutput())
 		// This may be obsolete, we will watch and see...
 		filename := list[0]
 		linenum := list[1]
 		text := strings.Join(list[2:], "|")
+		// check that we are not reaching past the end of jloSlice
 		if i+1 < length-1 {
 			secondLine := jloSlice[i+1].getOutput()
-			if strings.HasPrefix(secondLine, "        ") {
-				text += "|" + oneSpace + strings.TrimSpace(secondLine)
+			if strings.HasPrefix(secondLine, indent+indent) {
+				text += oneSpace + "|" + oneSpace + strings.TrimSpace(secondLine)
 			}
 		}
 		testname := jloSlice[i-1].getTest()
