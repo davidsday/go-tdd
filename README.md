@@ -15,8 +15,9 @@ It seeks to add two things to your Golang TDD development:
 go-tdd runs and parses the output of go test so as to provide Vim/Neovim
 instructions on what message to display, and in what color.
 Green bar messages indicate all tests passed. A red bar message indicates
-that tests ran, but at least one failed. A yellow bar indicates an error
-or concerning circumstance not directly related to a failing test.
+that tests ran, but at least one failed. If any tests are skipped, that is
+reported on a yellow bar.   A yellow bar also can indicate an error or
+concerning circumstance not directly related to a failing test.
 
 Right now these yellow bar messages include
 	[no tests found],
