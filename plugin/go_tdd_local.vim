@@ -10,6 +10,7 @@
 let g:go_tdd_debug=v:false
 let g:gocyclo_ignore="'vendor|testdata'"
 let g:go_list_type = 'quickfix'
+let g:go_test_timeout = '10s'
 
 nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
 nnoremap <LocalLeader>e <ESC>:e StdErr.txt<CR>

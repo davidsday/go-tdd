@@ -67,6 +67,9 @@ function! s:RunTest(toScreen)
     let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
+    if !exists('g:go_test_timeout')
+      let g:go_test_timeout='10s'
+    endif
     if !exists('g:go_tdd_debug')
       let g:go_tdd_debug=v:false
     endif
@@ -80,6 +83,7 @@ function! s:RunTest(toScreen)
     let l:cmdLine.= oneSpace . g:gocyclo_ignore
     let l:cmdLine.= oneSpace . string(g:go_tdd_debug)
     let l:cmdLine.= oneSpace . s:plugin_dir
+    let l:cmdLine.= oneSpace . g:go_test_timeout
 
     if a:toScreen == v:true
       echon system(l:cmdLine)
