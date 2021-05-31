@@ -163,6 +163,18 @@ stage of development, and this is all that is left, as testing incrementally
 replaced logging as my primary quality assurance tool.  I may even completely
 remove this in the future.
 
+                                                            *g:go_tdd_timeout*
+Default:
+let g:go_tdd_timeout='10s'
+
+go-tdd passes this variable to 'go test' on the command line.  'go test' will
+itself call panic() if it cannot finish in that time or less.
+
+If that happens, go-tdd will receive a specific panic message from 'go test'
+and report it in a Yellow bar.
+
+No StdErr.txt message and no quickfix list.
+
 ==============================================================================
 4. Internals and Behavior                                    *go-tdd_Behavior*
 
