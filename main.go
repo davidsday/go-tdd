@@ -94,9 +94,16 @@ func main() {
 		setupLogging()
 	}
 
+	oneSpace := " "
 	pluginDir = os.Args[5]
+	goTestTimeout := os.Args[6]
 
-	commandLine := "go test -v -json -cover " + packageDirsToSearch[0]
+	commandLine := "go test -v -json -cover"
+	commandLine += oneSpace + goTestTimeout
+	commandLine += oneSpace + packageDirsToSearch[0]
+	commandLine += oneSpace + "-timeout"
+	commandLine += oneSpace + goTestTimeout
+
 	stdout, stderr, _ := Shellout(commandLine)
 
 	if rcvdMsgOnStdErr(stderr) {
