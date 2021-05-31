@@ -99,7 +99,6 @@ func main() {
 	goTestTimeout := os.Args[6]
 
 	commandLine := "go test -v -json -cover"
-	commandLine += oneSpace + goTestTimeout
 	commandLine += oneSpace + packageDirsToSearch[0]
 	commandLine += oneSpace + "-timeout"
 	commandLine += oneSpace + goTestTimeout
