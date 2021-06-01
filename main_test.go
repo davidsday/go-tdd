@@ -789,26 +789,6 @@ func TestHandleOutputLines_received_a_panic(t *testing.T) {
 	}
 }
 
-//TestSetDebug() ....
-func TestSetDebug_true(t *testing.T) {
-	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "true"}
-	got := setDebug(args)
-	want := true
-	if got != want {
-		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
-	}
-}
-
-//TestSetDebug() ....
-func TestSetDebug_false(t *testing.T) {
-	args := []string{"progname", "pkgDir", "vimColumns", "vendor|testdata", "0"}
-	got := setDebug(args)
-	want := false
-	if got != want {
-		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
-	}
-}
-
 // func safeToLookAhead(jloSlice []JLObject, i, incr int) bool {
 
 //TestSafeToLookAhead_true

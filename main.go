@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -65,15 +64,37 @@ func main() {
 	// gocyclo can be happy
 	var packageDirsToSearch []string
 
+	type ArgDict struct {
+		PackageDir    string `json:"package_dir"`
+		ScreenColumns int    `json:"screen_columns"`
+		GocycloIgnore string `json:"gocyclo_ignore"`
+		GoTddDebug    bool   `json:"go_tdd_debug"`
+		PluginDir     string `json:"plugin_dir"`
+		Timeout       string `json:"timeout"`
+	}
+
+	var argDict ArgDict
+	json.Unmarshal([]byte(os.Args[1]), &argDict)
+
+	// let l:arg_dict={}
+	// let l:arg_dict['package_dir']=l:packageDir
+	// let l:arg_dict['screen_columns']=l:screencolumns
+	// let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
+	// let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
+	// let l:arg_dict['plugin_dir']=s:plugin_dir
+	// let l:arg_dict['timeout']=g:go_test_timeout
+
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
-	packageDirsToSearch = append(packageDirsToSearch, os.Args[1])
+	// packageDirsToSearch = append(packageDirsToSearch, os.Args[1])
+	packageDirsToSearch = append(packageDirsToSearch, argDict.PackageDir)
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
-	results.VimColumns, _ = strconv.Atoi(os.Args[2])
+	// results.VimColumns, _ = strconv.Atoi(os.Args[2])
+	results.VimColumns = argDict.ScreenColumns
 	// Gocyclo accepts a regex as a request to ignore paths which
 	// match the regex.  There is a vim global g:gocyclo_ignore which
 	// defaults to 'vendor|testdata' which the user may set to his/here
@@ -81,22 +102,23 @@ func main() {
 	// vendor is where go projects keep package dependencies and testdata
 	// is where we keep our, well, testdata, dirs and files that our tests
 	// need
-	if len(os.Args) > 3 {
-		results.GocycloIgnore = os.Args[3]
-	}
+	// if len(os.Args) > 3 {
+	//	results.GocycloIgnore = os.Args[3]
+	// }
+	results.GocycloIgnore = argDict.GocycloIgnore
 
 	// Turn Debug off
 	debug = false
 	// The user may also request some debugging logging via
 	// this argument
-	debug = setDebug(os.Args)
+	debug = argDict.GoTddDebug
 	if debug {
 		setupLogging()
 	}
 
 	oneSpace := " "
-	pluginDir = os.Args[5]
-	goTestTimeout := os.Args[6]
+	pluginDir = argDict.PluginDir
+	goTestTimeout := argDict.Timeout
 
 	commandLine := "go test -v -json -cover"
 	commandLine += oneSpace + packageDirsToSearch[0]
@@ -432,16 +454,6 @@ func hasTestCoverage(output string) bool {
 func hasTestFileReferences(output string) bool {
 	// one of the surest fail indicators is an output about a "_test.go" file
 	return CheckRegx(regexTestFileRef, output)
-}
-
-func setDebug(args []string) bool {
-	debug := false
-	if len(args) > 4 {
-		if args[4] == "true" {
-			debug = true
-		}
-	}
-	return debug
 }
 
 func safeToLookAhead(jloSlice []JLObject, i, incr int) bool {

@@ -77,6 +77,18 @@ function! s:RunTest(toScreen)
       let g:gocyclo_ignore="'vendor|testdata'"
     endif
 
+    let l:arg_dict={}
+    let l:arg_dict['package_dir']=l:packageDir
+    let l:arg_dict['screen_columns']=l:screencolumns
+    let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
+    let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
+    let l:arg_dict['plugin_dir']=s:plugin_dir
+    let l:arg_dict['timeout']=g:go_test_timeout
+
+    let l:json_args=json_encode(l:arg_dict)
+    " let l:cmdLine=l:go_tdd_binary
+    " let l:cmdLine.= oneSpace . l:json_args
+
     let l:cmdLine=l:go_tdd_binary
     let l:cmdLine.= oneSpace . l:packageDir
     let l:cmdLine.= oneSpace . l:screencolumns
