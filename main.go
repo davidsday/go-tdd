@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -78,9 +79,16 @@ func main() {
 	err := json.Unmarshal([]byte(os.Args[1]), &argDict)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
-	// setupLogging()
-	// log.Printf("argDict: '%v'\n", argDict)
-	// log.Printf("os.Args[1] '%v'\n", os.Args[1])
+	setupLogging()
+	log.Printf("argDict: '%v'\n", argDict)
+	log.Printf("os.Args[1] '%v'\n", os.Args[1])
+	// let l:arg_dict={}
+	// let l:arg_dict['package_dir']=l:packageDir
+	// let l:arg_dict['screen_columns']=l:screencolumns
+	// let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
+	// let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
+	// let l:arg_dict['plugin_dir']=s:plugin_dir
+	// let l:arg_dict['timeout']=g:go_test_timeout
 
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
