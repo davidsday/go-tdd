@@ -95,7 +95,8 @@ func main() {
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
-	// packageDirsToSearch = append(packageDirsToSearch, os.Args[1])
+	argDict.PackageDir = strings.TrimPrefix(argDict.PackageDir, "'")
+	argDict.PackageDir = strings.TrimSuffix(argDict.PackageDir, "'")
 	packageDirsToSearch = append(packageDirsToSearch, argDict.PackageDir)
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
