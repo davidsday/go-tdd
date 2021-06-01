@@ -90,14 +90,6 @@ function! s:RunTest(toScreen)
     let l:cmdLine.= oneSpace . l:json_args
 
 
-    " let l:cmdLine=l:go_tdd_binary
-    " let l:cmdLine.= oneSpace . l:packageDir
-    " let l:cmdLine.= oneSpace . l:screencolumns
-    " let l:cmdLine.= oneSpace . g:gocyclo_ignore
-    " let l:cmdLine.= oneSpace . string(g:go_tdd_debug)
-    " let l:cmdLine.= oneSpace . s:plugin_dir
-    " let l:cmdLine.= oneSpace . g:go_test_timeout
-
     if a:toScreen == v:true
       echon system(l:cmdLine)
     else
