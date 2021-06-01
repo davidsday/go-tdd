@@ -118,7 +118,6 @@ func main() {
 	// The user may also request some debugging logging via
 	// this argument
 	debug = argDict.GoTddDebug
-	debug = true
 	if debug {
 		setupLogging()
 	}
