@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -76,6 +77,8 @@ func main() {
 	var argDict ArgDict
 	json.Unmarshal([]byte(os.Args[1]), &argDict)
 
+	setupLogging()
+	log.Fatalf("'%v'", argDict)
 	// let l:arg_dict={}
 	// let l:arg_dict['package_dir']=l:packageDir
 	// let l:arg_dict['screen_columns']=l:screencolumns
