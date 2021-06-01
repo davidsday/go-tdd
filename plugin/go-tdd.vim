@@ -87,7 +87,7 @@ function! s:RunTest(toScreen)
 
     let l:json_args=shellescape(json_encode(l:arg_dict))
     let l:cmdLine=l:go_tdd_binary
-    let l:cmdLine.= oneSpace . "'" .l:json_args . "'"
+    let l:cmdLine.= oneSpace . l:json_args
 
     " let l:cmdLine=l:go_tdd_binary
     " let l:cmdLine.= oneSpace . l:packageDir
