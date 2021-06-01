@@ -25,13 +25,23 @@ type GtpArgs struct {
 	Timeout       string `json:"timeout"`
 }
 
+func (a *GtpArgs) getScreenColumns() int {
+	cols, err := strconv.Atoi(a.ScreenColumns)
+	chkErr(err, "Error converting results.Args.ScreenColumns (string) to int")
+	return cols
+}
+
+func (a *GtpArgs) setScreenColumns(cols int) {
+	a.ScreenColumns = strconv.Itoa(cols)
+}
+
 type GtpResults struct {
-	Summary       GtpSummary
-	Counts        GtpCounts
-	Errors        GtpErrors
-	FirstFail     GtpFirstFail
-	Args          GtpArgs
-	VimColumns    int
+	Summary   GtpSummary
+	Counts    GtpCounts
+	Errors    GtpErrors
+	FirstFail GtpFirstFail
+	Args      GtpArgs
+	// VimColumns    int
 	GocycloIgnore string
 }
 
