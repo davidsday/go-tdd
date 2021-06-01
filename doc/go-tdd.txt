@@ -199,7 +199,7 @@ it then converts to a slice of structs which are equivalent to the incoming JSON
 
 go-tdd does its work by looking at the individual structs in this slice one
 at a time, in sequence.  Since it feels its way along this slice of structs by
-index, if needed, it can both look forward and back any appropriate amount for
+index, if needed it can both look forward and back any appropriate amount for
 look ahead or look back purposes.
 
 A good example of this is go test's handling of Example Functions.  Go has
