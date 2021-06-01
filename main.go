@@ -80,8 +80,8 @@ func main() {
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
 	setupLogging()
-	log.Fatalf("argDict: '%v'\n", argDict)
-	log.Fatalf("os.Args[1] '%v'\n", os.Args[1])
+	log.Printf("argDict: '%v'\n", argDict)
+	log.Printf("os.Args[1] '%v'\n", os.Args[1])
 	// let l:arg_dict={}
 	// let l:arg_dict['package_dir']=l:packageDir
 	// let l:arg_dict['screen_columns']=l:screencolumns
