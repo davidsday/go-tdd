@@ -97,6 +97,7 @@ func main() {
 	// need
 
 	debug = results.Args.GoTddDebug
+	debug = true
 	if debug {
 		setupLogging()
 	}
