@@ -36,13 +36,6 @@ var PackageDir string
 
 func main() {
 
-	// if runtime.GOOS = 'windows' {
-	// just thinking about portability.....
-	//}
-	// user, _ := user.Current()
-	// User := user.Username
-	// HomeDir := user.HomeDir
-
 	// results has all the results we collect from go test
 	// to help us decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
