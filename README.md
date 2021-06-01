@@ -6,6 +6,9 @@ tiniest bit of shell script thrown in.
 
 <img src="images/go-tdd_screenshot.png">
 
+[Short go-tdd intro video](https://youtu.be/diRxrora2oc)
+
+
 It seeks to add two things to your Golang TDD development:
 
 	RedBar/GreenBar/Refactor Test Driven Development style programming
