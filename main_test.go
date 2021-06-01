@@ -212,7 +212,7 @@ func TestTakeNoteOfFirstFailure(t *testing.T) {
 //TestProcessStdErrMsg
 func TestProcessStdErrMsg(t *testing.T) {
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
@@ -228,7 +228,7 @@ func TestProcessStdErrMsg(t *testing.T) {
 //TestDoStdErrMsgTooLong ....
 func TestProcessStdErrMsgTooLong(t *testing.T) {
 	results := newResults()
-	results.VimColumns = 72
+	results.Args.setScreenColumns(72)
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -249,7 +249,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 //TestProcessStdOutMsg
 func TestProcessStdOutMsg1(t *testing.T) {
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "green", Message: "1 Run, 1 Passed, Test Coverage: 0.0%, Average Complexity: NaN, in 0.001s", QuickFixList: GtpQfList{}}
 	out := `{"Time":"2021-05-10T09:00:49.114179156-04:00","Action":"run","Package":"github.com/davidsday/hello","Test":"TestHello"}
@@ -284,7 +284,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 {"Time":"2021-05-10T20:55:51.269867388-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
 
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
 	PackageDirsToSearch := []string{}
@@ -312,7 +312,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 {"Time":"2021-05-23T11:06:16.6371028-04:00","Action":"fail","Package":"hello","Elapsed":0.001}`
 
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
 	PackageDirsToSearch := []string{}
@@ -335,7 +335,7 @@ func TestProcessStdOutMsg4(t *testing.T) {
 {"Time":"2021-05-11T22:20:14.727621504-04:00","Action":"pass","Package":"hello","Elapsed":0.001}`
 
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
 	PackageDirsToSearch := []string{}
@@ -355,7 +355,7 @@ func TestProcessStdOutMsg5(t *testing.T) {
 	input := `{"Time":"2021-05-11T22:30:46.844883222-04:00","Action":"output","Package":"/home/dave/sw/go/go-tdd/testdata/hello","Output":"?   \thello\t[no test files]\n"}
 {"Time":"2021-05-11T22:30:46.84499945-04:00","Action":"skip","Package":"hello","Elapsed":0}`
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
 	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
 	PackageDirsToSearch := []string{}
@@ -404,7 +404,7 @@ func TestMetricsMsg_no_skips_2_fails(t *testing.T) {
 //TestBuildAndAppendAnErrorForInvalidJSON ....
 func TestBuildAndAppendAnErrorForInvalidJSON(t *testing.T) {
 	results := newResults()
-	results.VimColumns = 135
+	results.Args.setScreenColumns(135)
 	buildAndAppendAnErrorForInvalidJSON(&results)
 	if len(results.Errors) <= 0 {
 		t.Errorf("pgmdata.Perrors has %d elements", len(results.Errors))

@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -75,12 +74,7 @@ func main() {
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
 	packageDirsToSearch = append(packageDirsToSearch, results.Args.PackageDir)
-	// Vim tells us how many columns it has available for messages via the
-	// third command line argument
-	// results.VimColumns, _ = strconv.Atoi(os.Args[2])
-	err = error(nil)
-	results.VimColumns, err = strconv.Atoi(results.Args.ScreenColumns)
-	chkErr(err, "Error converting results.Args.ScreenColumns to int")
+
 	// Gocyclo accepts a regex as a request to ignore paths which
 	// match the regex.  There is a vim global g:gocyclo_ignore which
 	// defaults to 'vendor|testdata' which the user may set to his/here
@@ -292,9 +286,9 @@ func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []str
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgSuffix := "[See pkgdir/StdErr.txt]"
 	Barmessage.setColor("yellow")
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix, results.VimColumns) {
+	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix, results.Args.getScreenColumns()) {
 		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
-		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg, results.VimColumns))
+		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg, results.Args.getScreenColumns()))
 	} else {
 		Barmessage.setMessage(stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|"))
 		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|"))
