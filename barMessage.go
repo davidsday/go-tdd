@@ -43,7 +43,7 @@ func (b *BarMessage) marshalToStdOut() {
 func (b *BarMessage) marshalToDisk() {
 	data, _ := json.Marshal(*b)
 	err := os.WriteFile("./go-tdd_log.json", data, 0664)
-	chkErr(err, "Error writing to ./go-tdd_log.json, in marshalToStdOut()")
+	chkErr(err, "Error writing to ./go-tdd_log.json, in marshalToDisk()")
 }
 
 func (b *BarMessage) marshalToByteString() []byte {
