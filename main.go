@@ -65,18 +65,7 @@ func main() {
 	// we create an empty list and append os.Args[1] to it so
 	// gocyclo can be happy
 	var packageDirsToSearch []string
-
-	type ArgDict struct {
-		PackageDir    string `json:"package_dir"`
-		ScreenColumns string `json:"screen_columns"`
-		GocycloIgnore string `json:"gocyclo_ignore"`
-		GoTddDebug    bool   `json:"go_tdd_debug"`
-		PluginDir     string `json:"plugin_dir"`
-		Timeout       string `json:"timeout"`
-	}
-
-	var argDict ArgDict
-	err := json.Unmarshal([]byte(os.Args[1]), &argDict)
+	err := json.Unmarshal([]byte(os.Args[1]), &results.Args)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
 	// let l:arg_dict={}
@@ -92,15 +81,13 @@ func main() {
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
-	argDict.PackageDir = strings.TrimPrefix(argDict.PackageDir, "'")
-	argDict.PackageDir = strings.TrimSuffix(argDict.PackageDir, "'")
-	packageDirsToSearch = append(packageDirsToSearch, argDict.PackageDir)
+	packageDirsToSearch = append(packageDirsToSearch, results.Args.PackageDir)
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	// results.VimColumns, _ = strconv.Atoi(os.Args[2])
 	err = error(nil)
-	results.VimColumns, err = strconv.Atoi(argDict.ScreenColumns)
-	chkErr(err, "Error converting argDict.ScreenColumns to int")
+	results.VimColumns, err = strconv.Atoi(results.Args.ScreenColumns)
+	chkErr(err, "Error converting results.Args.ScreenColumns to int")
 	// Gocyclo accepts a regex as a request to ignore paths which
 	// match the regex.  There is a vim global g:gocyclo_ignore which
 	// defaults to 'vendor|testdata' which the user may set to his/here
@@ -108,29 +95,21 @@ func main() {
 	// vendor is where go projects keep package dependencies and testdata
 	// is where we keep our, well, testdata, dirs and files that our tests
 	// need
-	// if len(os.Args) > 3 {
-	//	results.GocycloIgnore = os.Args[3]
-	// }
-	results.GocycloIgnore = argDict.GocycloIgnore
 
-	// Turn Debug off
-	debug = false
-	// The user may also request some debugging logging via
-	// this argument
-	debug = argDict.GoTddDebug
+	debug = results.Args.GoTddDebug
 	if debug {
 		setupLogging()
 	}
 
 	if debug {
-		log.Printf("argDict: '%v'\n\n", argDict)
+		log.Printf("results.Args: '%v'\n\n", results.Args)
 		log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 	}
 
 	oneSpace := " "
-	pluginDir = strings.TrimPrefix(argDict.PluginDir, "'")
-	pluginDir = strings.TrimSuffix(argDict.PluginDir, "'")
-	goTestTimeout := argDict.Timeout
+	pluginDir = strings.TrimPrefix(results.Args.PluginDir, "'")
+	pluginDir = strings.TrimSuffix(results.Args.PluginDir, "'")
+	goTestTimeout := results.Args.Timeout
 
 	commandLine := "go test -v -json -cover"
 	commandLine += oneSpace + packageDirsToSearch[0]

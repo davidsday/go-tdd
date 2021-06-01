@@ -16,11 +16,21 @@ import (
 
 type GtpCounts map[string]int
 
+type GtpArgs struct {
+	PackageDir    string `json:"package_dir"`
+	ScreenColumns string `json:"screen_columns"`
+	GocycloIgnore string `json:"gocyclo_ignore"`
+	GoTddDebug    bool   `json:"go_tdd_debug"`
+	PluginDir     string `json:"plugin_dir"`
+	Timeout       string `json:"timeout"`
+}
+
 type GtpResults struct {
 	Summary       GtpSummary
 	Counts        GtpCounts
 	Errors        GtpErrors
 	FirstFail     GtpFirstFail
+	Args          GtpArgs
 	VimColumns    int
 	GocycloIgnore string
 }
