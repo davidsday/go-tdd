@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"path"
 	"regexp"
 	"strconv"
@@ -116,6 +117,8 @@ func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []strin
 		// Since we only show avg cyclomatic complexity on green bars,
 		// only run it for green bars
 		// r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
+		log.Printf("About to call setComplexity(), results.GocycloIgnore: '%s'\n", r.GocycloIgnore)
+		log.Printf("About to call setComplexity(), results.Args.GocycloIgnore: '%s'\n\n", r.Args.GocycloIgnore)
 		r.Summary.setComplexity(PackageDirsToSearch, `testdata|vendor`)
 	}
 
