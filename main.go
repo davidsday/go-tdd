@@ -122,8 +122,10 @@ func main() {
 		setupLogging()
 	}
 
-	log.Printf("argDict: '%v'\n\n", argDict)
-	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
+	if debug {
+		log.Printf("argDict: '%v'\n\n", argDict)
+		log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
+	}
 
 	oneSpace := " "
 	pluginDir = strings.TrimPrefix(argDict.PluginDir, "'")
