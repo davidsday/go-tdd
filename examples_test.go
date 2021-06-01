@@ -17,13 +17,26 @@ func ExampleTestXXXX() {
 //===========================================================================
 
 //TestExampleError ....
-func TestExampleError(t *testing.T) {
+func TestExampleError_true(t *testing.T) {
 	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"--- FAIL: ExampleHW (0.00s)\n"}`
 	jlo := JLObject{}
 	jlo.unmarshal(input)
 
 	got := exampleError(jlo.getOutput())
 	want := true
+	if got != want {
+		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+	}
+}
+
+//TestExampleError_false ....
+func TestExampleError_false(t *testing.T) {
+	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"PASS: ExampleHW (0.00s)\n"}`
+	jlo := JLObject{}
+	jlo.unmarshal(input)
+
+	got := exampleError(jlo.getOutput())
+	want := false
 	if got != want {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
