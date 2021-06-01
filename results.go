@@ -39,7 +39,7 @@ func newResults() GtpResults {
 	r := new(GtpResults)
 	// Initialize map of Counts in Results
 	r.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	r.Args.GocycloIgnore = `vendor|testdata`
+	r.GocycloIgnore = `vendor|testdata`
 	return *r
 }
 
@@ -105,7 +105,7 @@ func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []strin
 		bm.setColor("green")
 		// Since we only show avg cyclomatic complexity on green bars,
 		// only run it for green bars
-		r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
+		r.Summary.setComplexity(PackageDirsToSearch, r.GocycloIgnore)
 	}
 
 	// build the message based on how we did ...
