@@ -125,7 +125,8 @@ func main() {
 	}
 
 	oneSpace := " "
-	pluginDir = argDict.PluginDir
+	pluginDir = strings.TrimPrefix(argDict.PluginDir, "'")
+	pluginDir = strings.TrimSuffix(argDict.PluginDir, "'")
 	goTestTimeout := argDict.Timeout
 
 	commandLine := "go test -v -json -cover"
