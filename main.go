@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -67,7 +68,7 @@ func main() {
 
 	type ArgDict struct {
 		PackageDir    string `json:"package_dir"`
-		ScreenColumns int    `json:"screen_columns"`
+		ScreenColumns string `json:"screen_columns"`
 		GocycloIgnore string `json:"gocyclo_ignore"`
 		GoTddDebug    bool   `json:"go_tdd_debug"`
 		PluginDir     string `json:"plugin_dir"`
@@ -99,7 +100,9 @@ func main() {
 	// Vim tells us how many columns it has available for messages via the
 	// third command line argument
 	// results.VimColumns, _ = strconv.Atoi(os.Args[2])
-	results.VimColumns = argDict.ScreenColumns
+	err = error(nil)
+	results.VimColumns, err = strconv.Atoi(argDict.ScreenColumns)
+	chkErr(err, "Error converting argDict.ScreenColumns to int")
 	// Gocyclo accepts a regex as a request to ignore paths which
 	// match the regex.  There is a vim global g:gocyclo_ignore which
 	// defaults to 'vendor|testdata' which the user may set to his/here
