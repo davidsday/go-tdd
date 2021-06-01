@@ -52,36 +52,19 @@ func main() {
 
 	barMessage := newBarMessage()
 
-	// Gocyclo likes to receive lists of paths to search
-	// We don't have any, but to avoid mucking with gocyclo internals
-	// we create an empty list and append os.Args[1] to it so
-	// gocyclo can be happy
-	var packageDirsToSearch []string
+	// We are storing our JSON arguments in the Args structure embedded
+	// in our results struct, which calculates our results for us.
+	// It needs several of these arguments to do that.
 	err := json.Unmarshal([]byte(os.Args[1]), &results.Args)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
-
-	// let l:arg_dict={}
-	// let l:arg_dict['package_dir']=l:packageDir
-	// let l:arg_dict['screen_columns']=l:screencolumns
-	// let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
-	// let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
-	// let l:arg_dict['plugin_dir']=s:plugin_dir
-	// let l:arg_dict['timeout']=g:go_test_timeout
 
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
 	// but gocyclo wants a list of dirs, so we create an empty
 	// list and append the dir we got from Vim to it so
 	// gocyclo will be happy
+	var packageDirsToSearch []string
 	packageDirsToSearch = append(packageDirsToSearch, results.Args.PackageDir)
-
-	// Gocyclo accepts a regex as a request to ignore paths which
-	// match the regex.  There is a vim global g:gocyclo_ignore which
-	// defaults to 'vendor|testdata' which the user may set to his/here
-	// preference and gocyclo will ignore those matching directories
-	// vendor is where go projects keep package dependencies and testdata
-	// is where we keep our, well, testdata, dirs and files that our tests
-	// need
 
 	debug = results.Args.GoTddDebug
 	if debug {
