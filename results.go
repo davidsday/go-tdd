@@ -115,7 +115,8 @@ func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []strin
 		bm.setColor("green")
 		// Since we only show avg cyclomatic complexity on green bars,
 		// only run it for green bars
-		r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
+		// r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
+		r.Summary.setComplexity(PackageDirsToSearch, `testdata|vendor`)
 	}
 
 	// build the message based on how we did ...
