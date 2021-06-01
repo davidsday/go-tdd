@@ -346,7 +346,10 @@ func stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix string,
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
-	path := pkgdir + "/StdErr.txt"
+	path := "./StdErr.txt"
+	if len(strings.TrimSpace(pkgdir)) > 0 {
+		path = pkgdir + "/StdErr.txt"
+	}
 	err := os.WriteFile(path, []byte(stderr), 0664)
 	chkErr(err, "error writing "+path)
 }
