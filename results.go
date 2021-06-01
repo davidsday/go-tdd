@@ -49,7 +49,7 @@ func newResults() GtpResults {
 	r := new(GtpResults)
 	// Initialize map of Counts in Results
 	r.Counts = map[string]int{"run": 0, "pause": 0, "continue": 0, "skip": 0, "pass": 0, "fail": 0, "output": 0}
-	r.GocycloIgnore = `vendor|testdata`
+	r.Args.GocycloIgnore = `vendor|testdata`
 	return *r
 }
 
