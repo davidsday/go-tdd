@@ -120,7 +120,7 @@ func (r *GtpResults) buildBarMessage(bm *BarMessage, PackageDirsToSearch []strin
 		// r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
 		log.Printf("About to call setComplexity(), results.GocycloIgnore: '%s'\n", r.GocycloIgnore)
 		log.Printf("About to call setComplexity(), results.Args.GocycloIgnore: '%s'\n\n", r.Args.GocycloIgnore)
-		r.Summary.setComplexity(PackageDirsToSearch, `testdata|vendor`)
+		r.Summary.setComplexity(PackageDirsToSearch, r.Args.GocycloIgnore)
 	}
 
 	// build the message based on how we did ...
