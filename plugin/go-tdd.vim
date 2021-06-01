@@ -78,16 +78,17 @@ function! s:RunTest(toScreen)
     endif
 
     let l:arg_dict={}
-    let l:arg_dict['package_dir']=l:packageDir
+    let l:arg_dict['package_dir']=trim(l:packageDir,"'", 0)
     let l:arg_dict['screen_columns']=l:screencolumns
     let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
     let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
-    let l:arg_dict['plugin_dir']=s:plugin_dir
+    let l:arg_dict['plugin_dir']=trim(s:plugin_dir,"'", 0)
     let l:arg_dict['timeout']=g:go_test_timeout
 
     let l:json_args=shellescape(json_encode(l:arg_dict))
     let l:cmdLine=l:go_tdd_binary
     let l:cmdLine.= oneSpace . l:json_args
+
 
     " let l:cmdLine=l:go_tdd_binary
     " let l:cmdLine.= oneSpace . l:packageDir
