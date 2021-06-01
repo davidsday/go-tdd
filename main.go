@@ -78,7 +78,8 @@ func main() {
 	json.Unmarshal([]byte(os.Args[1]), &argDict)
 
 	setupLogging()
-	log.Fatalf("'%v'", argDict)
+	log.Fatalf("os.Args: '%v'\n", os.Args)
+	log.Fatalf("argDict: '%v'\n", argDict)
 	// let l:arg_dict={}
 	// let l:arg_dict['package_dir']=l:packageDir
 	// let l:arg_dict['screen_columns']=l:screencolumns
