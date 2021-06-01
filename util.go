@@ -12,7 +12,7 @@ func setupLogging() {
 		log.Fatal(err)
 	}
 	log.SetOutput(file)
-	log.Println("Logging initiated.")
+	log.Printf("%s\n\n", "Logging initiated...")
 }
 
 func chkErr(err error, msg string) {
