@@ -1,4 +1,4 @@
-*go-tdd.txt*  For Vim version 8.1 and Neovim 4.0+ Last change: 2021 May 24
+*go-tdd.txt*  For Vim version 8.1 and Neovim 4.0+ Last change: 2021 June 1
 
 
 *go-tdd.txt*   Runs go test -v -json -cover from within vim and displays a
@@ -246,7 +246,8 @@ Example Functions as lesser entities and either ignore them or give very
 little info to the developer about them.  But go-tdd treats them as equals
 and the developer needn't know the difference.
 
-(This section just started May 28, 2021 and I'll expand it as I go)
+(This section just started May 28, 2021, updated June 1, 2021 and I'll
+expand it as I go)
 
 ==============================================================================
 5. License                                                    *go-tdd_License*
