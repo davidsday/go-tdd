@@ -99,7 +99,7 @@ func main() {
 	debug = results.Args.GoTddDebug
 	setupLogging()
 
-	log.Printf("debug: '%#v'\n\n", debug)
+	log.Printf("debug: '%#v', type: '%T'\n\n", debug, debug)
 	log.Printf("results.Args: '%#v'\n\n", results.Args)
 	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 
