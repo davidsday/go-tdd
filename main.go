@@ -75,11 +75,12 @@ func main() {
 	}
 
 	var argDict ArgDict
-	json.Unmarshal([]byte(os.Args[1]), &argDict)
+	err := json.Unmarshal([]byte(os.Args[1]), &argDict)
+	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
 	setupLogging()
-	log.Fatalf("os.Args[1] '%v'\n", os.Args[1])
 	log.Fatalf("argDict: '%v'\n", argDict)
+	log.Fatalf("os.Args[1] '%v'\n", os.Args[1])
 	// let l:arg_dict={}
 	// let l:arg_dict['package_dir']=l:packageDir
 	// let l:arg_dict['screen_columns']=l:screencolumns
