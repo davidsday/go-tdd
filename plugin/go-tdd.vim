@@ -74,7 +74,7 @@ function! s:RunTest(toScreen)
       let g:go_tdd_debug=v:false
     endif
     if !exists('g:gocyclo_ignore') || g:gocyclo_ignore ==# ''
-      let g:gocyclo_ignore="'vendor|testdata'"
+      let g:gocyclo_ignore='vendor|testdata'
     endif
 
     let l:arg_dict={}
@@ -85,7 +85,8 @@ function! s:RunTest(toScreen)
     let l:arg_dict['plugin_dir']=s:plugin_dir
     let l:arg_dict['timeout']=g:go_test_timeout
 
-    let l:json_args=shellescape(json_encode(l:arg_dict))
+    " let l:json_args=shellescape(json_encode(l:arg_dict))
+    let l:json_args=json_encode(l:arg_dict)
     let l:cmdLine=l:go_tdd_binary
     let l:cmdLine.= oneSpace . l:json_args
 
