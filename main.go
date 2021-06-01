@@ -97,15 +97,10 @@ func main() {
 	// need
 
 	debug = results.Args.GoTddDebug
-	debug = true
-	if debug {
-		setupLogging()
-	}
+	setupLogging()
 
-	if debug {
-		log.Printf("results.Args: '%v'\n\n", results.Args)
-		log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
-	}
+	log.Printf("results.Args: '%v'\n\n", results.Args)
+	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 
 	oneSpace := " "
 	pluginDir = strings.TrimPrefix(results.Args.PluginDir, "'")
