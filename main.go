@@ -45,9 +45,9 @@ func main() {
 
 	// barMessage includes QfList. They are populated by the methods
 	// in Results.  They don't "do" anything except hold
-	// the data Vim will need, and they also marshal themselves
+	// the data Vim will need, and they also can marshal themselves
 	// into JSON and send it to Vim via stdout for display
-	// or to disk for logging purposes
+	// or to disk for logging purposes, or into a []bytes.
 	// BarMessage lives in barMessage.go
 
 	barMessage := newBarMessage()
