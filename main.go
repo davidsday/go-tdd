@@ -100,7 +100,7 @@ func main() {
 	setupLogging()
 
 	log.Printf("results.Args: '%#v'\n\n", results.Args)
-	log.Printf("os.Args[1] '%#v'\n\n", os.Args[1])
+	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 
 	oneSpace := " "
 	goTestTimeout := results.Args.Timeout
