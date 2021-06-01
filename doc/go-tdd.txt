@@ -131,7 +131,7 @@ after this plugin is set up, so your preferences will prevail.
                                                            *g:gocyclo_ignore*
 
 Default:
-let g:gocyclo_ignore="'vendor|testdata'"
+let g:gocyclo_ignore='vendor|testdata'
 
 gocyclo accepts a regex it uses to ignore matching paths.  Golang development
 projects commonly have both vendor and testdata directories which we likely do

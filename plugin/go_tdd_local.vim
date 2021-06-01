@@ -8,7 +8,7 @@
 
 " Vim has its own true/false, (the v: stands for Vim )
 let g:go_tdd_debug=v:false
-let g:gocyclo_ignore="'vendor|testdata'"
+let g:gocyclo_ignore='vendor|testdata'
 let g:go_list_type = 'quickfix'
 let g:go_test_timeout = '10s'
 

@@ -139,7 +139,7 @@ like this:
 
 	" the actual file does not have these comments
 	let g:go_tdd_debug=v:false " set to v:true if you want to log JSON sent to vim
-	let g:gocyclo_ignore="'vendor|testdata'"  "regex for gocyclo to ignore
+	let g:gocyclo_ignore='vendor|testdata'  "regex for gocyclo to ignore
 	let g:go_list_type = 'quickfix'  " my pref is to only use quickfix
 
 	" toggle between mygofile.go and mygofile_test.go
