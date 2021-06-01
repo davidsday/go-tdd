@@ -79,9 +79,6 @@ func main() {
 	err := json.Unmarshal([]byte(os.Args[1]), &argDict)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
-	setupLogging()
-	log.Printf("argDict: '%v'\n\n", argDict)
-	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 	// let l:arg_dict={}
 	// let l:arg_dict['package_dir']=l:packageDir
 	// let l:arg_dict['screen_columns']=l:screencolumns
@@ -121,9 +118,13 @@ func main() {
 	// The user may also request some debugging logging via
 	// this argument
 	debug = argDict.GoTddDebug
+	debug = true
 	if debug {
 		setupLogging()
 	}
+
+	log.Printf("argDict: '%v'\n\n", argDict)
+	log.Printf("os.Args[1] '%v'\n\n", os.Args[1])
 
 	oneSpace := " "
 	pluginDir = strings.TrimPrefix(argDict.PluginDir, "'")
