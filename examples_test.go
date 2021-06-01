@@ -42,8 +42,8 @@ func TestFindExampleFunc(t *testing.T) {
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
 	pkgDir := `/home/dave/sw/go/go-tdd`
 	results := newResults()
-	results.GocycloIgnore = `vendor|testdata`
-	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir, results.GocycloIgnore)
+	results.Args.GocycloIgnore = `vendor|testdata`
+	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir, results.Args.GocycloIgnore)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
