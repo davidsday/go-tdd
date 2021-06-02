@@ -58,6 +58,7 @@ func main() {
 	err := json.Unmarshal([]byte(os.Args[1]), &results.Args)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
+	pluginDir = results.Args.PluginDir
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
 	// but gocyclo wants a list of dirs, so we create an empty
@@ -183,7 +184,6 @@ func Shellout(command string) (string, string, error) {
 // this task here
 func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 	PackageDir, pluginDir string, Barmessage *BarMessage) (bool, error) {
-
 	var err error = nil
 	doBreak := false
 
