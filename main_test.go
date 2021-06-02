@@ -220,7 +220,6 @@ func TestProcessStdErrMsg(t *testing.T) {
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
-	// packageDir := "/home/dave/sw/go/go-tdd"
 	packageDir := "."
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
@@ -237,7 +236,6 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-	// packageDir := "/home/dave/sw/go/go-tdd"
 	packageDir := "."
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
