@@ -52,6 +52,9 @@ func main() {
 
 	barMessage := newBarMessage()
 
+	// Instead of calling go-tdd with a fairly long list of command line
+	// arguments, put the args into a structure and marshal them to JSON,
+	// passing just that one JSON encoded string on the command line.
 	// We are storing our JSON arguments in the Args structure embedded
 	// in our results struct, which calculates our results for us.
 	// It needs several of these arguments to do that.
