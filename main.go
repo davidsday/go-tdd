@@ -35,7 +35,6 @@ var PackageDir string
 
 func main() {
 
-	setupLogging()
 	// results has all the results we collect from go test
 	// to help us decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
