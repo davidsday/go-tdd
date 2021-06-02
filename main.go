@@ -35,6 +35,7 @@ var PackageDir string
 
 func main() {
 
+	setupLogging()
 	// results has all the results we collect from go test
 	// to help us decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
@@ -203,6 +204,8 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDecl := fmt.Sprintf("func +%s\\(\\) +{ *", testName)
+		log.Printf("About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n", results.Args.PluginDir)
+		log.Printf("In findExampleFunc(): pluginDir: '%s'\n\n", pluginDir)
 
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.Args.GocycloIgnore)
 
