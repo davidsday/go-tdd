@@ -144,6 +144,10 @@ func TestBuildBarMessage_all_pass(t *testing.T) {
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, results.Args.PackageDir)
 	barmsg := BarMessage{}
+	results.Counts["skip"] = 0
+	results.Counts["run"] = 10
+	results.Counts["pass"] = 10
+	results.Errors = GtpErrors{}
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
 
@@ -304,11 +308,11 @@ func TestGtpError_GetColor(t *testing.T) {
 // func (e *GtpError) getMessage() string {
 //============================================================================
 
-//TestGtpError.GetColor ....
+//TestGtpError.GetMessage ....
 func TestGtpError_GetMessage(t *testing.T) {
-	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + results.Args.PackageDir + ", [No Test Files]", Color: "yellow"})
+	results.Errors.Add(GtpError{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + "./testdata/hello" + ", [No Test Files]", Color: "yellow"})
 	got := results.Errors[0].getMessage()
-	want := "In package: go-tdd, [No Test Files]"
+	want := "In package: ./testdata/hello, [No Test Files]"
 	if got != want {
 		t.Errorf("got '%s' want '%s'", got, want)
 	}
