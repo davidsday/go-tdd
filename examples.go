@@ -11,6 +11,7 @@ func exampleError(output string) bool {
 }
 
 func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, string, string) {
+	setupLogging()
 	cmdLine := fmt.Sprintf(
 		"%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s",
 		pluginDir,
@@ -18,7 +19,6 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, s
 		exampleFuncDecl,
 		path,
 	)
-	setupLogging()
 	log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	result, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
