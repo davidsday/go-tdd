@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 		setupLogging()
 	}
 	results = newResults()
-	// for testing, we can have PackageDir and PluginDir the same and since we are running the tests in the PackageDir, they can both be "."
+	// for testing, we can have PackageDir and PluginDir the same and since we are running the tests from the PackageDir, they can both be "."
 	// for testing purposes.
 	results.Args = GtpArgs{
 		PackageDir:    ".",
