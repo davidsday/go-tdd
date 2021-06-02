@@ -13,12 +13,14 @@ func TestMain(m *testing.M) {
 	//2021/06/02 10:36:52 results.Args: 'main.GtpArgs{PackageDir:"/home/dave/sw/go/go-tdd", ScreenColumns:"144", GocycloIgnore:"vendor|testdata", GoTddDebug:true, PluginDir:"/home/dave/sw/go/go-tdd", Timeout:"10s"}'
 	setupLogging()
 	results = newResults()
+	// for testing, we can have PackageDir and PluginDir the same and since we are running the tests in the PackageDir, they can both be "."
+	// for testing purposes.
 	results.Args = GtpArgs{
-		PackageDir:    "/home/dave/sw/go/go-tdd",
+		PackageDir:    ".",
 		ScreenColumns: "144",
 		GocycloIgnore: "vendor|testdata",
 		GoTddDebug:    true,
-		PluginDir:     "/home/dave/sw/go/go-tdd",
+		PluginDir:     ".",
 		Timeout:       "10s",
 	}
 	exitVal := m.Run()
@@ -69,7 +71,7 @@ func TestExampleError_false(t *testing.T) {
 func TestFindExampleFunc(t *testing.T) {
 	exampleFuncDecl := `func ExampleHW`
 
-	got1, _, _ := findExampleFunc(".", exampleFuncDecl, ".", results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
 
 	want := `examples_test.go`
 	if got1 != want {
@@ -81,7 +83,7 @@ func TestFindExampleFunc(t *testing.T) {
 func TestFindExampleFunc_XXXX(t *testing.T) {
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
 
-	got1, _, _ := findExampleFunc(".", exampleFuncDecl, ".", results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
 
 	want := `examples_test.go`
 	if got1 != want {
