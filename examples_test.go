@@ -2,9 +2,26 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	//2021/06/02 10:36:52 results.Args: 'main.GtpArgs{PackageDir:"/home/dave/sw/go/go-tdd", ScreenColumns:"144", GocycloIgnore:"vendor|testdata", GoTddDebug:true, PluginDir:"/home/dave/sw/go/go-tdd", Timeout:"10s"}'
+	setupLogging()
+	results := newResults()
+	results.Args = GtpArgs{
+		PackageDir:    "/home/dave/sw/go/go-tdd",
+		ScreenColumns: "144",
+		GocycloIgnore: "vendor|testdata",
+		GoTddDebug:    true,
+		PluginDir:     "/home/dave/sw/go/go-tdd",
+		Timeout:       "10s",
+	}
+	exitVal := m.Run()
+	os.Exit(exitVal)
+}
 
 // Output: What's shakin
 func ExampleTestXXXX() {
@@ -52,13 +69,8 @@ func TestFindExampleFunc(t *testing.T) {
 		setupLogging()
 	}
 	exampleFuncDecl := `func ExampleHW`
-	// plugDir & pkgDir the same for testing
-	plugDir := `/home/dave/sw/go/go-tdd`
-	pkgDir := `/home/dave/sw/go/go-tdd`
 
-	results := newResults()
-	results.Args.GocycloIgnore = `vendor|testdata`
-	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir, results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
@@ -68,16 +80,8 @@ func TestFindExampleFunc(t *testing.T) {
 
 //TestFindExampleFunc ....
 func TestFindExampleFunc_XXXX(t *testing.T) {
-	if debug {
-		setupLogging()
-	}
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
-	// plugDir & pkgDir the same for testing
-	plugDir := `/home/dave/sw/go/go-tdd`
-	pkgDir := `/home/dave/sw/go/go-tdd`
-	results := newResults()
-	results.Args.GocycloIgnore = `vendor|testdata`
-	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir, results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.PackageDir, results.Args.GocycloIgnore)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
