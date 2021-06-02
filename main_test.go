@@ -220,7 +220,8 @@ func TestProcessStdErrMsg(t *testing.T) {
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR.", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR."
-	packageDir := "/home/dave/sw/go/go-tdd"
+	// packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdErr(msg, &results, PackageDirsToSearch, &Barmessage)
@@ -236,7 +237,8 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 	Barmessage := newBarMessage()
 	want := BarMessage{Color: "yellow", Message: "STDERR: This is my message from STDERR. xx, [See pkgdir/StdErr.txt]", QuickFixList: GtpQfList{}}
 	msg := "This is my message from STDERR. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-	packageDir := "/home/dave/sw/go/go-tdd"
+	// packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdErr(msg, &results, PackageDirsToSearch, &Barmessage)
@@ -264,7 +266,7 @@ func TestProcessStdOutMsg1(t *testing.T) {
 {"Time":"2021-05-10T09:00:49.114360603-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"coverage: 0.0% of statements\n"}
 {"Time":"2021-05-10T09:00:49.114412878-04:00","Action":"output","Package":"github.com/davidsday/hello","Output":"ok  \tgithub.com/davidsday/hello\t0.001s\n"}
 {"Time":"2021-05-10T09:00:49.114430234-04:00","Action":"pass","Package":"github.com/davidsday/hello","Elapsed":0.001}`
-	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
+	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 	processStdOut(out, &results, PackageDirsToSearch, &Barmessage)
@@ -290,7 +292,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 	results := newResults()
 	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
-	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
+	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
@@ -302,7 +304,7 @@ func TestProcessStdOutMsg2(t *testing.T) {
 
 //TestProcessStdOutMsg3
 func TestProcessStdOutMsg3(t *testing.T) {
-	want := []byte(`{"color":"red","message":"1 Run, 0 Passed, 1 Failed, 1st in hello_test.go, on line 10, in 0.001s","quickfixlist":[{"filename":"/home/dave/sw/go/go-tdd/testdata/hello/hello_test.go","lnum":10,"col":1,"vcol":1,"pattern":"TestHello","text":" got 'hello world' want 'hello World'"}]}`)
+	want := []byte(`{"color":"red","message":"1 Run, 0 Passed, 1 Failed, 1st in hello_test.go, on line 10, in 0.001s","quickfixlist":[{"filename":"./testdata/hello/hello_test.go","lnum":10,"col":1,"vcol":1,"pattern":"TestHello","text":" got 'hello world' want 'hello World'"}]}`)
 
 	input := `{"Time":"2021-05-23T11:06:16.636557509-04:00","Action":"run","Package":"hello","Test":"TestHello"}
 {"Time":"2021-05-23T11:06:16.636882472-04:00","Action":"output","Package":"hello","Test":"TestHello","Output":"=== RUN   TestHello\n"}
@@ -318,7 +320,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 	results := newResults()
 	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
-	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
+	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
@@ -331,7 +333,7 @@ func TestProcessStdOutMsg3(t *testing.T) {
 //TestProcessStdOutMsg4
 func TestProcessStdOutMsg4(t *testing.T) {
 
-	want := []byte(`{"color":"yellow","message":"In package: /home/dave/sw/go/go-tdd/testdata/hello, [Test Files, but No Tests to Run]","quickfixlist":[]}`)
+	want := []byte(`{"color":"yellow","message":"In package: ./testdata/hello, [Test Files, but No Tests to Run]","quickfixlist":[]}`)
 
 	input := `{"Time":"2021-05-11T22:20:14.727345713-04:00","Action":"output","Package":"hello","Output":"testing: warning: no tests to run\n"}
 {"Time":"2021-05-11T22:20:14.727527656-04:00","Action":"output","Package":"hello","Output":"PASS\n"}
@@ -341,7 +343,7 @@ func TestProcessStdOutMsg4(t *testing.T) {
 	results := newResults()
 	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
-	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
+	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
@@ -354,14 +356,13 @@ func TestProcessStdOutMsg4(t *testing.T) {
 ////TestProcessStdOutMsg5
 func TestProcessStdOutMsg5(t *testing.T) {
 
-	want := []byte(`{"color":"yellow","message":"In package: /home/dave/sw/go/go-tdd/testdata/hello, [No Test Files]","quickfixlist":[]}`)
+	want := []byte(`{"color":"yellow","message":"In package: ./testdata/hello, [No Test Files]","quickfixlist":[]}`)
 
-	input := `{"Time":"2021-05-11T22:30:46.844883222-04:00","Action":"output","Package":"/home/dave/sw/go/go-tdd/testdata/hello","Output":"?   \thello\t[no test files]\n"}
+	input := `{"Time":"2021-05-11T22:30:46.844883222-04:00","Action":"output","Package":"./testdata/hello","Output":"?   \thello\t[no test files]\n"}
 {"Time":"2021-05-11T22:30:46.84499945-04:00","Action":"skip","Package":"hello","Elapsed":0}`
-	results := newResults()
 	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
-	packageDir := "/home/dave/sw/go/go-tdd/testdata/hello"
+	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
 	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
 
@@ -579,7 +580,7 @@ func TestHasTestCoverage_no(t *testing.T) {
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 	results := newResults()
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "[no test files]"
 	got := checkErrorCandidates(&results, output, packageDir)
@@ -591,7 +592,7 @@ func TestCheckErrorCandidates_no_test_files(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_yes(t *testing.T) {
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	results := newResults()
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "panic: "
@@ -604,7 +605,7 @@ func TestCheckErrorCandidates_yes(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_panic_recovered(t *testing.T) {
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	results := newResults()
 	// output := "FAIL:Part1:Part2:Part3"
 	output := "panic: blah blah blah [recovered]"
@@ -617,7 +618,7 @@ func TestCheckErrorCandidates_panic_recovered(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_fatal_error(t *testing.T) {
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	results := newResults()
 	output := "fatal error: "
 	got := checkErrorCandidates(&results, output, packageDir)
@@ -629,7 +630,7 @@ func TestCheckErrorCandidates_fatal_error(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_fatal_error_recovered(t *testing.T) {
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	results := newResults()
 	output := "fatal error: blah blah blah [recovered]"
 	got := checkErrorCandidates(&results, output, packageDir)
@@ -641,7 +642,7 @@ func TestCheckErrorCandidates_fatal_error_recovered(t *testing.T) {
 
 //TestCheckErrorCandidates ....
 func TestCheckErrorCandidates_no(t *testing.T) {
-	packageDir := "/home/dave/sw/go/go-tdd"
+	packageDir := "."
 	results := newResults()
 	output := "Part0:Part1:Part2:Part3"
 	got := checkErrorCandidates(&results, output, packageDir)
@@ -705,7 +706,6 @@ func TestAdjustOutSuperfluousFinalFail_1(t *testing.T) {
 
 //TestAdjustOutSuperfuousFinalResult ....
 func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
-	results := newResults()
 	action := "pass"
 	results.Counts["pass"] = 21
 
@@ -723,7 +723,6 @@ func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 
 //TestHandleOutputLines ....
 func TestHandleOutputLines(t *testing.T) {
-	results := newResults()
 	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time": "2021-05-07T23:32:18.412171038-04:00", "Action": "output", "Package": "github.com/davidsday/go-tdd", "Output": "PASS\n"}`)
@@ -733,9 +732,8 @@ func TestHandleOutputLines(t *testing.T) {
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine")
 	jloSlice := []JLObject{prevJlo, jlo}
-	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, results.Args.PackageDir, results.Args.PluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -743,7 +741,6 @@ func TestHandleOutputLines(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_FAIL(t *testing.T) {
-	results := newResults()
 	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jsonlinePrevJlo := []byte(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
@@ -753,9 +750,8 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 	err = json.Unmarshal(jsonlineJlo, &jlo)
 	chkErr(err, "Error Unmarshaling jsonLine_jlo")
 	jloSlice := []JLObject{prevJlo, jlo}
-	packageDir := "/home/dave/sw/go/go-tdd"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, results.Args.PackageDir, results.Args.PluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -763,15 +759,13 @@ func TestHandleOutputLines_FAIL(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_TestFileRef(t *testing.T) {
-	results := newResults()
 	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"--- FAIL: TestHello (0.00s)\n"}`)
 	jloSlice := []JLObject{prevJlo, jlo}
-	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, results.Args.PackageDir, results.Args.PluginDir, &Barmessage)
 	if doBreak != false {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(false))
 	}
@@ -779,15 +773,13 @@ func TestHandleOutputLines_TestFileRef(t *testing.T) {
 
 ////TestHandleOutputLines ....
 func TestHandleOutputLines_received_a_panic(t *testing.T) {
-	results := newResults()
 	Barmessage := newBarMessage()
 	jlo, prevJlo := JLObject{}, JLObject{}
 	prevJlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543663129-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"    main_test.go:12: got = \"Hello, World!\", want \"!Hello, World!\"\n"}`)
 	jlo.unmarshal(`{"Time":"2021-05-08T08:06:40.543669982-04:00","Action":"output","Package":"github.com/davidsday/hello","Test":"TestHello","Output":"panic: "}`)
 	jloSlice := []JLObject{prevJlo, jlo}
-	packageDir := "/home/dave/sw/go/hello"
 
-	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, packageDir, pluginDir, &Barmessage)
+	doBreak, _ := HandleOutputLines(&results, jloSlice, 1, results.Args.PackageDir, results.Args.PluginDir, &Barmessage)
 	if doBreak != true {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(doBreak), strconv.FormatBool(true))
 	}
