@@ -86,7 +86,9 @@ func main() {
 	commandLine += oneSpace + "-timeout"
 	commandLine += oneSpace + goTestTimeout
 
-	stdout, stderr, _ := Shellout(commandLine)
+	errString := fmt.Sprintf("error running '%s'\n", commandLine)
+	stdout, stderr, err := Shellout(commandLine)
+	chkErr(err, errString)
 
 	if rcvdMsgOnStdErr(stderr) {
 		processStdErr(stderr, &results, packageDirsToSearch, &barMessage)
