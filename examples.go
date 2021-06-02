@@ -18,9 +18,7 @@ func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, s
 		exampleFuncDecl,
 		path,
 	)
-	if debug {
-		log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
-	}
+	log.Printf("In findExampleFunc, cmdLine: %s\n", cmdLine)
 	result, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
 	trimmed := strings.TrimSuffix(result, "() {")
