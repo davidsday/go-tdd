@@ -212,17 +212,17 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 			log.Printf("About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n", results.Args.PluginDir)
 			log.Printf("In findExampleFunc(): pluginDir: '%s'\n\n", pluginDir)
 		}
-		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.Args.GocycloIgnore)
+		filepath, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.Args.GocycloIgnore)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
 		if thisIsTheFirstFailure(results) {
-			takeNoteOfFirstFailure(filename, linenum, jloSlice[i-1].getTest(), results)
+			takeNoteOfFirstFailure(filepath, linenum, jloSlice[i-1].getTest(), results)
 		}
 
 		// sometimes the paths can make the messages too long to fit on one
 		// screen so, just use the filename
-		filename = path.Base(filename)
+		filename := path.Base(filepath)
 		qfItem := buildQuickFixItem(PackageDir, filename, linenum, testname, text)
 		Barmessage.QuickFixList.Add(qfItem)
 		return doBreak, err
