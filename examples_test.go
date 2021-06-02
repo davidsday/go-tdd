@@ -69,7 +69,7 @@ func TestExampleError_false(t *testing.T) {
 func TestFindExampleFunc(t *testing.T) {
 	exampleFuncDecl := `func ExampleHW`
 
-	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(".", exampleFuncDecl, ".", results.Args.GocycloIgnore)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
@@ -80,7 +80,8 @@ func TestFindExampleFunc(t *testing.T) {
 //TestFindExampleFunc ....
 func TestFindExampleFunc_XXXX(t *testing.T) {
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
-	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
+
+	got1, _, _ := findExampleFunc(".", exampleFuncDecl, ".", results.Args.GocycloIgnore)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
