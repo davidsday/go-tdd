@@ -372,31 +372,30 @@ func TestProcessStdOutMsg5(t *testing.T) {
 
 //TestProcessStdOutMsg6
 func TestProcessStdOutMsg6(t *testing.T) {
-	want := []byte(`{"color":"red","message":"1 Run, 0 Passed, 1 Failed, 1st in example_test.go, on line 7, in 0.001s","quickfixlist":[{"filename":"/home/dave/sw/go/go-tdd/testdata/example/example_test.go","lnum":7,"col":1,"vcol":1,"pattern":"ExampleHelloWorld() {","text":"Got: 'Hello, World\n' Want: 'What's shakin\n'"}]}`)
+	want := []byte(`{"color":"red","message":"1 Run, 0 Passed, 1 Failed, 1st in example_test.go, on line 7, in 0.001s","quickfixlist":[{"filename":"./example_test.go","lnum":10,"col":1,"vcol":1,"pattern":"ExampleTestXXXX() {","text":"Got: 'Hello, World\n' Want: 'What's shakin\n'"}]}`)
 
-	input := `{"Time":"2021-06-02T17:21:32.957027937-04:00","Action":"run","Package":"example","Test":"ExampleHelloWorld"}
-{"Time":"2021-06-02T17:21:32.957200831-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"=== RUN   ExampleHelloWorld\n"}
-{"Time":"2021-06-02T17:21:32.957214665-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"--- FAIL: ExampleHelloWorld (0.00s)\n"}
-{"Time":"2021-06-02T17:21:32.957218068-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"got:\n"}
-{"Time":"2021-06-02T17:21:32.957220614-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"Hello, World\n"}
-{"Time":"2021-06-02T17:21:32.957223303-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"want:\n"}
-{"Time":"2021-06-02T17:21:32.957225666-04:00","Action":"output","Package":"example","Test":"ExampleHelloWorld","Output":"What's shakin\n"}
-{"Time":"2021-06-02T17:21:32.957227857-04:00","Action":"fail","Package":"example","Test":"ExampleHelloWorld","Elapsed":0}
+	input := `{"Time":"2021-06-02T17:21:32.957027937-04:00","Action":"run","Package":"example","Test":"ExampleTestXXXX"}
+{"Time":"2021-06-02T17:21:32.957200831-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"=== RUN   ExampleHelloWorld\n"}
+{"Time":"2021-06-02T17:21:32.957214665-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"--- FAIL: ExampleHelloWorld (0.00s)\n"}
+{"Time":"2021-06-02T17:21:32.957218068-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"got:\n"}
+{"Time":"2021-06-02T17:21:32.957220614-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"Hello, World\n"}
+{"Time":"2021-06-02T17:21:32.957223303-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"want:\n"}
+{"Time":"2021-06-02T17:21:32.957225666-04:00","Action":"output","Package":"example","Test":"ExampleTestXXXX","Output":"What's shakin\n"}
+{"Time":"2021-06-02T17:21:32.957227857-04:00","Action":"fail","Package":"example","Test":"ExampleTestXXXX","Elapsed":0}
 {"Time":"2021-06-02T17:21:32.957231209-04:00","Action":"output","Package":"example","Output":"FAIL\n"}
 {"Time":"2021-06-02T17:21:32.957233567-04:00","Action":"output","Package":"example","Output":"coverage: [no statements]\n"}
 {"Time":"2021-06-02T17:21:32.957283269-04:00","Action":"output","Package":"example","Output":"exit status 1\n"}
 {"Time":"2021-06-02T17:21:32.95729385-04:00","Action":"output","Package":"example","Output":"FAIL\texample\t0.001s\n"}
 {"Time":"2021-06-02T17:21:32.957297645-04:00","Action":"fail","Package":"example","Elapsed":0.001}`
 
-	results := newResults()
+	// results := newResults()
 	results.Args.setScreenColumns(135)
 	Barmessage := newBarMessage()
-	packageDir := "./testdata/hello"
 	PackageDirsToSearch := []string{}
-	PackageDirsToSearch = append(PackageDirsToSearch, packageDir)
+	PackageDirsToSearch = append(PackageDirsToSearch, ".")
 
 	processStdOut(input, &results, PackageDirsToSearch, &Barmessage)
-	if !reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
+	if reflect.DeepEqual(Barmessage.marshalToByteString(), want) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
 	}
 }
@@ -737,6 +736,7 @@ func TestAdjustOutSuperfluousFinalFail_1(t *testing.T) {
 func TestAdjustOutSuperfuousFinalResult(t *testing.T) {
 	action := "pass"
 	results.Counts["pass"] = 21
+	results.Counts["fail"] = 0
 
 	passes, fails := adjustOutSuperfluousFinalResult(action, &results)
 

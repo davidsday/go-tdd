@@ -147,6 +147,7 @@ func TestBuildBarMessage_all_pass(t *testing.T) {
 	results.Counts["skip"] = 0
 	results.Counts["run"] = 10
 	results.Counts["pass"] = 10
+	results.Counts["fail"] = 0
 	results.Errors = GtpErrors{}
 
 	results.buildBarMessage(&barmsg, PackageDirsToSearch)
