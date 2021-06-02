@@ -208,9 +208,10 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		oneSpace := " "
 		testName := jloSlice[i].getTest()
 		exampleFuncDecl := fmt.Sprintf("func +%s\\(\\) +{ *", testName)
-		log.Printf("About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n", results.Args.PluginDir)
-		log.Printf("In findExampleFunc(): pluginDir: '%s'\n\n", pluginDir)
-
+		if debug {
+			log.Printf("About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n", results.Args.PluginDir)
+			log.Printf("In findExampleFunc(): pluginDir: '%s'\n\n", pluginDir)
+		}
 		filename, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.Args.GocycloIgnore)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
