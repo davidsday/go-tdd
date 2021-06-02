@@ -10,13 +10,16 @@ import (
 var results GtpResults
 
 func TestMain(m *testing.M) {
-	//2021/06/02 10:36:52 results.Args: 'main.GtpArgs{PackageDir:"/home/dave/sw/go/go-tdd", ScreenColumns:"144", GocycloIgnore:"vendor|testdata", GoTddDebug:true, PluginDir:"/home/dave/sw/go/go-tdd", Timeout:"10s"}'
+	//2021/06/02 10:36:52 results.Args: 'main.GtpArgs{PackageDir:"/home/dave/sw/go/go-tdd",
+	//ScreenColumns:"144", GocycloIgnore:"vendor|testdata", GoTddDebug:true,
+	//PluginDir:"/home/dave/sw/go/go-tdd", Timeout:"10s"}'
 	if debug {
 		setupLogging()
 	}
 	results = newResults()
-	// for testing, we can have PackageDir and PluginDir the same and since we are running the tests from the PackageDir, they can both be "."
-	// for testing purposes.
+	// for testing, we can have PackageDir and PluginDir the same and since we
+	// are running the tests from the PackageDir, they can both be "." for
+	// testing purposes.
 	results.Args = GtpArgs{
 		PackageDir:    ".",
 		ScreenColumns: "144",
