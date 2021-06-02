@@ -67,9 +67,6 @@ func TestExampleError_false(t *testing.T) {
 
 //TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
-	if debug {
-		setupLogging()
-	}
 	exampleFuncDecl := `func ExampleHW`
 
 	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
