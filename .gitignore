@@ -2,3 +2,5 @@ go-junit-report
 tags
 tests/
 pgmdata.vim_
+*.log
+*.json
