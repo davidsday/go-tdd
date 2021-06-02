@@ -53,11 +53,12 @@ func TestFindExampleFunc(t *testing.T) {
 		setupLogging()
 	}
 	exampleFuncDecl := `func ExampleHW`
-	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
-	hostname, _ := os.Hostname()
-	if hostname == "fennel" {
-		plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
-	}
+	plugDir := `/home/dave/sw/go/go-tdd`
+	// plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
+	// hostname, _ := os.Hostname()
+	// if hostname == "fennel" {
+	//	plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
+	// }
 	pkgDir := `/home/dave/sw/go/go-tdd`
 
 	results := newResults()
@@ -76,11 +77,12 @@ func TestFindExampleFunc_XXXX(t *testing.T) {
 		setupLogging()
 	}
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
-	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
-	hostname, _ := os.Hostname()
-	if hostname == "fennel" {
-		plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
-	}
+	// plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
+	plugDir := `/home/dave/sw/go/go-tdd`
+	// hostname, _ := os.Hostname()
+	// if hostname == "fennel" {
+	//	plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
+	// }
 	pkgDir := `/home/dave/sw/go/go-tdd`
 	results := newResults()
 	results.Args.GocycloIgnore = `vendor|testdata`
