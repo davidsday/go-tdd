@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"testing"
 )
@@ -53,7 +54,12 @@ func TestFindExampleFunc(t *testing.T) {
 	}
 	exampleFuncDecl := `func ExampleHW`
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
+	hostname, _ := os.Hostname()
+	if hostname == "fennel" {
+		plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
+	}
 	pkgDir := `/home/dave/sw/go/go-tdd`
+
 	results := newResults()
 	results.Args.GocycloIgnore = `vendor|testdata`
 	got1, _, _ := findExampleFunc(plugDir, exampleFuncDecl, pkgDir, results.Args.GocycloIgnore)
@@ -71,6 +77,10 @@ func TestFindExampleFunc_XXXX(t *testing.T) {
 	}
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
 	plugDir := `/home/dave/.config/nvim/plugged/go-tdd`
+	hostname, _ := os.Hostname()
+	if hostname == "fennel" {
+		plugDir = `/home/dave/.local/share/nvim/site/pack/packer/start/go-tdd`
+	}
 	pkgDir := `/home/dave/sw/go/go-tdd`
 	results := newResults()
 	results.Args.GocycloIgnore = `vendor|testdata`
