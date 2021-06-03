@@ -30,7 +30,6 @@ var (
 	regexNil             = &regexp.Regexp{}
 )
 var debug bool
-var pluginDir string
 var PackageDir string
 
 func main() {
@@ -61,7 +60,6 @@ func main() {
 	err := json.Unmarshal([]byte(os.Args[1]), &results.Args)
 	chkErr(err, "Error in json.Unmarshal of os.Args[1]")
 
-	pluginDir = results.Args.PluginDir
 	// We get quidance from Vim about where go test and gocyclo
 	// should search, there is really only one dir from Vim,
 	// but gocyclo wants a list of dirs, so we create an empty
@@ -143,7 +141,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 		var doBreak bool
 
 		if jloSlice[i].getAction() == "output" {
-			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, pluginDir, Barmessage)
+			doBreak, err = HandleOutputLines(results, jloSlice, i, PackageDir, results.Args.PluginDir, Barmessage)
 			chkErr(err, "Error in HandleOutputLines()")
 			if doBreak {
 				break
