@@ -1,4 +1,3 @@
-" Dave's GoLang Testing Stuff
 
 function! go#color_bar#DoColorBar(color, msg)
   let l:length = strlen(a:msg)

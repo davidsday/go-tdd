@@ -1,4 +1,3 @@
-" Dave's GoLang Testing Stuff
 
 " RunTest(), ProcessStandardOutput(), ColorBar(),
 " and go-tdd, a Golang program that runs go test -v -json -cover
