@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -291,10 +292,10 @@ func stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix string,
 }
 
 func writeStdErrMsgToDisk(stderr, pkgdir string) {
-	path := "./StdErr.txt"
+	path := filepath.Join(".", "StdErr.txt")
 	if len(strings.TrimSpace(pkgdir)) > 0 {
-		pkgdir = strings.TrimSuffix(pkgdir, "/")
-		path = pkgdir + "/StdErr.txt"
+		pkgdir = strings.TrimSuffix(pkgdir, string(filepath.Separator))
+		path = filepath.Join(pkgdir, "StdErr.txt")
 	}
 	err := os.WriteFile(path, []byte(stderr), 0664)
 	chkErr(err, "error writing "+path)
