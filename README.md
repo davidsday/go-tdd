@@ -52,7 +52,7 @@ start warning about Cyclomatic Complexity at 10.  I like to keep mine below
 Many experienced developers find that test driven development, along with
 low cyclomatic complexities help to achieve robust applications more quickly
 than might otherwise be achieved.  I certainly have, so much so that I built
-this tool to supplement vim-go for my own use. This project has ~87% test
+this tool to supplement vim-go for my own use. This project has ~82% test
 coverage as I write this (basically everything but main() and a few
 logFatal() type calls).
 
@@ -106,9 +106,9 @@ This is typical of how Example Functions are handled by editors and IDEs.
 go-tdd's synchronous invocation of 'go test -v -json -cover' has not
 really been noticeable for me. I rarely see go test take more than a few
 hundredths of a second to complete even hundreds of tests. Most reported
-times are in the thousandths of seconds and go-tdd, written almost
-entirely in Golang itself, does its job probably orders of magnitude more
-quickly than a tool written in Vimscript could.
+times are in the thousandths of seconds and go-tdd, written almost entirely in
+Golang itself, does its job probably an order of magnitude more quickly than
+a tool written in Vimscript could.
 
 In this style of development, the RedBar/GreenBar (and YellowBar)s are the
 primary layer of communication with the developer, so go-tdd loads
