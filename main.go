@@ -78,9 +78,9 @@ func main() {
 	goTestTimeout := results.Args.Timeout
 
 	commandLine := "go test -v -json -cover"
-	commandLine += oneSpace + packageDirsToSearch[0]
 	commandLine += oneSpace + "-timeout"
 	commandLine += oneSpace + goTestTimeout
+	commandLine += oneSpace + packageDirsToSearch[0]
 
 	errString := fmt.Sprintf("error running '%s'\n", commandLine)
 	stdout, stderr, err := Shellout(commandLine)
