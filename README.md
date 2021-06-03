@@ -6,7 +6,7 @@ tiniest bit of shell script thrown in.
 
 <img src="images/go-tdd_screenshot.png">
 
-[Short go-tdd intro video](https://youtu.be/NNmGYyF7XrE)
+[Short go-tdd intro video](https://youtu.be/OE0QktFVhWc)
 
 
 It seeks to add two things to your Golang TDD development:
