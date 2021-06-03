@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"testing"
@@ -267,7 +268,7 @@ func TestProcessStdErrMsgTooLong(t *testing.T) {
 	if !reflect.DeepEqual(want, Barmessage) {
 		t.Errorf("Barmessage: '%#v', Want: '%#v'", Barmessage, want)
 	}
-	_ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
+	_ = os.Remove(filepath.Join(PackageDirsToSearch[0], "StdErr.txt"))
 }
 
 //===========================================================================
@@ -295,7 +296,7 @@ func TestProcessStdOutMsg1(t *testing.T) {
 	if !reflect.DeepEqual(Barmessage, want) {
 		t.Errorf("'%v'|'%v'", Barmessage, want)
 	}
-	// _ = os.Remove(PackageDirsToSearch[0] + "/StdErr.txt")
+	// _ = os.Remove(filepath.Join(PackageDirsToSearch[0], "StdErr.txt"))
 }
 
 //TestProcessStdOutMsg2
