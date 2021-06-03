@@ -82,9 +82,7 @@ func main() {
 	commandLine += oneSpace + goTestTimeout
 	commandLine += oneSpace + packageDirsToSearch[0]
 
-	errString := fmt.Sprintf("error running '%s'\n", commandLine)
-	stdout, stderr, err := Shellout(commandLine)
-	chkErr(err, errString)
+	stdout, stderr, _ := Shellout(commandLine)
 
 	if rcvdMsgOnStdErr(stderr) {
 		processStdErr(stderr, &results, packageDirsToSearch, &barMessage)
