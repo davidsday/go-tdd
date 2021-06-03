@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func setupLogging() {
@@ -20,3 +22,17 @@ func chkErr(err error, msg string) {
 		log.Fatalf("Error: %v, %s", err, msg)
 	}
 }
+
+// Shellout - run a command, capturing stdout, stderr, and errors
+func Shellout(command string) (string, string, error) {
+	// Force POSIX compliant shell for predictability
+	// var ShellToUse = "/bin/sh"
+	var ShellToUse = "/bin/sh"
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd := exec.Command(ShellToUse, "-c", command)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return stdout.String(), stderr.String(), err
+} //end_Shellout()

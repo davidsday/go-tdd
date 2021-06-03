@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path"
 	"regexp"
 	"strings"
@@ -164,20 +162,6 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 	// yellow bar and  message if appropriate
 	results.buildBarMessage(Barmessage, PackageDirsToSearch)
 }
-
-// Shellout - run a command, capturing stdout, stderr, and errors
-func Shellout(command string) (string, string, error) {
-	// Force POSIX compliant shell for predictability
-	// var ShellToUse = "/bin/sh"
-	var ShellToUse = "/bin/sh"
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd := exec.Command(ShellToUse, "-c", command)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	return stdout.String(), stderr.String(), err
-} //end_Shellout()
 
 // HandleOutputLines does much of our work, very similarly
 // to how we would search and grep go test -v output.
