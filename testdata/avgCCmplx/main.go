@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -57,14 +58,6 @@ func main() {
 	// oneSpace := " "
 	commaSpace := ", "
 
-	// Remove ./StdeErr.txt if one still lingers
-	// and any lingering JSON logs...
-	// So we are guaranteed any present after
-	// this run are created by this run
-	// os.Remove("./StdErr.txt")
-	// os.Remove("./goTestParser_log.json")
-	// os.Remove("./gotestlog.json")
-
 	commandLine := "go test -v -json -cover " + os.Args[1]
 	var err error
 	PD.Info.AvgComplexity, err = getAvgCyclomaticComplexity()
@@ -105,9 +98,10 @@ func main() {
 		}
 		PD.Barmessage.Message = "STDERR: " + strings.ReplaceAll(msg, "\n", "|")
 		if len(stderr) > PD.Barmessage.Columns-26 {
-			err := os.WriteFile("./StdErr.txt", []byte(stderr), 0664)
+			err := os.WriteFile(filepath.Join(".", "StdErr.txt"), []byte(stderr), 0664)
 			if err != nil {
-				log.Fatal("Error writing pkgfile/StdErr.txt")
+				msg := "Error writing pkgfile" + string(filepath.Separator) + "StdErr.txt"
+				log.Fatal(msg)
 			}
 			// PD.Barmessage.Message = PD.Barmessage.Message[0 : PD.Barmessage.Columns-26]
 			PD.Barmessage.Message += commaSpace + "[See pkgdir/StdErr.txt]"
@@ -243,7 +237,7 @@ func main() {
 // Shellout - run a command, capturing stdout, stderr, and errors
 func Shellout(command string) (string, string, error) {
 	// Force POSIX compliant shell for predictability
-	var ShellToUse string = "/bin/sh"
+	var ShellToUse = filepath.Join("/", "bin", "sh")
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command(ShellToUse, "-c", command)
@@ -263,11 +257,6 @@ func marshallTR(pgmdata PgmData) {
 	if err != nil {
 		log.Fatal("Error writing to Stdout")
 	}
-
-	// err = os.WriteFile("./goTestParserLog.json", data, 0664)
-	// if err != nil {
-	//	log.Fatal("Error writing to ./goTestParserLog.json")
-	// }
 
 } // end_marshallTR
 
