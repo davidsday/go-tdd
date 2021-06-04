@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"path/filepath"
+	"testing"
+)
 
 //TestBarMessage_setColor ....
 func TestBarMessage_setColor(t *testing.T) {
@@ -85,8 +88,8 @@ func TestBuildQuickFixItem_filename(t *testing.T) {
 	jlo.Package = "packageDir"
 
 	QfItem = buildQuickFixItem(pkgDir, filename, linenum, pattern, text)
-	if QfItem.Filename != "packageDir/filename" {
-		t.Errorf("Filename:  Got: %s, Want: %s\n", QfItem.Filename, "packageDir/firstPart")
+	if QfItem.Filename != "packageDir"+string(filepath.Separator)+"filename" {
+		t.Errorf("Filename:  Got: %s, Want: %s\n", QfItem.Filename, "packageDir"+string(filepath.Separator)+"firstPart")
 	}
 }
 
