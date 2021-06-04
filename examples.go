@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -9,13 +11,18 @@ func exampleError(output string) bool {
 	return CheckRegx(regexExampleFail, output)
 }
 
-func findExampleFunc(pluginDir, exampleFuncDecl, path, ignore string) (string, string, string) {
+func findExampleFunc(pluginDir, exampleFuncDecl, pathToSearch, ignore string) (string, string, string) {
+	agExecutable := "ag"
+	if runtime.GOOS == "windows" {
+		agExecutable = "ag.exe"
+	}
+	agBinaryPath := filepath.Join(pluginDir, "bin", agExecutable)
 	cmdLine := fmt.Sprintf(
-		"%s/bin/ag --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s",
-		pluginDir,
+		"%s --vimgrep -G '.*_test.go' --ignore '%s' '%s' %s",
+		agBinaryPath,
 		ignore,
 		exampleFuncDecl,
-		path,
+		pathToSearch,
 	)
 	result, _, err := Shellout(cmdLine)
 	chkErr(err, "Error in ag searching for an example func declaration")
