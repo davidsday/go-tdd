@@ -63,7 +63,8 @@ function! s:RunTest(toScreen)
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
     chdir %:p:h
-    let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
+    " let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
+    let l:go_tdd_binary=go#util#Join(s:plugin_dir, 'bin','go-tdd')
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
     if !exists('g:go_test_timeout')
@@ -96,6 +97,8 @@ function! s:RunTest(toScreen)
      call s:ProcessStdOutput(l:out)
     endif
     let l:ch = getchar()
+    " DEBUG: do I need to OS neutralize this?  I'm thinking probably
+    " But it seemed to be working OK the last time I tried on Windows
     echon "\r\n\n"
     redraw
     " Turn Vim-Go's automatic type display back on
