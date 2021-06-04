@@ -89,7 +89,7 @@ func TestBuildQuickFixItem_filename(t *testing.T) {
 
 	QfItem = buildQuickFixItem(pkgDir, filename, linenum, pattern, text)
 	if QfItem.Filename != "packageDir"+string(filepath.Separator)+"filename" {
-		t.Errorf("Filename:  Got: %s, Want: %s\n", QfItem.Filename, "packageDir"+string(filepath.Separator)+"firstPart")
+		t.Errorf("Filename:  Got: %s, Want: %s\n", QfItem.Filename, "packageDir"+string(filepath.Separator)+"filename")
 	}
 }
 
