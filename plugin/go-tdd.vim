@@ -55,16 +55,23 @@ function! s:RunTest(toScreen)
     " Turn off Vim-Go's automatic type display until we are done here
     let g:go_echo_go_info = 0
     echon 'Testing...'
+    let l:go_tdd_executable_filename='go-tdd'
+    if has('win32')
+        let l:go_tdd_executable_filename='go-tdd.exe'
+    endif
     "shellescape(expand('%:p:h')) gives path to this docs directory
     "(package dir)
-    let l:packageDir = shellescape(expand('%:p:h'))
+    "my current understanding is that fnameescape is for the Vim command line
+    "and shellescape is for escaping shell commands.  I'll go with that
+    "till I learn otherwise
+    let l:package_dir=expand('%:p:h')
     " Ensure Vim's working directory is the same as the file we are editing
     " Without this, sometimes, when opening opening a file found by FZF
     " (<Leader>f), Vim's working directory stays at the directory we just
     " left.  So don't delete it.
     chdir %:p:h
     " let l:go_tdd_binary=s:plugin_dir . '/bin/go-tdd'
-    let l:go_tdd_binary=go#util#Join(s:plugin_dir, 'bin','go-tdd')
+    let l:go_tdd_binary=go#util#Join(s:plugin_dir, 'bin',l:go_tdd_executable_filename)
     let l:oneSpace=' '
     let l:screencolumns=string(&columns - 1)
     if !exists('g:go_test_timeout')
@@ -78,16 +85,22 @@ function! s:RunTest(toScreen)
     endif
 
     let l:arg_dict={}
-    let l:arg_dict['package_dir']=trim(l:packageDir,"'", 0)
+    if has('win32')
+        let l:arg_dict['package_dir']=trim(l:package_dir,"'")
+        let l:arg_dict['plugin_dir']=trim(s:plugin_dir,"'")
+    else
+        let l:arg_dict['plugin_dir']=trim(s:plugin_dir,"'", 0)
+        let l:arg_dict['package_dir']=trim(l:package_dir,"'", 0)
+    endif
     let l:arg_dict['screen_columns']=l:screencolumns
     let l:arg_dict['gocyclo_ignore']=g:gocyclo_ignore
     let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
-    let l:arg_dict['plugin_dir']=trim(s:plugin_dir,"'", 0)
     let l:arg_dict['timeout']=g:go_test_timeout
 
-    let l:json_args=shellescape(json_encode(l:arg_dict))
+    let l:json_args=json_encode(l:arg_dict)
     let l:cmdLine=l:go_tdd_binary
     let l:cmdLine.= oneSpace . l:json_args
+    let l:cmdLine=shellescape(l:cmdLine)
 
 
     if a:toScreen == v:true
@@ -111,7 +124,7 @@ endfunction
 " calling go#color_bar#DoColorBar() to display a Red/Green/Yellow Bar
 " message as provided by go-tdd.
 function! s:ProcessStdOutput(stdout) abort
-  let l:packageDir = shellescape(expand('%:p:h'))
+  " let l:packageDir = shellescape(expand('%:p:h'))
   let l:json_object = json_decode(a:stdout)
   if l:json_object.quickfixlist != []
     call setqflist(l:json_object.quickfixlist,'r')
