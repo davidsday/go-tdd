@@ -43,7 +43,7 @@ let g:did_gotdd_ftplugin = 1
 " with pathtoplugin, to which I can add '/bin/go-tdd'
 " and have the path to our binary, where ever the plugin
 " manager might have put it.
-let s:plugin_dir = expand('<sfile>:p:h:h')
+let s:plugin_dir = shellescape(expand('<sfile>:p:h:h'))
 
 
 " toScreen needs to either be v:true or v:false
@@ -64,7 +64,7 @@ function! s:RunTest(toScreen)
     "my current understanding is that fnameescape is for the Vim command line
     "and shellescape is for escaping shell commands.  I'll go with that
     "till I learn otherwise
-    let l:package_dir=expand('%:p:h')
+    let l:package_dir=shellescape(expand('%:p:h'))
     " Ensure Vim's working directory is the same as the file we are editing
     " Without this, sometimes, when opening opening a file found by FZF
     " (<Leader>f), Vim's working directory stays at the directory we just
@@ -97,10 +97,9 @@ function! s:RunTest(toScreen)
     let l:arg_dict['go_tdd_debug']=g:go_tdd_debug
     let l:arg_dict['timeout']=g:go_test_timeout
 
-    let l:json_args=json_encode(l:arg_dict)
+    let l:json_args=shellescape(json_encode(l:arg_dict))
     let l:cmdLine=l:go_tdd_binary
     let l:cmdLine.= oneSpace . l:json_args
-    let l:cmdLine=shellescape(l:cmdLine)
 
 
     if a:toScreen == v:true
@@ -124,7 +123,7 @@ endfunction
 " calling go#color_bar#DoColorBar() to display a Red/Green/Yellow Bar
 " message as provided by go-tdd.
 function! s:ProcessStdOutput(stdout) abort
-  " let l:packageDir = shellescape(expand('%:p:h'))
+  let l:packageDir = shellescape(expand('%:p:h'))
   let l:json_object = json_decode(a:stdout)
   if l:json_object.quickfixlist != []
     call setqflist(l:json_object.quickfixlist,'r')
