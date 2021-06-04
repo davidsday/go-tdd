@@ -1,6 +1,6 @@
 " don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
+let s:cpo_save = &cpoptions
+set cpoptions&vim
 
 " PathSep returns the appropriate OS specific path separator.
 function! go#util#PathSep() abort
@@ -13,16 +13,16 @@ endfunction
 " PathListSep returns the appropriate OS specific path list separator.
 function! go#util#PathListSep() abort
   if go#util#IsWin()
-    return ";"
+    return ';'
   endif
-  return ":"
+  return ':'
 endfunction
 
 " LineEnding returns the correct line ending, based on the current fileformat
 function! go#util#LineEnding() abort
-  if &fileformat == 'dos'
+  if &fileformat ==# 'dos'
     return "\r\n"
-  elseif &fileformat == 'mac'
+  elseif &fileformat ==# 'mac'
     return "\r"
   endif
 
@@ -50,7 +50,7 @@ function! go#util#IsMac() abort
 endfunction
 
 " restore Vi compatibility settings
-let &cpo = s:cpo_save
+let &cpoptions = s:cpo_save
 unlet s:cpo_save
 
 " vim: sw=2 ts=2 et
