@@ -49,23 +49,6 @@ function! go#util#IsMac() abort
         \ go#util#Exec(['uname'])[0] =~? '^darwin'
 endfunction
 
- " Checks if using:
- " 1) Windows system,
- " 2) And has cygpath executable,
- " 3) And uses *sh* as 'shell'
-function! go#util#IsUsingCygwinShell()
-  return go#util#IsWin() && executable('cygpath') && &shell =~ '.*sh.*'
-endfunction
-
-" Check if Vim jobs API is supported.
-"
-" The (optional) first parameter can be added to indicate the 'cwd' or 'env'
-" parameters will be used, which wasn't added until a later version.
-function! go#util#has_job(...) abort
-  return has('job') || has('nvim')
-endfunction
-
-
 " restore Vi compatibility settings
 let &cpo = s:cpo_save
 unlet s:cpo_save
