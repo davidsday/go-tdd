@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -34,7 +36,7 @@ func (b *BarMessage) getMessage() string {
 }
 
 func (b *BarMessage) marshalToStdOut() {
-	// data, err := json.MarshalIndent(pgmdata, "", "    ")
+	// data, err := json.MarshalIndent(*b, "", "    ")
 	data, _ := json.Marshal(*b)
 	_, err := os.Stdout.Write(data)
 	chkErr(err, "Error writing to Stdout in BarMessage.marshalToStdOut()")
@@ -42,8 +44,10 @@ func (b *BarMessage) marshalToStdOut() {
 
 func (b *BarMessage) marshalToDisk() {
 	data, _ := json.Marshal(*b)
-	err := os.WriteFile("./go-tdd_log.json", data, 0664)
-	chkErr(err, "Error writing to ./go-tdd_log.json, in marshalToDisk()")
+	path := filepath.Join(".", "go-tdd_log.json")
+	err := os.WriteFile(path, data, 0664)
+	emsg := fmt.Sprintf("Error writing to '%s', in marshalToDisk()", path)
+	chkErr(err, emsg)
 }
 
 func (b *BarMessage) marshalToByteString() []byte {
@@ -130,8 +134,8 @@ func (q *GtpQfList) Count() int {
 func buildQuickFixItem(searchDir, filename, linenum, pattern, text string) GtpQfItem {
 	QfItem := GtpQfItem{}
 	if searchDir != "" {
-		if !strings.HasSuffix(searchDir, "/") {
-			QfItem.Filename = searchDir + "/"
+		if !strings.HasSuffix(searchDir, string(filepath.Separator)) {
+			QfItem.Filename = searchDir + string(filepath.Separator)
 		}
 	}
 	QfItem.Filename += filename
