@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -37,3 +39,10 @@ func Shellout(command string) (string, string, error) {
 	err := cmd.Run()
 	return stdout.String(), stderr.String(), err
 } //end_Shellout()
+
+func readFile(fPath string) string {
+	data, err := ioutil.ReadFile(fPath)
+	emsg := fmt.Sprintf("Error in readFile(%s)", fPath)
+	chkErr(err, emsg)
+	return string(data)
+}
