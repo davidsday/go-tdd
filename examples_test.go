@@ -52,7 +52,7 @@ func TestFindExampleFunc(t *testing.T) {
 
 	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
 
-	want := `examples_test.go`
+	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
 	}
@@ -64,7 +64,7 @@ func TestFindExampleFunc_XXXX(t *testing.T) {
 
 	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
 
-	want := `examples_test.go`
+	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
 		t.Errorf("got '%s' want '%s'", got1, want)
 	}
