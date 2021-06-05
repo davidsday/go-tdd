@@ -23,12 +23,14 @@ func TestMain(m *testing.M) {
 	// for testing, we can have PackageDir and PluginDir the same and since we
 	// are running the tests from the PackageDir, they can both be "." for
 	// testing purposes.
+	fpath, err := filepath.Abs(".")
+	chkErr(err, "error getting absolute path in TestMain()\n")
 	results.Args = GtpArgs{
-		PackageDir:    ".",
+		PackageDir:    fpath,
 		ScreenColumns: "144",
 		GocycloIgnore: "vendor|testdata",
 		GoTddDebug:    true,
-		PluginDir:     ".",
+		PluginDir:     fpath,
 		Timeout:       "10s",
 	}
 	exitVal := m.Run()
