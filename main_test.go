@@ -868,3 +868,12 @@ func TestSafeToLookAhead_false(t *testing.T) {
 		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
 	}
 }
+
+//TestReadFile ....
+func TestReadFile(t *testing.T) {
+	got := readFile("./testdata/hello.txt")
+	want := "Hello World!\n"
+	if got != want {
+		t.Errorf("got '%s' want '%s'", got, want)
+	}
+}
