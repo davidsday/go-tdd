@@ -18,7 +18,10 @@ CONTENTS                                                      *go-tdd-contents*
 ==============================================================================
 1. Intro                                                          *go-tdd_Intro*
 
-This is a Vim plugin that I wrote in Golang for my own use.
+This is a Vim plugin that I wrote in Golang for my own use on Linux Mint
+Cinnamon, in Golang 1.16.  I use Vim-Plug on most of my machines and Packer
+on one.  I use Neovim 5.0 almost exclusively but also have Vim 8 and Vim-Plug
+and it works with them just fine.  It does not work on Windows or MacOS.
 
 It is designed to work conveniently alongside Fatih Arslan's vim-go plugin,
 which I consider to be my main Golang development tool.
@@ -73,7 +76,7 @@ it is a metric I want to be aware of.
 2. Usage                                                          *go-tdd_Usage*
 
 If you are using vim-plug:
-  Plug 'davidsday/go-tdd', {'for': [ 'go' ], 'branch': 'master', 'do': './install.sh'}
+  Plug 'davidsday/go-tdd', {'for': [ 'go' ], 'branch': 'master', 'do': 'go build ./bin/'}
   Plug 'Valloric/ListToggle'
     If you use this 'Valloric/ListToggle', <Leader>q toggles the quickfix window open and closed
     Use <C-j> (down), and <C-k> (up) to navigate the quickfix window
