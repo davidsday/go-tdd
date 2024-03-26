@@ -16,7 +16,7 @@ func ExampleTestXXXX() {
 //TestExampleError
 //===========================================================================
 
-//TestExampleError ....
+// TestExampleError ....
 func TestExampleError_true(t *testing.T) {
 	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"--- FAIL: ExampleHW (0.00s)\n"}`
 	jlo := JLObject{}
@@ -25,11 +25,15 @@ func TestExampleError_true(t *testing.T) {
 	got := exampleError(jlo.getOutput())
 	want := true
 	if got != want {
-		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+		t.Errorf(
+			"got '%s' want '%s'",
+			strconv.FormatBool(got),
+			strconv.FormatBool(want),
+		)
 	}
 }
 
-//TestExampleError_false ....
+// TestExampleError_false ....
 func TestExampleError_false(t *testing.T) {
 	input := `{"Time":"2021-05-27T10:05:48.703313416-04:00","Action":"output","Package":"example","Test":"ExampleHW","Output":"PASS: ExampleHW (0.00s)\n"}`
 	jlo := JLObject{}
@@ -38,7 +42,11 @@ func TestExampleError_false(t *testing.T) {
 	got := exampleError(jlo.getOutput())
 	want := false
 	if got != want {
-		t.Errorf("got '%s' want '%s'", strconv.FormatBool(got), strconv.FormatBool(want))
+		t.Errorf(
+			"got '%s' want '%s'",
+			strconv.FormatBool(got),
+			strconv.FormatBool(want),
+		)
 	}
 }
 
@@ -46,11 +54,16 @@ func TestExampleError_false(t *testing.T) {
 //TestFindExample
 //===========================================================================
 
-//TestFindExampleFunc ....
+// TestFindExampleFunc ....
 func TestFindExampleFunc(t *testing.T) {
 	exampleFuncDecl := `func ExampleHW`
 
-	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(
+		results.Args.PluginDir,
+		exampleFuncDecl,
+		results.Args.PackageDir,
+		results.Args.GocycloIgnore,
+	)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
@@ -58,11 +71,16 @@ func TestFindExampleFunc(t *testing.T) {
 	}
 }
 
-//TestFindExampleFunc ....
+// TestFindExampleFunc ....
 func TestFindExampleFunc_XXXX(t *testing.T) {
 	exampleFuncDecl := `func ExampleTestXXXX\(\) {`
 
-	got1, _, _ := findExampleFunc(results.Args.PluginDir, exampleFuncDecl, results.Args.PackageDir, results.Args.GocycloIgnore)
+	got1, _, _ := findExampleFunc(
+		results.Args.PluginDir,
+		exampleFuncDecl,
+		results.Args.PackageDir,
+		results.Args.GocycloIgnore,
+	)
 
 	want := `/home/dave/sw/go/go-tdd/examples_test.go`
 	if got1 != want {
