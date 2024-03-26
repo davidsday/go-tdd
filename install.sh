@@ -1,9 +1,10 @@
 #! /bin/sh
 
-#cd $(dirname "$(readlink -f "$0")")
-CURDIR="$(pwd)"
+cd $(dirname "$(readlink -f "$0")")
 
-mkdir -p ${CURDIR}/bin
+CURDIR=$(pwd)
+
+mkdir -p ./bin
 
 go build -o ${CURDIR}/bin/
 
