@@ -4,6 +4,5 @@ cd $(dirname "$(readlink -f "$0")")
 
 mkdir -p ./bin
 
-go build
+go build -o ./bin/
 
-mv go-tdd ./bin/
