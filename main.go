@@ -28,11 +28,13 @@ var (
 	regexCoverageNoStmts = regexp.MustCompile(`^coverage: \[no statements\]`)
 	regexNil             = &regexp.Regexp{}
 )
-var debug bool
-var PackageDir string
+
+var (
+	debug      bool
+	PackageDir string
+)
 
 func main() {
-
 	// results has all the results we collect from go test
 	// to help us decide how to present the results to the user
 	// It has the methods it needs to build the BarMessage
@@ -97,7 +99,6 @@ func main() {
 	if debug {
 		barMessage.marshalToDisk()
 	}
-
 } // endmain()
 
 func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
@@ -144,7 +145,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 				break
 			}
 		}
-	} //endfor
+	} // endfor
 
 	// Make note of the elapsed time, as reported by go test
 	results.Summary.setElapsed(GtpElapsed(jloSlice[len(jloSlice)-1].getElapsed()))
@@ -155,8 +156,7 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 	// not represent a test, but get counted as one.
 	// So it throws off our counts by one.
 	// So we fix that here
-	results.Counts["pass"], results.Counts["fail"] =
-		adjustOutSuperfluousFinalResult(jloSlice[len(jloSlice)-1].getAction(), results)
+	results.Counts["pass"], results.Counts["fail"] = adjustOutSuperfluousFinalResult(jloSlice[len(jloSlice)-1].getAction(), results)
 	// Now we check for results.Errors and create a
 	// yellow bar and  message if appropriate
 	results.buildBarMessage(Barmessage, PackageDirsToSearch)
@@ -169,7 +169,8 @@ func processStdOut(stdout string, results *GtpResults, PackageDirsToSearch []str
 // go test -json emits these in jlo.Output fields. We handle
 // this task here
 func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
-	PackageDir, pluginDir string, Barmessage *BarMessage) (bool, error) {
+	PackageDir, pluginDir string, Barmessage *BarMessage,
+) (bool, error) {
 	var err error = nil
 	doBreak := false
 
@@ -190,10 +191,21 @@ func HandleOutputLines(results *GtpResults, jloSlice []JLObject, i int,
 		testName := jloSlice[i].getTest()
 		exampleFuncDecl := fmt.Sprintf("func +%s\\(\\) +{ *", testName)
 		if debug {
-			log.Printf("About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n", results.Args.PluginDir)
-			log.Printf("In findExampleFunc(): pluginDir: '%s'\n\n", pluginDir)
+			log.Printf(
+				"About to call findExampleFunc(): results.Args.PluginDir: '%s'\n\n",
+				results.Args.PluginDir,
+			)
+			log.Printf(
+				"In findExampleFunc(): pluginDir: '%s'\n\n",
+				pluginDir,
+			)
 		}
-		filepath, linenum, testname := findExampleFunc(pluginDir, exampleFuncDecl, PackageDir, results.Args.GocycloIgnore)
+		filepath, linenum, testname := findExampleFunc(
+			pluginDir,
+			exampleFuncDecl,
+			PackageDir,
+			results.Args.GocycloIgnore,
+		)
 
 		text := "Got: '" + jloSlice[i+2].getOutput() + "'" + oneSpace + "Want: '" + jloSlice[i+4].getOutput() + "'"
 
@@ -252,20 +264,40 @@ func rcvdMsgOnStdErr(stderror string) bool {
 	return len(stderror) > 0
 }
 
-func processStdErr(stderr string, results *GtpResults, PackageDirsToSearch []string, Barmessage *BarMessage) {
+func processStdErr(
+	stderr string,
+	results *GtpResults,
+	PackageDirsToSearch []string,
+	Barmessage *BarMessage,
+) {
 	oneSpace := " "
 	msg := stderr
 	stdErrMsgPrefix := "STDERR:"
 	stdErrMsgSuffix := "[See pkgdir/StdErr.txt]"
 	Barmessage.setColor("yellow")
-	if stdErrMsgTooLongForOneLine(stderr, stdErrMsgPrefix, stdErrMsgSuffix, results.Args.getScreenColumns()) {
+	if stdErrMsgTooLongForOneLine(
+		stderr,
+		stdErrMsgPrefix,
+		stdErrMsgSuffix,
+		results.Args.getScreenColumns(),
+	) {
 		writeStdErrMsgToDisk(stderr, PackageDirsToSearch[0])
-		Barmessage.setMessage(buildShortenedBarMessage(stdErrMsgPrefix, stdErrMsgSuffix, msg, results.Args.getScreenColumns()))
+		Barmessage.setMessage(buildShortenedBarMessage(
+			stdErrMsgPrefix,
+			stdErrMsgSuffix,
+			msg,
+			results.Args.getScreenColumns(),
+		))
 	} else {
 		Barmessage.setMessage(stdErrMsgPrefix + oneSpace + strings.ReplaceAll(msg, "\n", "|"))
 		Barmessage.setMessage(strings.TrimSuffix(Barmessage.Message, "|"))
 	}
-	gtperror := GtpError{Name: "StdErrError", Regex: regexNil, Message: Barmessage.Message, Color: "yellow"}
+	gtperror := GtpError{
+		Name:    "StdErrError",
+		Regex:   regexNil,
+		Message: Barmessage.Message,
+		Color:   "yellow",
+	}
 	results.Errors = append(results.Errors, gtperror)
 }
 
@@ -313,7 +345,7 @@ func buildAndAppendAnErrorForInvalidJSON(results *GtpResults) {
 
 func splitIntoLines(s string) []string {
 	lines := strings.Split(s, "\n")
-	//bytes.Split returns an empty line AFTER the final "\n"
+	// bytes.Split returns an empty line AFTER the final "\n"
 	// so we drop that one
 	if len(lines[len(lines)-1]) > 0 {
 		return lines
@@ -380,7 +412,7 @@ func adjustOutSuperfluousFinalResult(action string, results *GtpResults) (int, i
 }
 
 func checkErrorCandidates(results *GtpResults, output string, PackageDir string) bool {
-	var ErrorCandidates = GtpErrors{
+	ErrorCandidates := GtpErrors{
 		{Name: "NoTestFiles", Regex: regexNoTestFiles, Message: "In package: " + PackageDir + ", [No Test Files]", Color: "yellow"},
 		{Name: "NoTestsToRun", Regex: regexNoTestsToRun, Message: "In package: " + PackageDir + ", [Test Files, but No Tests to Run]", Color: "yellow"},
 		{Name: "BuildFailed", Regex: regexBuildFailed, Message: "In package: " + PackageDir + ", [Build Failed]", Color: "yellow"},
