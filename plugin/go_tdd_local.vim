@@ -14,8 +14,8 @@ let g:go_test_timeout = '10s'
 
 nnoremap <LocalLeader>a  call go#alternate#Switch(<bang>0, 'edit')
 nnoremap <LocalLeader>e <ESC>:e StdErr.txt<CR>
-nnoremap <C-j> :cnext<CR>
-nnoremap <C-k> :cprev<CR>
+nnoremap <C-n> :cnext<CR>
+nnoremap <C-p> :cprev<CR>
 
 " I try to use <LocalLeader> in ftplugin types of situations
 " This one runs GreenBar/RedBar tests
